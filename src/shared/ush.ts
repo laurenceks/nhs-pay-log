@@ -1,15 +1,5 @@
-import bankHolidays from "../../tests/data/bankHolidays.ts";
-import {
-  convertToDate,
-  makeToDateAlwaysLater,
-  msToDecimalHours,
-} from "./conversions.ts";
-
-const isBankHoliday = (date: Date | string) => {
-  return bankHolidays["england-and-wales"].events.some(
-    (bh) => bh.date === convertToDate(date).toISOString().slice(0, 10),
-  );
-};
+import { makeToDateAlwaysLater, msToDecimalHours } from "./conversions.ts";
+import { isBankHoliday } from "./shiftLengths.ts";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
   // returns in ms the total time within the lower rate windows

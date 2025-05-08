@@ -1,4 +1,9 @@
-import { convertToNumber, msToDecimalHours } from "./conversions.ts";
+import {
+  convertToDate,
+  convertToNumber,
+  msToDecimalHours,
+} from "./conversions.ts";
+import bankHolidays from "../../tests/data/bankHolidays.ts";
 
 export const calculateShiftLength = (
   from: Date | string | number,
@@ -12,4 +17,11 @@ export const calculateShiftHours = (
 ) => {
   const shiftLength = calculateShiftLength(from, to);
   return shiftLength > 6 ? shiftLength - 0.5 : shiftLength;
+};
+
+export const isBankHoliday = (date: Date | string) => {
+  const lookupDate = convertToDate(date).toISOString().slice(0, 10);
+  return bankHolidays["england-and-wales"].events.some(
+    (bh) => bh.date === lookupDate,
+  );
 };

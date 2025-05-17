@@ -63,7 +63,7 @@ const logShiftReducer = (
 ) => {
     switch (action) {
         case "date": {
-            const newFrom = `${payload} ${prevState.start}`;
+            const newFrom = `${payload} ${prevState.start}:00`;
             return {
                 ...prevState,
                 date: payload,
@@ -77,7 +77,7 @@ const logShiftReducer = (
             };
         }
         case "start": {
-            const newFrom = `${prevState.date} ${payload}`;
+            const newFrom = `${prevState.date} ${payload}:00`;
             return {
                 ...prevState,
                 date: prevState.date,

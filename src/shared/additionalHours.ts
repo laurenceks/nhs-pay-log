@@ -101,11 +101,10 @@ export const calculateAdditionalHours = (
     const fromIsBankHoliday = isBankHoliday(fromObj);
     const toIsBankHoliday = isBankHoliday(toObj);
 
-    const cumulativeAdditionalHours = calculateCumulativeAdditionalHours(
-        fromObj,
-        id,
-        log
-    );
+    const cumulativeAdditionalHours =
+        type === "Bank"
+            ? 0
+            : calculateCumulativeAdditionalHours(fromObj, id, log);
     const paidAdditionalHours = isAdditionalHoursShift
         ? calculateShiftHours(fromObj, toObj)
         : calculateShiftLength(fromObj, toObj);
@@ -124,13 +123,11 @@ export const calculateAdditionalHours = (
         // TODO make this a lookup (37.5 - weekly contracted hours)
         const weeklyOtThresholdHours = 18.75;
 
-        console.log(paidAdditionalHours, overrunHours);
-
         if (
             paidAdditionalHours + overrunHours + cumulativeAdditionalHours >=
-            weeklyOtThresholdHours
+                weeklyOtThresholdHours &&
+            type !== "Bank"
         ) {
-            //FIXME
             additionalHoursBreakdown.flat = Math.max(
                 0,
                 Math.min(
@@ -168,7 +165,8 @@ export const calculateAdditionalHours = (
                     additionalHoursBreakdown.flat
             );
         } else {
-            additionalHoursBreakdown.flat = paidAdditionalHours;
+            additionalHoursBreakdown.flat =
+                paidAdditionalHours * (type === "Bank" ? 1.12004801920768 : 1);
         }
 
         if (type === "TOIL" || overrunType === "TOIL") {

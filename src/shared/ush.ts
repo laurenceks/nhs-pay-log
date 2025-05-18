@@ -125,26 +125,13 @@ export const calculateUsh = (
     to: Date | string,
     hoursOverThreshold = 0
 ) => {
-    const { fromObj, toObj } = makeToAlwaysLater(from, to);
-    const hoursOverThresholdMs = hoursOverThreshold * 60 * 60 * 1000;
+    let lowerRateRaw = 0;
+    let higherRateRaw = 0;
+    if (from && to) {
+        //TODO is making sure timestamps are always later still necessary now that they are set using the reducer which makes sure already?
+        const { fromObj, toObj } = makeToAlwaysLater(from, to);
+        const hoursOverThresholdMs = hoursOverThreshold * 60 * 60 * 1000;
 
-    let lowerRateRaw = calculateRawLowerRate(
-        new Date(fromObj),
-        new Date(toObj)
-    );
-    let higherRateRaw = calculateRawHigherRate(
-        new Date(fromObj),
-        new Date(toObj)
-    );
-
-    const totalUshRaw = lowerRateRaw + higherRateRaw;
-    let shiftLength = toObj.getTime() - fromObj.getTime();
-
-    const remainingBreak = shiftLength > 21600000 ? 1800000 : 0;
-
-    if (hoursOverThreshold) {
-        //recalculate USH based on new end
-        toObj.setTime(toObj.getTime() + hoursOverThresholdMs * -1);
         lowerRateRaw = calculateRawLowerRate(
             new Date(fromObj),
             new Date(toObj)
@@ -153,31 +140,49 @@ export const calculateUsh = (
             new Date(fromObj),
             new Date(toObj)
         );
-    }
 
-    if (totalUshRaw >= shiftLength / 2) {
-        // more than half the shift is USH
-        if (!higherRateRaw) {
-            // only lower rate
-            lowerRateRaw = Math.max(
-                0,
-                shiftLength - remainingBreak - hoursOverThresholdMs
+        const totalUshRaw = lowerRateRaw + higherRateRaw;
+        let shiftLength = toObj.getTime() - fromObj.getTime();
+
+        const remainingBreak = shiftLength > 21600000 ? 1800000 : 0;
+
+        if (hoursOverThreshold) {
+            //recalculate USH based on new end
+            toObj.setTime(toObj.getTime() + hoursOverThresholdMs * -1);
+            lowerRateRaw = calculateRawLowerRate(
+                new Date(fromObj),
+                new Date(toObj)
             );
-        } else if (!lowerRateRaw) {
-            // only higher rate
-            higherRateRaw = Math.max(
-                0,
-                shiftLength - remainingBreak - hoursOverThresholdMs
+            higherRateRaw = calculateRawHigherRate(
+                new Date(fromObj),
+                new Date(toObj)
             );
-        } else {
-            if (hoursOverThreshold) {
-                // update shift length to match USH length with OT hours deducted
-                shiftLength = toObj.getTime() - fromObj.getTime();
+        }
+
+        if (totalUshRaw >= shiftLength / 2) {
+            // more than half the shift is USH
+            if (!higherRateRaw) {
+                // only lower rate
+                lowerRateRaw = Math.max(
+                    0,
+                    shiftLength - remainingBreak - hoursOverThresholdMs
+                );
+            } else if (!lowerRateRaw) {
+                // only higher rate
+                higherRateRaw = Math.max(
+                    0,
+                    shiftLength - remainingBreak - hoursOverThresholdMs
+                );
+            } else {
+                if (hoursOverThreshold) {
+                    // update shift length to match USH length with OT hours deducted
+                    shiftLength = toObj.getTime() - fromObj.getTime();
+                }
+                const segmentBreak = Math.min(lowerRateRaw, remainingBreak);
+                // take break from cheaper side
+                lowerRateRaw = shiftLength - higherRateRaw - segmentBreak;
+                higherRateRaw -= remainingBreak - segmentBreak;
             }
-            const segmentBreak = Math.min(lowerRateRaw, remainingBreak);
-            // take break from cheaper side
-            lowerRateRaw = shiftLength - higherRateRaw - segmentBreak;
-            higherRateRaw -= remainingBreak - segmentBreak;
         }
     }
 

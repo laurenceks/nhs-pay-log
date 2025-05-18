@@ -1,6 +1,7 @@
 import { Button, Form, Modal } from "react-bootstrap";
-import { ShiftEditModalState } from "../../../../types/commonTypes";
+import { LogShift, ShiftEditModalState } from "../../../../types/commonTypes";
 import {
+    ChangeEvent,
     Dispatch,
     SetStateAction,
     useEffect,
@@ -10,15 +11,18 @@ import {
 import { calculateUsh } from "../../../shared/ush.ts";
 import { calculateAdditionalHours } from "../../../shared/additionalHours.ts";
 import ShiftEditModalCalculation from "./ShiftEditModalCalculation.tsx";
-import mockLogData from "../../../../tests/data/mockLogData.ts";
 import logShiftReducer from "../reducers/logShiftReducer.ts";
 
 const ShiftEditModal = ({
-    state: { show, shift },
-    setState,
+    modalState: { show, shift },
+    setModalState,
+    log,
+    setLogState,
 }: {
-    state: ShiftEditModalState;
-    setState: Dispatch<SetStateAction<ShiftEditModalState>>;
+    modalState: ShiftEditModalState;
+    setModalState: Dispatch<SetStateAction<ShiftEditModalState>>;
+    log: LogShift[];
+    setLogState: Dispatch<SetStateAction<LogShift[]>>;
 }) => {
     const [editState, setEditState] = useReducer(
         logShiftReducer,
@@ -32,6 +36,29 @@ const ShiftEditModal = ({
         timeAndHalf: 0,
         double: 0,
     });
+
+    const closeModal = () => {
+        setModalState((prevState) => ({ ...prevState, show: false }));
+    };
+    const saveEdit = () => {
+        setLogState((prevState) => {
+            const newState = [...prevState];
+            if (editState.id) {
+                newState[newState.findIndex((x) => x.id === editState.id)] = {
+                    ...editState,
+                    ...ushState,
+                };
+            } else {
+                newState.push({
+                    ...editState,
+                    ...ushState,
+                    id: (Math.random() + 1).toString(36),
+                });
+            }
+            return newState;
+        });
+        closeModal();
+    };
     useEffect(() => {
         if (!show && !shift) {
             setEditState({ action: "clear" });
@@ -40,19 +67,18 @@ const ShiftEditModal = ({
         }
     }, [show, shift]);
 
-    const changeHandler = (e) => {
+    const changeHandler = (
+        e: ChangeEvent<HTMLInputElement> & ChangeEvent<HTMLSelectElement>
+    ) => {
         setEditState({
-            action: e.target.dataset.field,
-            payload: e.target.value,
+            action: e.currentTarget.dataset.field as keyof typeof shift,
+            payload: e.currentTarget.value,
         });
     };
 
     useEffect(() => {
         if (editState) {
-            const additionalHours = calculateAdditionalHours(
-                editState,
-                mockLogData
-            );
+            const additionalHours = calculateAdditionalHours(editState, log);
             setUshState({
                 ...calculateUsh(
                     editState.from,
@@ -79,7 +105,7 @@ const ShiftEditModal = ({
         <Modal
             show={show}
             onExited={() => {
-                setState({ show: false, shift: null });
+                setModalState({ show: false, shift: null });
             }}
             size="lg"
             fullscreen={"lg-down"}
@@ -232,24 +258,32 @@ const ShiftEditModal = ({
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button
-                    onClick={() =>
-                        setState((prevState) => {
-                            return { ...prevState, show: false };
-                        })
-                    }
-                    variant="warning"
-                >
+                {editState?.id && (
+                    <>
+                        <Button
+                            onClick={() => {
+                                setLogState((prevState) => {
+                                    const newState = [...prevState];
+                                    newState.splice(
+                                        newState.findIndex(
+                                            (x) => x.id === editState.id
+                                        ),
+                                        1
+                                    );
+                                    return newState;
+                                });
+                                closeModal();
+                            }}
+                            variant="danger"
+                        >
+                            Delete shift
+                        </Button>
+                    </>
+                )}
+                <Button onClick={closeModal} variant="warning">
                     Cancel
                 </Button>
-                <Button
-                    onClick={() =>
-                        setState((prevState) => {
-                            return { ...prevState, show: false };
-                        })
-                    }
-                    variant="success"
-                >
+                <Button onClick={saveEdit} variant="success">
                     Save changes
                 </Button>
             </Modal.Footer>

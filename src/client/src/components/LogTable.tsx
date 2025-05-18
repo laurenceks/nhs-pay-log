@@ -1,11 +1,13 @@
 import { Table } from "react-bootstrap";
 import { Dispatch, SetStateAction } from "react";
 import { LogShift, ShiftEditModalState } from "../../../../types/commonTypes";
-import mockLogData from "../../../../tests/data/mockLogData.ts";
+import { formatDate } from "../../../shared/formatDates.ts";
 
 const LogTable = ({
+    log,
     setModalState,
 }: {
+    log: LogShift[];
     setModalState: Dispatch<SetStateAction<ShiftEditModalState>>;
 }) => {
     return (
@@ -33,35 +35,37 @@ const LogTable = ({
                 </tr>
             </thead>
             <tbody>
-                {mockLogData.map((x) => {
-                    return (
-                        <tr
-                            key={x.date + x.start + x.actualEnd}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => {
-                                setModalState({
-                                    show: true,
-                                    shift: x as LogShift,
-                                });
-                            }}
-                        >
-                            <td>{x.date}</td>
-                            <td>{x.start}</td>
-                            <td>{x.plannedEnd}</td>
-                            <td>{x.actualEnd}</td>
-                            <td>{x.employment}</td>
-                            <td>{x.type}</td>
-                            <td>{x.overrunType}</td>
-                            <td>{x.toil}</td>
-                            <td>{x.lowerRate}</td>
-                            <td>{x.higherRate}</td>
-                            <td>{x.flat}</td>
-                            <td>{x.timeAndHalf}</td>
-                            <td></td>
-                            <td>£-</td>
-                        </tr>
-                    );
-                })}
+                {log
+                    .sort((a, b) => (a.from > b.from ? 1 : -1))
+                    .map((x) => {
+                        return (
+                            <tr
+                                key={x.id}
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                    setModalState({
+                                        show: true,
+                                        shift: x as LogShift,
+                                    });
+                                }}
+                            >
+                                <td>{formatDate(x.from, "dd/mm/yy")}</td>
+                                <td>{x.start}</td>
+                                <td>{x.plannedEnd}</td>
+                                <td>{x.actualEnd}</td>
+                                <td>{x.employment}</td>
+                                <td>{x.type}</td>
+                                <td>{x.overrunType}</td>
+                                <td>{x.toil}</td>
+                                <td>{x.lowerRate}</td>
+                                <td>{x.higherRate}</td>
+                                <td>{x.flat}</td>
+                                <td>{x.timeAndHalf}</td>
+                                <td></td>
+                                <td>£-</td>
+                            </tr>
+                        );
+                    })}
             </tbody>
         </Table>
     );

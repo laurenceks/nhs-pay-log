@@ -1,10 +1,10 @@
-import Log from "./components/Log.tsx";
+import { Link } from "@tanstack/react-router";
 
 const App = () => {
     return (
-        <>
-            <Log />
-        </>
+        <div className="">
+            <Link to={"/log"}>Log</Link>
+        </div>
     );
 };
 

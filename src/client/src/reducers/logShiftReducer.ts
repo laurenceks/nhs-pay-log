@@ -1,10 +1,16 @@
 import { LogShift, Overruns, ShiftTypes } from "../../../../types/commonTypes";
-import { makeToAlwaysLater } from "../../../shared/conversions.ts";
-import { formatDate } from "../../../shared/formatDates.ts";
+import { makeToAlwaysLater } from "../../../shared/utils/conversions.ts";
+import { formatDate } from "../../../shared/utils/formatDates.ts";
 
 export type LogShiftReducerOptions =
     | {
-          action: "date" | "start" | "plannedEnd" | "actualEnd" | "employment";
+          action:
+              | "date"
+              | "start"
+              | "plannedEnd"
+              | "plannedEndBlur"
+              | "actualEnd"
+              | "employment";
           payload: string;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
@@ -128,6 +134,28 @@ const logShiftReducer = (
                 return {
                     ...prevState,
                     plannedEnd: payload,
+                    actualEnd: prevState.actualEnd,
+                    ...(prevState.actualEnd
+                        ? makeEndTimestamps(
+                              prevState.date,
+                              prevState.from,
+                              payload as string,
+                              prevState.actualEnd || payload
+                          )
+                        : {}),
+                };
+            } else {
+                return {
+                    ...prevState,
+                    plannedEnd: payload,
+                };
+            }
+        }
+        case "plannedEndBlur": {
+            if (prevState.from) {
+                return {
+                    ...prevState,
+                    plannedEnd: payload,
                     actualEnd: prevState.actualEnd || payload,
                     ...makeEndTimestamps(
                         prevState.date,
@@ -180,12 +208,12 @@ const logShiftReducer = (
                 overrunType: payload,
             };
         }
-        case "clear": {
+        /*case "clear": {
             return null;
         }
         case "set": {
             return payload;
-        }
+        }*/
         case undefined:
         case null:
         default: {

@@ -1,58 +1,39 @@
 import LogTable from "./LogTable.tsx";
-import ShiftEditModal from "./ShiftEditModal.tsx";
-import { useState } from "react";
-import { ShiftEditModalState } from "../../../../types/commonTypes";
 import { Button } from "react-bootstrap";
-import { formatDate } from "../../../shared/formatDates.ts";
-import mockLogData from "../../../../tests/data/mockLogData.ts";
+import { Outlet, useLoaderData, useNavigate } from "@tanstack/react-router";
 
-const Log = () => {
-    const [logState, setLogState] = useState(mockLogData);
-    const [modalState, setModalState] = useState<ShiftEditModalState>({
-        show: false,
-        shift: null,
-    });
+const Log = ({ disabled }: { disabled: boolean }) => {
+    const navigate = useNavigate();
+    const log = useLoaderData({ from: "/_private/log" });
     return (
-        <div className="m-3 position-relative">
-            <LogTable setModalState={setModalState} log={logState} />
-            <ShiftEditModal
-                modalState={modalState}
-                setModalState={setModalState}
-                log={logState}
-                setLogState={setLogState}
-            />
-            <Button
-                variant="success"
-                className="position-fixed bottom-0 start-0 m-5"
-                size="lg"
-                disabled={!!modalState.shift}
-                onClick={() =>
-                    setModalState({
-                        show: true,
-                        shift: {
-                            id: "",
-                            date: formatDate(new Date(), "yyyy-mm-dd"),
-                            start: "",
-                            plannedEnd: "",
-                            actualEnd: "",
-                            from: "",
-                            plannedTo: "",
-                            actualTo: "",
-                            employment: "",
-                            type: "Normal",
-                            overrunType: "OT",
-                            toil: 0,
-                            flat: 0,
-                            lowerRate: 0,
-                            timeAndHalf: 0,
-                            higherRate: 0,
-                            double: 0,
-                        },
-                    })
-                }
-            >
-                Add
-            </Button>
+        <div className="position-relative">
+            <LogTable log={log} />
+            <Outlet />
+            <div className="position-fixed bottom-0 start-0 ms-4 mb-3 d-flex gap-3">
+                <Button
+                    variant="secondary"
+                    disabled={disabled}
+                    onClick={() =>
+                        navigate({
+                            to: "/",
+                        })
+                    }
+                >
+                    Home
+                </Button>
+                <Button
+                    variant="success"
+                    disabled={disabled}
+                    onClick={() =>
+                        navigate({
+                            to: "/log/$shiftId",
+                            params: { shiftId: "new" },
+                        })
+                    }
+                >
+                    Add
+                </Button>
+            </div>
         </div>
     );
 };

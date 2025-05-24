@@ -10,11 +10,20 @@ export type ShiftTypes =
     | "Bank"
     | Overruns;
 
+export type ShiftExtra = {
+    to?: string;
+    from?: string;
+    name: string;
+    id: string;
+    amount: number;
+};
+
 export type LogShift = {
     actualEnd: string;
     date: string;
     double: number;
     employment: string;
+    extras: { id: ShiftExtra["id"]; quantity: number }[];
     flat: number;
     from: string;
     plannedTo: string;
@@ -25,13 +34,11 @@ export type LogShift = {
     // incentiveHours: number;
     // incentiveType: number;
     lowerRate: number;
-    // lunchAllowances: number;
     // mileage: number;
     // mileageLocation: string;
     // mileageType: string;
     overrunType: Overruns;
     plannedEnd: string;
-    // snsc: number;
     start: string;
     timeAndHalf: number;
     toil: number;

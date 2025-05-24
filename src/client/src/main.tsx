@@ -1,10 +1,30 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
 import "./style.scss";
-import App from "./App.tsx";
+import { routeTree } from "./routeTree.gen";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { createRoot } from "react-dom/client";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+const router = createRouter({
+    routeTree,
+    pathParamsAllowedCharacters: [":"],
+    defaultPendingMinMs: 0,
+});
+
+declare module "@tanstack/react-router" {
+    interface Register {
+        router: typeof router;
+    }
+}
+
+// Render the app
+const rootElement = document.getElementById("root")!;
+if (!rootElement.innerHTML) {
+    const root = createRoot(rootElement);
+    root.render(
+        <StrictMode>
+            <div className="p-3">
+                <RouterProvider router={router} />
+            </div>
+        </StrictMode>
+    );
+}

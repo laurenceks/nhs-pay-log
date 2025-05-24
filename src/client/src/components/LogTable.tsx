@@ -1,15 +1,20 @@
 import { Table } from "react-bootstrap";
-import { Dispatch, SetStateAction } from "react";
-import { LogShift, ShiftEditModalState } from "../../../../types/commonTypes";
-import { formatDate } from "../../../shared/formatDates.ts";
+import { LogShift } from "../../../../types/commonTypes";
+import { formatDate } from "../../../shared/utils/formatDates.ts";
+import { useNavigate } from "@tanstack/react-router";
+import { useCallback } from "react";
+import calculateExtraPay from "../../../shared/calculations/calculateExtraPay.ts";
 
-const LogTable = ({
-    log,
-    setModalState,
-}: {
-    log: LogShift[];
-    setModalState: Dispatch<SetStateAction<ShiftEditModalState>>;
-}) => {
+const LogTable = ({ log }: { log: LogShift[] }) => {
+    const navigate = useNavigate();
+    const openShiftModal = useCallback(
+        (id: string) =>
+            navigate({
+                to: "/log/$shiftId",
+                params: { shiftId: id },
+            }),
+        []
+    );
     return (
         <Table striped={true} hover={true} className="overflow-x-scroll">
             <thead>
@@ -42,12 +47,7 @@ const LogTable = ({
                             <tr
                                 key={x.id}
                                 style={{ cursor: "pointer" }}
-                                onClick={() => {
-                                    setModalState({
-                                        show: true,
-                                        shift: x as LogShift,
-                                    });
-                                }}
+                                onClick={() => openShiftModal(x.id)}
                             >
                                 <td>{formatDate(x.from, "dd/mm/yy")}</td>
                                 <td>{x.start}</td>
@@ -62,7 +62,12 @@ const LogTable = ({
                                 <td>{x.flat}</td>
                                 <td>{x.timeAndHalf}</td>
                                 <td></td>
-                                <td>£-</td>
+                                <td>
+                                    {new Intl.NumberFormat("en-GB", {
+                                        style: "currency",
+                                        currency: "GBP",
+                                    }).format(calculateExtraPay(x))}
+                                </td>
                             </tr>
                         );
                     })}

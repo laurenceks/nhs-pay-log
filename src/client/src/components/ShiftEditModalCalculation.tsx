@@ -5,9 +5,11 @@ import { Table } from "react-bootstrap";
 const ShiftEditModalCalculation = ({
     label,
     value,
+    currency,
 }: {
     label: string;
     value: number;
+    currency?: boolean;
 }) => {
     return (
         <Table className="w-auto mb-2" style={{ display: "inline-table" }}>
@@ -19,7 +21,14 @@ const ShiftEditModalCalculation = ({
             <tbody>
                 <tr>
                     <td>
-                        <NumberFlow value={roundTo(value, 5)}></NumberFlow>
+                        <NumberFlow
+                            value={roundTo(value, 5)}
+                            format={
+                                currency
+                                    ? { style: "currency", currency: "GBP" }
+                                    : undefined
+                            }
+                        ></NumberFlow>
                     </td>
                 </tr>
             </tbody>

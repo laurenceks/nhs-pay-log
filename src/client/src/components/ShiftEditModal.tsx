@@ -1,32 +1,21 @@
 import { Button, Form, Modal } from "react-bootstrap";
-import { LogShift, ShiftEditModalState } from "../../../../types/commonTypes";
-import {
-    ChangeEvent,
-    Dispatch,
-    SetStateAction,
-    useEffect,
-    useReducer,
-    useState,
-} from "react";
-import { calculateUsh } from "../../../shared/ush.ts";
-import { calculateAdditionalHours } from "../../../shared/additionalHours.ts";
+import { ChangeEvent, useEffect, useReducer, useState } from "react";
+import { calculateUsh } from "../../../shared/calculations/ush.ts";
+import { calculateAdditionalHours } from "../../../shared/calculations/additionalHours.ts";
 import ShiftEditModalCalculation from "./ShiftEditModalCalculation.tsx";
 import logShiftReducer from "../reducers/logShiftReducer.ts";
+import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { LogShift } from "../../../../types/commonTypes";
+import calculateExtraPay from "../../../shared/calculations/calculateExtraPay.ts";
 
-const ShiftEditModal = ({
-    modalState: { show, shift },
-    setModalState,
-    log,
-    setLogState,
-}: {
-    modalState: ShiftEditModalState;
-    setModalState: Dispatch<SetStateAction<ShiftEditModalState>>;
-    log: LogShift[];
-    setLogState: Dispatch<SetStateAction<LogShift[]>>;
-}) => {
+const ShiftEditModal = () => {
+    const navigate = useNavigate();
+    const log: LogShift[] = useLoaderData({ from: "/_private/log" });
+    const shift = useLoaderData({ from: "/_private/log/$shiftId" });
+    const [show, setShow] = useState<boolean>(true);
     const [editState, setEditState] = useReducer(
         logShiftReducer,
-        shift || null
+        shift as LogShift
     );
     const [ushState, setUshState] = useState({
         toil: 0,
@@ -38,27 +27,12 @@ const ShiftEditModal = ({
     });
 
     const closeModal = () => {
-        setModalState((prevState) => ({ ...prevState, show: false }));
+        setShow(false);
     };
     const saveEdit = () => {
-        setLogState((prevState) => {
-            const newState = [...prevState];
-            if (editState.id) {
-                newState[newState.findIndex((x) => x.id === editState.id)] = {
-                    ...editState,
-                    ...ushState,
-                };
-            } else {
-                newState.push({
-                    ...editState,
-                    ...ushState,
-                    id: (Math.random() + 1).toString(36),
-                });
-            }
-            return newState;
-        });
         closeModal();
     };
+    /*
     useEffect(() => {
         if (!show && !shift) {
             setEditState({ action: "clear" });
@@ -66,12 +40,19 @@ const ShiftEditModal = ({
             setEditState({ action: "set", payload: shift });
         }
     }, [show, shift]);
+*/
 
     const changeHandler = (
         e: ChangeEvent<HTMLInputElement> & ChangeEvent<HTMLSelectElement>
     ) => {
         setEditState({
-            action: e.currentTarget.dataset.field as keyof typeof shift,
+            action: e.currentTarget.dataset.field as
+                | "actualEnd"
+                | "date"
+                | "employment"
+                | "plannedEnd"
+                | "start"
+                | "plannedEndBlur",
             payload: e.currentTarget.value,
         });
     };
@@ -105,7 +86,8 @@ const ShiftEditModal = ({
         <Modal
             show={show}
             onExited={() => {
-                setModalState({ show: false, shift: null });
+                navigate({ to: "/log" });
+                // setModalState({ show: false, shift: null });
             }}
             size="lg"
             fullscreen={"lg-down"}
@@ -145,6 +127,12 @@ const ShiftEditModal = ({
                                     value={editState?.plannedEnd}
                                     data-field={"plannedEnd"}
                                     onChange={changeHandler}
+                                    onBlur={(e) => {
+                                        setEditState({
+                                            action: "plannedEndBlur",
+                                            payload: e.currentTarget.value,
+                                        });
+                                    }}
                                 />
                             </Form.Group>
                             <Form.Group controlId="editActualEnd">
@@ -252,7 +240,11 @@ const ShiftEditModal = ({
                         />
                         <ShiftEditModalCalculation
                             label="Extra pay"
-                            value={0}
+                            value={calculateExtraPay({
+                                ...editState,
+                                ...ushState,
+                            })}
+                            currency
                         />
                     </div>
                 </div>
@@ -262,16 +254,6 @@ const ShiftEditModal = ({
                     <>
                         <Button
                             onClick={() => {
-                                setLogState((prevState) => {
-                                    const newState = [...prevState];
-                                    newState.splice(
-                                        newState.findIndex(
-                                            (x) => x.id === editState.id
-                                        ),
-                                        1
-                                    );
-                                    return newState;
-                                });
                                 closeModal();
                             }}
                             variant="danger"

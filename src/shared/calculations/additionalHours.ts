@@ -1,10 +1,10 @@
-import { makeToAlwaysLater } from "./conversions.ts";
+import { makeToAlwaysLater } from "../utils/conversions.ts";
 import {
     calculateShiftHours,
     calculateShiftLength,
     isBankHoliday,
 } from "./shiftLengths.ts";
-import { LogShift, ShiftTypes } from "../../types/commonTypes";
+import { LogShift, ShiftTypes } from "../../../types/commonTypes";
 
 const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 

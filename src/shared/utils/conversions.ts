@@ -1,4 +1,5 @@
 export const msToDecimalHours = (timeInMs: number) => timeInMs / 3600000;
+export const decimalHoursToMs = (timeInHrs: number) => timeInHrs * 3600000;
 
 export const makeToAlwaysLater = (from: Date | string, to: Date | string) => {
     const fromObj = new Date(from);

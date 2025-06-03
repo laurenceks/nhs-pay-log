@@ -1,6 +1,7 @@
 import { LogShift, Overruns, ShiftTypes } from "../../../../types/commonTypes";
 import { makeToAlwaysLater } from "../../../shared/utils/conversions.ts";
 import { formatDate } from "../../../shared/utils/formatDates.ts";
+import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup.ts";
 
 export type LogShiftReducerOptions =
     | {
@@ -10,7 +11,7 @@ export type LogShiftReducerOptions =
               | "plannedEnd"
               | "plannedEndBlur"
               | "actualEnd"
-              | "employment";
+              | "employment_id";
           payload: string;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
@@ -22,6 +23,11 @@ export type LogShiftReducerOptions =
     | {
           action: "overrunType";
           payload: Overruns;
+          // setNewToasts: (newToasts: NotificationToastType[]) => void;
+      }
+    | {
+          action: "extras";
+          payload: typeof mockExtrasLookup;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
@@ -61,8 +67,8 @@ const makeEndTimestamps = (
     ).toObj;
 
     return {
-        plannedTo: formatDate(newPlannedTo, "yyyy-mm-dd hh:mm:ss"),
-        actualTo: formatDate(newActualTo, "yyyy-mm-dd hh:mm:ss"),
+        planned_to: formatDate(newPlannedTo, "yyyy-mm-dd hh:mm:ss"),
+        actual_to: formatDate(newActualTo, "yyyy-mm-dd hh:mm:ss"),
     };
 };
 const logShiftReducer = (
@@ -70,10 +76,11 @@ const logShiftReducer = (
     { action, payload }: LogShiftReducerOptions
 ) => {
     switch (action) {
+        //TODO on date change filter out extras that didn't exist on those dates/had a different value
         case "date": {
             if (payload && prevState.start) {
                 const newFrom = makeFromTimestamp(payload, prevState.start);
-                if (prevState.plannedEnd) {
+                if (prevState.planned_end) {
                     return {
                         ...prevState,
                         date: payload,
@@ -81,8 +88,8 @@ const logShiftReducer = (
                         ...makeEndTimestamps(
                             payload as string,
                             newFrom,
-                            prevState.plannedEnd,
-                            prevState.actualEnd || prevState.plannedEnd
+                            prevState.planned_end,
+                            prevState.actual_end || prevState.planned_end
                         ),
                     };
                 } else {
@@ -102,7 +109,7 @@ const logShiftReducer = (
         case "start": {
             if (payload && prevState.date) {
                 const newFrom = makeFromTimestamp(prevState.date, payload);
-                if (prevState.plannedEnd) {
+                if (prevState.planned_end) {
                     return {
                         ...prevState,
                         date: prevState.date,
@@ -111,8 +118,8 @@ const logShiftReducer = (
                         ...makeEndTimestamps(
                             prevState.date,
                             newFrom,
-                            prevState.plannedEnd,
-                            prevState.actualEnd || prevState.plannedEnd
+                            prevState.planned_end,
+                            prevState.actual_end || prevState.planned_end
                         ),
                     };
                 } else {
@@ -133,21 +140,21 @@ const logShiftReducer = (
             if (prevState.from) {
                 return {
                     ...prevState,
-                    plannedEnd: payload,
-                    actualEnd: prevState.actualEnd,
-                    ...(prevState.actualEnd
+                    planned_end: payload,
+                    actual_end: prevState.actual_end,
+                    ...(prevState.actual_end
                         ? makeEndTimestamps(
                               prevState.date,
                               prevState.from,
                               payload as string,
-                              prevState.actualEnd || payload
+                              prevState.actual_end || payload
                           )
                         : {}),
                 };
             } else {
                 return {
                     ...prevState,
-                    plannedEnd: payload,
+                    planned_end: payload,
                 };
             }
         }
@@ -155,45 +162,45 @@ const logShiftReducer = (
             if (prevState.from) {
                 return {
                     ...prevState,
-                    plannedEnd: payload,
-                    actualEnd: prevState.actualEnd || payload,
+                    planned_end: payload,
+                    actual_end: prevState.actual_end || payload,
                     ...makeEndTimestamps(
                         prevState.date,
                         prevState.from,
                         payload as string,
-                        prevState.actualEnd || payload
+                        prevState.actual_end || payload
                     ),
                 };
             } else {
                 return {
                     ...prevState,
-                    plannedEnd: payload,
+                    planned_end: payload,
                 };
             }
         }
         case "actualEnd": {
-            if (prevState.from && prevState.plannedTo) {
+            if (prevState.from && prevState.planned_to) {
                 return {
                     ...prevState,
-                    actualEnd: payload,
+                    actual_end: payload,
                     ...makeEndTimestamps(
                         prevState.date,
                         prevState.from,
-                        prevState.plannedEnd,
+                        prevState.planned_end,
                         payload as string
                     ),
                 };
             } else {
                 return {
                     ...prevState,
-                    actualEnd: payload,
+                    actual_end: payload,
                 };
             }
         }
-        case "employment": {
+        case "employment_id": {
             return {
                 ...prevState,
-                employment: payload,
+                employment_id: payload,
             };
         }
         case "type": {
@@ -205,7 +212,13 @@ const logShiftReducer = (
         case "overrunType": {
             return {
                 ...prevState,
-                overrunType: payload,
+                overrun_type: payload,
+            };
+        }
+        case "extras": {
+            return {
+                ...prevState,
+                extras: [...payload.map((x) => x.id)],
             };
         }
         /*case "clear": {

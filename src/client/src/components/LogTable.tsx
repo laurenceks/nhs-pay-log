@@ -4,6 +4,7 @@ import { formatDate } from "../../../shared/utils/formatDates.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import calculateExtraPay from "../../../shared/calculations/calculateExtraPay.ts";
+import { msToTableFormat } from "../../../shared/utils/conversions.ts";
 
 const LogTable = ({ log }: { log: LogShift[] }) => {
     const navigate = useNavigate();
@@ -51,16 +52,16 @@ const LogTable = ({ log }: { log: LogShift[] }) => {
                             >
                                 <td>{formatDate(x.from, "dd/mm/yy")}</td>
                                 <td>{x.start}</td>
-                                <td>{x.plannedEnd}</td>
-                                <td>{x.actualEnd}</td>
-                                <td>{x.employment}</td>
+                                <td>{x.planned_end}</td>
+                                <td>{x.actual_end}</td>
+                                <td>{x.employment_id}</td>
                                 <td>{x.type}</td>
-                                <td>{x.overrunType}</td>
-                                <td>{x.toil}</td>
-                                <td>{x.lowerRate}</td>
-                                <td>{x.higherRate}</td>
-                                <td>{x.flat}</td>
-                                <td>{x.timeAndHalf}</td>
+                                <td>{x.overrun_type}</td>
+                                <td>{msToTableFormat(x.toil)}</td>
+                                <td>{msToTableFormat(x.lower_rate)}</td>
+                                <td>{msToTableFormat(x.higher_rate)}</td>
+                                <td>{msToTableFormat(x.flat)}</td>
+                                <td>{msToTableFormat(x.time_and_half)}</td>
                                 <td></td>
                                 <td>
                                     {new Intl.NumberFormat("en-GB", {

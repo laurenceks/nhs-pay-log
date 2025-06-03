@@ -1,6 +1,7 @@
 import { roundTo } from "round-to";
 import NumberFlow from "@number-flow/react";
 import { Table } from "react-bootstrap";
+import { msToDecimalHours } from "../../../shared/utils/conversions.ts";
 
 const ShiftEditModalCalculation = ({
     label,
@@ -22,7 +23,11 @@ const ShiftEditModalCalculation = ({
                 <tr>
                     <td>
                         <NumberFlow
-                            value={roundTo(value, 5)}
+                            value={
+                                currency
+                                    ? value
+                                    : roundTo(msToDecimalHours(value), 5)
+                            }
                             format={
                                 currency
                                     ? { style: "currency", currency: "GBP" }

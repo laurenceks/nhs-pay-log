@@ -3,32 +3,48 @@ import ShiftEditModal from "../../../components/ShiftEditModal.tsx";
 import mockLogData from "../../../../../../tests/data/mockLogData.ts";
 import { formatDate } from "../../../../../shared/utils/formatDates.ts";
 import { LogShift } from "../../../../../../types/commonTypes";
+import { filterOptionsByDate } from "../../../../../shared/utils/lookup.ts";
+import mockEmploymentLookup from "../../../../../../tests/data/mockEmploymentLookup.ts";
 
-const blankShift: LogShift = {
-    actualEnd: "",
-    actualTo: "",
-    date: formatDate(new Date(), "yyyy-mm-dd"),
-    double: 0,
-    employment: "",
-    extras: [],
-    flat: 0,
-    from: "",
-    higherRate: 0,
-    id: "",
-    lowerRate: 0,
-    overrunType: "OT",
-    plannedEnd: "",
-    plannedTo: "",
-    start: "",
-    timeAndHalf: 0,
-    toil: 0,
-    type: "Normal",
+const createShift = () => {
+    const today = formatDate(new Date(), "yyyy-mm-dd");
+    const employmentSelectOptions = filterOptionsByDate<
+        (typeof mockEmploymentLookup)[0]
+    >(mockEmploymentLookup, today);
+    employmentSelectOptions.length === 1
+        ? employmentSelectOptions[0].employment_id
+        : "";
+
+    return {
+        actual_end: "",
+        actual_to: "",
+        date: today,
+        double: 0,
+        employment_id:
+            employmentSelectOptions.length === 1
+                ? employmentSelectOptions[0].employment_id
+                : "",
+        extras: [],
+        flat: 0,
+        from: "",
+        higher_rate: 0,
+        id: "",
+        lower_rate: 0,
+        overrun_type: "OT",
+        planned_end: "",
+        planned_to: "",
+        start: "",
+        time_and_half: 0,
+        toil: 0,
+        type: "Normal",
+    } as LogShift;
 };
+
 export const Route = createFileRoute("/_private/log/$shiftId")({
     component: ShiftEditModal,
     loader: async ({ params }): Promise<LogShift> => {
         if (params.shiftId === "new") {
-            return blankShift;
+            return createShift();
         }
         console.log("Fetching shift...");
         await new Promise((resolve) =>

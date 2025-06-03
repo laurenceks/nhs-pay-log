@@ -1,4 +1,4 @@
-import { makeToAlwaysLater, msToDecimalHours } from "../utils/conversions.ts";
+import { makeToAlwaysLater } from "../utils/conversions.ts";
 import { isBankHoliday } from "./shiftLengths.ts";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
@@ -187,8 +187,8 @@ export const calculateUsh = (
     }
 
     return {
-        lowerRate: Math.max(0, msToDecimalHours(lowerRateRaw)),
-        higherRate: Math.max(0, msToDecimalHours(higherRateRaw)),
+        lower_rate: Math.max(0, lowerRateRaw),
+        higher_rate: Math.max(0, higherRateRaw),
     };
     //}
 };

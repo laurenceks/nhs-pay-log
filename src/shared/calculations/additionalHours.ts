@@ -1,17 +1,24 @@
-import { makeToAlwaysLater } from "../utils/conversions.ts";
+import { decimalHoursToMs, makeToAlwaysLater } from "../utils/conversions.ts";
 import {
     calculateShiftHours,
     calculateShiftLength,
     isBankHoliday,
 } from "./shiftLengths.ts";
-import { LogShift, ShiftTypes } from "../../../types/commonTypes";
+import {
+    AdditionalHours,
+    LogShift,
+    ShiftTypes,
+} from "../../../types/commonTypes";
+import { lookupByDate } from "../utils/lookup.ts";
+import mockEmploymentLookup from "../../../tests/data/mockEmploymentLookup.ts";
 
 const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 
 export const calculateCumulativeAdditionalHours = (
     from: Date,
     id: string,
-    log: LogShift[] = []
+    log: LogShift[] = [],
+    employment: string
 ) => {
     const prevMonday = new Date(from);
     prevMonday.setHours(0, 0, 0, 0);
@@ -21,9 +28,14 @@ export const calculateCumulativeAdditionalHours = (
         const valFrom = new Date(`${val.date} ${val.start}`);
         const valTo = makeToAlwaysLater(
             valFrom,
-            `${val.date} ${val.actualEnd}`
+            `${val.date} ${val.actual_end}`
         ).toObj;
-        if (valFrom >= prevMonday && valFrom < from && id !== val.id) {
+        if (
+            valFrom >= prevMonday &&
+            valFrom < from &&
+            id !== val.id &&
+            employment === val.employment_id
+        ) {
             if (additionalHoursShiftTypes.includes(val.type)) {
                 return acc + calculateShiftHours(valFrom, valTo);
             } else {
@@ -32,7 +44,7 @@ export const calculateCumulativeAdditionalHours = (
                     calculateShiftHours(
                         makeToAlwaysLater(
                             valFrom,
-                            `${val.date} ${val.plannedEnd}`
+                            `${val.date} ${val.planned_end}`
                         ).toObj,
                         valTo
                     )
@@ -67,37 +79,39 @@ const calculateBankHolidayToil = (
 export const calculateAdditionalHours = (
     {
         from,
-        actualTo,
-        plannedTo,
-        overrunType,
+        actual_to,
+        planned_to,
+        overrun_type,
         type,
         id,
+        employment_id,
     }: {
         from: string;
-        actualTo: string;
-        plannedTo: string;
-        overrunType: string;
+        actual_to: string;
+        employment_id: string;
+        planned_to: string;
+        overrun_type: string;
         type: ShiftTypes;
         id: string;
     },
     log: LogShift[]
 ) => {
-    const additionalHoursBreakdown = {
+    const additionalHoursBreakdown: AdditionalHours = {
         flat: 0,
-        timeAndHalf: 0,
+        time_and_half: 0,
         double: 0,
         toil: 0,
     };
-    if (type && from && actualTo && plannedTo) {
+    if (type && from && actual_to && planned_to) {
         additionalHoursBreakdown.toil = calculateBankHolidayToil(
             type,
             from,
-            plannedTo
+            planned_to
         );
         const isAdditionalHoursShift = additionalHoursShiftTypes.includes(type);
         const { fromObj, toObj } = makeToAlwaysLater(
-            isAdditionalHoursShift ? from : plannedTo,
-            overrunType === "OT" ? actualTo : plannedTo
+            isAdditionalHoursShift ? from : planned_to,
+            overrun_type === "OT" ? actual_to : planned_to
         );
 
         const fromIsBankHoliday = isBankHoliday(fromObj);
@@ -106,32 +120,38 @@ export const calculateAdditionalHours = (
         const cumulativeAdditionalHours =
             type === "Bank"
                 ? 0
-                : calculateCumulativeAdditionalHours(fromObj, id, log);
+                : calculateCumulativeAdditionalHours(
+                      fromObj,
+                      id,
+                      log,
+                      employment_id
+                  );
         const paidAdditionalHours = isAdditionalHoursShift
             ? calculateShiftHours(fromObj, toObj)
             : calculateShiftLength(fromObj, toObj);
 
         const { fromObj: overrunFrom, toObj: overrunTo } = makeToAlwaysLater(
-            plannedTo,
-            actualTo
+            planned_to,
+            actual_to
         );
 
         const overrunHours =
             overrunFrom === overrunTo
                 ? 0
-                : calculateShiftLength(plannedTo, overrunTo);
+                : calculateShiftLength(planned_to, overrunTo);
 
         if (paidAdditionalHours || overrunHours) {
-            // TODO make this a lookup (37.5 - weekly contracted hours)
-            const weeklyOtThresholdHours = 18.75;
-
-            if (
-                paidAdditionalHours +
-                    overrunHours +
-                    cumulativeAdditionalHours >=
-                    weeklyOtThresholdHours &&
-                type !== "Bank"
-            ) {
+            const weeklyOtThresholdHours =
+                1.35e8 - //37.5hrs
+                decimalHoursToMs(
+                    (lookupByDate({
+                        arr: mockEmploymentLookup,
+                        d: fromObj,
+                        returnKey: "weekly_hours",
+                        employment_id: employment_id,
+                    }) as number) ?? 1.35e8 //37.5hrs
+                );
+            if (type === "OT" || type === "Normal") {
                 additionalHoursBreakdown.flat = Math.max(
                     0,
                     Math.min(
@@ -139,46 +159,54 @@ export const calculateAdditionalHours = (
                         weeklyOtThresholdHours - cumulativeAdditionalHours
                     )
                 );
-
-                //TODO test night shifts
-                if (fromIsBankHoliday || toIsBankHoliday) {
-                    if (fromIsBankHoliday && toIsBankHoliday) {
-                        additionalHoursBreakdown.double = Math.max(
-                            0,
-                            paidAdditionalHours - additionalHoursBreakdown.flat
-                        );
-                    } else if (fromIsBankHoliday) {
-                        //from time until midnight
-                        additionalHoursBreakdown.double = calculateShiftLength(
-                            fromObj,
-                            fromObj.setHours(24, 0, 0, 0)
-                        );
-                    } else {
-                        //midnight until to time
-                        additionalHoursBreakdown.double = calculateShiftLength(
-                            fromObj.setHours(24, 0, 0, 0),
-                            toObj
-                        );
+                if (
+                    paidAdditionalHours +
+                        overrunHours +
+                        cumulativeAdditionalHours >=
+                    weeklyOtThresholdHours
+                ) {
+                    //TODO test night shifts
+                    if (fromIsBankHoliday || toIsBankHoliday) {
+                        if (fromIsBankHoliday && toIsBankHoliday) {
+                            additionalHoursBreakdown.double = Math.max(
+                                0,
+                                paidAdditionalHours -
+                                    additionalHoursBreakdown.flat
+                            );
+                        } else if (fromIsBankHoliday) {
+                            //from time until midnight
+                            additionalHoursBreakdown.double =
+                                calculateShiftLength(
+                                    fromObj,
+                                    fromObj.setHours(24, 0, 0, 0)
+                                );
+                        } else {
+                            //midnight until to time
+                            additionalHoursBreakdown.double =
+                                calculateShiftLength(
+                                    fromObj.setHours(24, 0, 0, 0),
+                                    toObj
+                                );
+                        }
                     }
-                }
 
-                additionalHoursBreakdown.timeAndHalf = Math.max(
-                    0,
-                    paidAdditionalHours -
-                        additionalHoursBreakdown.double -
-                        additionalHoursBreakdown.flat
-                );
-            } else {
+                    additionalHoursBreakdown.time_and_half = Math.max(
+                        0,
+                        paidAdditionalHours -
+                            additionalHoursBreakdown.double -
+                            additionalHoursBreakdown.flat
+                    );
+                }
+            } else if (type === "Bank") {
                 additionalHoursBreakdown.flat =
-                    paidAdditionalHours *
-                    (type === "Bank" ? 1.12004801920768 : 1);
+                    paidAdditionalHours * 1.12004801920768;
             }
 
-            if (type === "TOIL" || overrunType === "TOIL") {
+            if (type === "TOIL" || overrun_type === "TOIL") {
                 if (type === "TOIL") {
                     additionalHoursBreakdown.toil += paidAdditionalHours;
                 }
-                if (overrunType === "TOIL") {
+                if (overrun_type === "TOIL") {
                     additionalHoursBreakdown.toil += overrunHours;
                 }
             }

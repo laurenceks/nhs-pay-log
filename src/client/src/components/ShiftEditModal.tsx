@@ -5,8 +5,16 @@ import { calculateAdditionalHours } from "../../../shared/calculations/additiona
 import ShiftEditModalCalculation from "./ShiftEditModalCalculation.tsx";
 import logShiftReducer from "../reducers/logShiftReducer.ts";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
-import { LogShift } from "../../../../types/commonTypes";
+import {
+    CalculatedHours,
+    LogShift,
+    ShiftExtra,
+} from "../../../../types/commonTypes";
 import calculateExtraPay from "../../../shared/calculations/calculateExtraPay.ts";
+import { filterOptionsByDate } from "../../../shared/utils/lookup.ts";
+import mockEmploymentLookup from "../../../../tests/data/mockEmploymentLookup.ts";
+import { Typeahead } from "react-bootstrap-typeahead";
+import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup.ts";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
@@ -17,14 +25,18 @@ const ShiftEditModal = () => {
         logShiftReducer,
         shift as LogShift
     );
-    const [ushState, setUshState] = useState({
+    const [ushState, setUshState] = useState<CalculatedHours>({
         toil: 0,
-        lowerRate: 0,
-        higherRate: 0,
+        lower_rate: 0,
+        higher_rate: 0,
         flat: 0,
-        timeAndHalf: 0,
+        time_and_half: 0,
         double: 0,
     });
+
+    const employmentSelectOptions = filterOptionsByDate<
+        (typeof mockEmploymentLookup)[0]
+    >(mockEmploymentLookup, editState.date);
 
     const closeModal = () => {
         setShow(false);
@@ -49,7 +61,7 @@ const ShiftEditModal = () => {
             action: e.currentTarget.dataset.field as
                 | "actualEnd"
                 | "date"
-                | "employment"
+                | "employment_id"
                 | "plannedEnd"
                 | "start"
                 | "plannedEndBlur",
@@ -63,21 +75,21 @@ const ShiftEditModal = () => {
             setUshState({
                 ...calculateUsh(
                     editState.from,
-                    editState.overrunType === "OT"
-                        ? editState.actualTo
-                        : editState.plannedTo,
-                    additionalHours.timeAndHalf + additionalHours.double
+                    editState.overrun_type === "OT"
+                        ? editState.actual_to
+                        : editState.planned_to,
+                    additionalHours.time_and_half + additionalHours.double
                 ),
                 ...additionalHours,
             });
         } else {
             setUshState({
-                lowerRate: 0,
-                higherRate: 0,
+                lower_rate: 0,
+                higher_rate: 0,
                 double: 0,
                 flat: 0,
                 toil: 0,
-                timeAndHalf: 0,
+                time_and_half: 0,
             });
         }
     }, [editState]);
@@ -124,7 +136,7 @@ const ShiftEditModal = () => {
                                 <Form.Control
                                     type="time"
                                     placeholder=""
-                                    value={editState?.plannedEnd}
+                                    value={editState?.planned_end}
                                     data-field={"plannedEnd"}
                                     onChange={changeHandler}
                                     onBlur={(e) => {
@@ -140,7 +152,7 @@ const ShiftEditModal = () => {
                                 <Form.Control
                                     type="time"
                                     placeholder=""
-                                    value={editState?.actualEnd}
+                                    value={editState?.actual_end}
                                     data-field={"actualEnd"}
                                     onChange={changeHandler}
                                 />
@@ -150,19 +162,28 @@ const ShiftEditModal = () => {
                             <Form.Group controlId="editEmployment">
                                 <Form.Label>Employment</Form.Label>
                                 <Form.Select
-                                    value={editState?.employment}
-                                    data-field={"employment"}
+                                    value={editState?.employment_id}
+                                    data-field={"employment_id"}
                                     onChange={changeHandler}
+                                    disabled={
+                                        employmentSelectOptions.length <= 1
+                                    }
                                 >
                                     <>
-                                        {!editState?.employment && (
+                                        {!editState?.employment_id && (
                                             <option>
                                                 Pick an employment type
                                             </option>
                                         )}
                                     </>
-                                    <option value={"SECAmb"}>SECAmb</option>
-                                    <option value={"SCAS"}>SCAS</option>
+                                    {employmentSelectOptions.map((x) => (
+                                        <option
+                                            key={x.employment_id}
+                                            value={x.employment_id}
+                                        >
+                                            {x.name}
+                                        </option>
+                                    ))}
                                 </Form.Select>
                             </Form.Group>
                             <Form.Group controlId="editType">
@@ -179,6 +200,7 @@ const ShiftEditModal = () => {
                                     </>
                                     <option value={"Normal"}>Normal</option>
                                     <option value={"OT"}>OT</option>
+                                    <option value={"Bank"}>Bank</option>
                                     <option value={"TOIL"}>TOIL</option>
                                     <option value={"AL"}>AL</option>
                                     <option value={"AL (relief)"}>
@@ -196,12 +218,12 @@ const ShiftEditModal = () => {
                             <Form.Group controlId="editOverrunType">
                                 <Form.Label>Overrun type</Form.Label>
                                 <Form.Select
-                                    value={editState?.overrunType}
+                                    value={editState?.overrun_type}
                                     data-field={"overrunType"}
                                     onChange={changeHandler}
                                 >
                                     <>
-                                        {!editState?.employment && (
+                                        {!editState?.employment_id && (
                                             <option>
                                                 Pick an overrun type
                                             </option>
@@ -212,6 +234,27 @@ const ShiftEditModal = () => {
                                 </Form.Select>
                             </Form.Group>
                         </div>
+                        <div className="d-flex flex-wrap gap-3">
+                            <Form.Group controlId="editEmployment">
+                                <Form.Label>Extras</Form.Label>
+                                <Typeahead
+                                    options={filterOptionsByDate<
+                                        (typeof mockExtrasLookup)[0]
+                                    >(mockExtrasLookup, editState.date)}
+                                    multiple
+                                    selected={mockExtrasLookup.filter((x) =>
+                                        editState.extras.includes(x.id)
+                                    )}
+                                    onChange={(e) =>
+                                        setEditState({
+                                            action: "extras",
+                                            payload: e as ShiftExtra[],
+                                        })
+                                    }
+                                    labelKey={"name"}
+                                />
+                            </Form.Group>
+                        </div>
                     </Form>
                     <div className="d-flex flex-wrap">
                         <ShiftEditModalCalculation
@@ -220,11 +263,11 @@ const ShiftEditModal = () => {
                         />
                         <ShiftEditModalCalculation
                             label="Lower rate"
-                            value={ushState.lowerRate}
+                            value={ushState.lower_rate}
                         />
                         <ShiftEditModalCalculation
                             label="Higher rate"
-                            value={ushState.higherRate}
+                            value={ushState.higher_rate}
                         />
                         <ShiftEditModalCalculation
                             label="Flat"
@@ -232,7 +275,7 @@ const ShiftEditModal = () => {
                         />
                         <ShiftEditModalCalculation
                             label="Time and a half"
-                            value={ushState.timeAndHalf}
+                            value={ushState.time_and_half}
                         />
                         <ShiftEditModalCalculation
                             label="Double"

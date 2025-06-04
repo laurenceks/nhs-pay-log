@@ -83,6 +83,7 @@ const ShiftEditModal = () => {
                     editState.overrun_type === "OT"
                         ? editState.actual_to
                         : editState.planned_to,
+                    editState.type,
                     additionalHours.time_and_half + additionalHours.double
                 ),
                 ...additionalHours,

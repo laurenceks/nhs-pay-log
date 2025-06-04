@@ -1,5 +1,6 @@
 import { makeToAlwaysLater } from "../utils/conversions.ts";
 import { isBankHoliday } from "./shiftLengths.ts";
+import { ShiftTypes } from "../../../types/commonTypes";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
     // returns in ms the total time within the lower rate windows
@@ -120,14 +121,17 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
     return 0;
 };
 
+const ushTypes: ShiftTypes[] = ["Normal", "OT", "AL", "Absent (TOIL)", "Bank"];
+
 export const calculateUsh = (
     from: Date | string,
     to: Date | string,
+    type: ShiftTypes = "Normal",
     hoursOverThreshold = 0
 ) => {
     let lowerRateRaw = 0;
     let higherRateRaw = 0;
-    if (from && to) {
+    if (from && to && ushTypes.includes(type)) {
         //TODO is making sure timestamps are always later still necessary now that they are set using the reducer which makes sure already?
         const { fromObj, toObj } = makeToAlwaysLater(from, to);
         const hoursOverThresholdMs = hoursOverThreshold * 60 * 60 * 1000;

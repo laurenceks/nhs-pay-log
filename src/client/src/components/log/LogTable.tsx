@@ -1,10 +1,10 @@
 import { Table } from "react-bootstrap";
-import { LogShift } from "../../../../types/commonTypes";
-import { formatDate } from "../../../shared/utils/formatDates.ts";
+import { LogShift } from "../../../../../types/commonTypes";
+import { formatDate } from "../../../../shared/utils/formatDates.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import calculateExtraPay from "../../../shared/calculations/calculateExtraPay.ts";
-import { msToTableFormat } from "../../../shared/utils/conversions.ts";
+import calculateExtraPay from "../../../../shared/calculations/calculateExtraPay.ts";
+import { msToTableFormat } from "../../../../shared/utils/conversions.ts";
 
 const LogTable = ({ log }: { log: LogShift[] }) => {
     const navigate = useNavigate();

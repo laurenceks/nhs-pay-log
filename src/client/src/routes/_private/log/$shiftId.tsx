@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import ShiftEditModal from "../../../components/ShiftEditModal.tsx";
+import ShiftEditModal from "../../../components/shiftEdit/ShiftEditModal.tsx";
 import mockLogData from "../../../../../../tests/data/mockLogData.ts";
 import { formatDate } from "../../../../../shared/utils/formatDates.ts";
 import { LogShift } from "../../../../../../types/commonTypes";

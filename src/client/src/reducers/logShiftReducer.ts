@@ -26,8 +26,13 @@ export type LogShiftReducerOptions =
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
-          action: "extras";
+          action: "addExtra";
           payload: typeof mockExtrasLookup;
+          // setNewToasts: (newToasts: NotificationToastType[]) => void;
+      }
+    | {
+          action: "removeExtra";
+          payload: string;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
@@ -215,10 +220,16 @@ const logShiftReducer = (
                 overrun_type: payload,
             };
         }
-        case "extras": {
+        case "addExtra": {
             return {
                 ...prevState,
                 extras: [...payload.map((x) => x.id)],
+            };
+        }
+        case "removeExtra": {
+            return {
+                ...prevState,
+                extras: prevState.extras.filter((x) => x !== payload),
             };
         }
         /*case "clear": {

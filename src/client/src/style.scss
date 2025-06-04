@@ -1,3 +1,10 @@
 @import "bootswatch/dist/zephyr/variables";
 @import "bootstrap/scss/bootstrap";
 @import "bootswatch/dist/zephyr/bootswatch";
+
+.rbt-highlight-text{
+  @extend .fw-bolder;
+  padding: 0;
+  background: none;
+  color: inherit;
+}

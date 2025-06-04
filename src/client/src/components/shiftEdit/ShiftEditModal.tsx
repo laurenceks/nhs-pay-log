@@ -1,20 +1,21 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import { ChangeEvent, useEffect, useReducer, useState } from "react";
-import { calculateUsh } from "../../../shared/calculations/ush.ts";
-import { calculateAdditionalHours } from "../../../shared/calculations/additionalHours.ts";
+import { calculateUsh } from "../../../../shared/calculations/ush.ts";
+import { calculateAdditionalHours } from "../../../../shared/calculations/additionalHours.ts";
 import ShiftEditModalCalculation from "./ShiftEditModalCalculation.tsx";
-import logShiftReducer from "../reducers/logShiftReducer.ts";
+import logShiftReducer from "../../reducers/logShiftReducer.ts";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import {
     CalculatedHours,
     LogShift,
     ShiftExtra,
-} from "../../../../types/commonTypes";
-import calculateExtraPay from "../../../shared/calculations/calculateExtraPay.ts";
-import { filterOptionsByDate } from "../../../shared/utils/lookup.ts";
-import mockEmploymentLookup from "../../../../tests/data/mockEmploymentLookup.ts";
+} from "../../../../../types/commonTypes";
+import calculateExtraPay from "../../../../shared/calculations/calculateExtraPay.ts";
+import { filterOptionsByDate } from "../../../../shared/utils/lookup.ts";
+import mockEmploymentLookup from "../../../../../tests/data/mockEmploymentLookup.ts";
 import { Typeahead } from "react-bootstrap-typeahead";
-import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup.ts";
+import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup.ts";
+import { FiX } from "react-icons/fi";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
@@ -37,6 +38,10 @@ const ShiftEditModal = () => {
     const employmentSelectOptions = filterOptionsByDate<
         (typeof mockEmploymentLookup)[0]
     >(mockEmploymentLookup, editState.date);
+
+    const selectedExtras = mockExtrasLookup.filter((x) =>
+        editState.extras.includes(x.id)
+    );
 
     const closeModal = () => {
         setShow(false);
@@ -234,25 +239,61 @@ const ShiftEditModal = () => {
                                 </Form.Select>
                             </Form.Group>
                         </div>
-                        <div className="d-flex flex-wrap gap-3">
+                        <div className="d-flex flex-wrap gap-3 w-100">
                             <Form.Group controlId="editExtras">
                                 <Form.Label>Extras</Form.Label>
-                                <Typeahead
-                                    options={filterOptionsByDate<
-                                        (typeof mockExtrasLookup)[0]
-                                    >(mockExtrasLookup, editState.date)}
-                                    multiple
-                                    selected={mockExtrasLookup.filter((x) =>
-                                        editState.extras.includes(x.id)
-                                    )}
-                                    onChange={(e) =>
-                                        setEditState({
-                                            action: "extras",
-                                            payload: e as ShiftExtra[],
-                                        })
-                                    }
-                                    labelKey={"name"}
-                                />
+                                <div className="d-flex gap-3 flex-wrap flex-md-fill">
+                                    <Typeahead
+                                        options={filterOptionsByDate<
+                                            (typeof mockExtrasLookup)[0]
+                                        >(mockExtrasLookup, editState.date)}
+                                        multiple
+                                        selected={selectedExtras}
+                                        onChange={(e) =>
+                                            setEditState({
+                                                action: "addExtra",
+                                                payload: e as ShiftExtra[],
+                                            })
+                                        }
+                                        labelKey={"name"}
+                                        renderToken={() => null}
+                                        className="flex-shrink-0"
+                                    />
+                                    <div className="d-flex flex-wrap gap-1">
+                                        {selectedExtras.map((x) => (
+                                            <Button
+                                                key={x.id}
+                                                variant="outline-light"
+                                                size="sm"
+                                                className="d-flex align-items-center gap-1 h-auto"
+                                                onClick={() =>
+                                                    setEditState({
+                                                        action: "removeExtra",
+                                                        payload: x.id,
+                                                    })
+                                                }
+                                            >
+                                                {x.name} (
+                                                {x.amount.toLocaleString(
+                                                    "en-GB",
+                                                    {
+                                                        style: "currency",
+                                                        currency: "GBP",
+                                                    }
+                                                )}
+                                                )
+                                                <span
+                                                    className="d-inline-flex justify-content-center align-items-center bg-light text-dark rounded"
+                                                    style={{
+                                                        padding: "0.125rem",
+                                                    }}
+                                                >
+                                                    <FiX />
+                                                </span>
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </div>
                             </Form.Group>
                         </div>
                     </Form>

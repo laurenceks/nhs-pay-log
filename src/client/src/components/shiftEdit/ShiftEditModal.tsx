@@ -235,7 +235,7 @@ const ShiftEditModal = () => {
                             </Form.Group>
                         </div>
                         <div className="d-flex flex-wrap gap-3">
-                            <Form.Group controlId="editEmployment">
+                            <Form.Group controlId="editExtras">
                                 <Form.Label>Extras</Form.Label>
                                 <Typeahead
                                     options={filterOptionsByDate<

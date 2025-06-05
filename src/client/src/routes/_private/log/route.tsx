@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import mockLogData from "../../../../../../tests/data/mockLogData.ts";
-import Log from "../../../components/log/Log.tsx";
+import mockLogData from "../../../../../../tests/data/mockLogData";
+import Log from "../../../components/log/Log";
 import { memo } from "react";
 
 export const Route = createFileRoute("/_private/log")({

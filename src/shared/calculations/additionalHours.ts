@@ -1,16 +1,16 @@
-import { decimalHoursToMs, makeToAlwaysLater } from "../utils/conversions.ts";
+import { decimalHoursToMs, makeToAlwaysLater } from "../utils/conversions";
 import {
     calculateShiftHours,
     calculateShiftLength,
     isBankHoliday,
-} from "./shiftLengths.ts";
+} from "./shiftLengths";
 import {
     AdditionalHours,
     LogShift,
     ShiftTypes,
 } from "../../../types/commonTypes";
-import { lookupByDate } from "../utils/lookup.ts";
-import mockEmploymentLookup from "../../../tests/data/mockEmploymentLookup.ts";
+import { lookupByDate } from "../utils/lookup";
+import mockEmploymentLookup from "../../../tests/data/mockEmploymentLookup";
 
 const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 

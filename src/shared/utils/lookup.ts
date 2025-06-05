@@ -1,5 +1,5 @@
 import { ShiftExtra } from "../../../types/commonTypes";
-import { formatDate } from "./formatDates.ts";
+import { formatDate } from "./formatDates";
 
 export const lookupByDate = <T>({
     arr = [],

@@ -4,5 +4,9 @@ export const Route = createFileRoute("/_public")({
     beforeLoad: () => {
         console.log("Public route");
     },
-    component: Outlet,
+    component: () => (
+        <div className="p-3">
+            <Outlet />
+        </div>
+    ),
 });

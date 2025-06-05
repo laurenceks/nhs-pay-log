@@ -6,7 +6,7 @@ import TanStackRouterVite from "@tanstack/router-plugin/vite";
 export default defineConfig({
     // depending on your application, base can also be "/"
     root: "src/client/",
-    base: "",
+    base: "/",
     plugins: [
         TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
         react(),

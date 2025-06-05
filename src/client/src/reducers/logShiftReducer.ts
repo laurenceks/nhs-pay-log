@@ -1,7 +1,7 @@
 import { LogShift, Overruns, ShiftTypes } from "../../../../types/commonTypes";
-import { makeToAlwaysLater } from "../../../shared/utils/conversions.ts";
-import { formatDate } from "../../../shared/utils/formatDates.ts";
-import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup.ts";
+import { makeToAlwaysLater } from "../../../shared/utils/conversions";
+import { formatDate } from "../../../shared/utils/formatDates";
+import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup";
 
 export type LogShiftReducerOptions =
     | {

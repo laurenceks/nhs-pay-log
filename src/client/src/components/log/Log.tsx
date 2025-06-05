@@ -1,4 +1,4 @@
-import LogTable from "./LogTable.tsx";
+import LogTable from "./LogTable";
 import { Button } from "react-bootstrap";
 import { Outlet, useLoaderData, useNavigate } from "@tanstack/react-router";
 

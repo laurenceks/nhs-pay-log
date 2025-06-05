@@ -1,5 +1,5 @@
-import { convertToDate, convertToNumber } from "../utils/conversions.ts";
-import bankHolidays from "../../../tests/data/bankHolidays.ts";
+import { convertToDate, convertToNumber } from "../utils/conversions";
+import bankHolidays from "../../../tests/data/bankHolidays";
 
 export const calculateShiftLength = (
     from: Date | string | number,

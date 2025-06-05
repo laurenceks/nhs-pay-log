@@ -1,4 +1,4 @@
-import App from "../../App.tsx";
+import App from "../../App";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_public/")({

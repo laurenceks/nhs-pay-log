@@ -1,5 +1,5 @@
-import { makeToAlwaysLater } from "../utils/conversions.ts";
-import { isBankHoliday } from "./shiftLengths.ts";
+import { makeToAlwaysLater } from "../utils/conversions";
+import { isBankHoliday } from "./shiftLengths";
 import { ShiftTypes } from "../../../types/commonTypes";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {

@@ -1,10 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import ShiftEditModal from "../../../components/shiftEdit/ShiftEditModal.tsx";
-import mockLogData from "../../../../../../tests/data/mockLogData.ts";
-import { formatDate } from "../../../../../shared/utils/formatDates.ts";
+import ShiftEditModal from "../../../components/shiftEdit/ShiftEditModal";
+import mockLogData from "../../../../../../tests/data/mockLogData";
+import { formatDate } from "../../../../../shared/utils/formatDates";
 import { LogShift } from "../../../../../../types/commonTypes";
-import { filterOptionsByDate } from "../../../../../shared/utils/lookup.ts";
-import mockEmploymentLookup from "../../../../../../tests/data/mockEmploymentLookup.ts";
+import { filterOptionsByDate } from "../../../../../shared/utils/lookup";
+import mockEmploymentLookup from "../../../../../../tests/data/mockEmploymentLookup";
 
 const createShift = () => {
     const today = formatDate(new Date(), "yyyy-mm-dd");

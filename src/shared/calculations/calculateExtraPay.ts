@@ -1,8 +1,8 @@
 import { LogShift } from "../../../types/commonTypes";
-import { lookupByDate, lookupShiftExtra } from "../utils/lookup.ts";
-import mockExtrasLookup from "../../../tests/data/mockExtrasLookup.ts";
-import { msToDecimalHours } from "../utils/conversions.ts";
-import mockEmploymentLookup from "../../../tests/data/mockEmploymentLookup.ts";
+import { lookupByDate, lookupShiftExtra } from "../utils/lookup";
+import mockExtrasLookup from "../../../tests/data/mockExtrasLookup";
+import { msToDecimalHours } from "../utils/conversions";
+import mockEmploymentLookup from "../../../tests/data/mockEmploymentLookup";
 
 const calculateExtraPay = (logShift: LogShift) => {
     const rate =

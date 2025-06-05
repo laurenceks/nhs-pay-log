@@ -1,7 +1,7 @@
 import { roundTo } from "round-to";
 import NumberFlow from "@number-flow/react";
 import { Table } from "react-bootstrap";
-import { msToDecimalHours } from "../../../../shared/utils/conversions.ts";
+import { msToDecimalHours } from "../../../../shared/utils/conversions";
 
 const ShiftEditModalCalculation = ({
     label,

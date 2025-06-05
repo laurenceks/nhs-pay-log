@@ -1,20 +1,20 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import { ChangeEvent, useEffect, useReducer, useState } from "react";
-import { calculateUsh } from "../../../../shared/calculations/ush.ts";
-import { calculateAdditionalHours } from "../../../../shared/calculations/additionalHours.ts";
-import ShiftEditModalCalculation from "./ShiftEditModalCalculation.tsx";
-import logShiftReducer from "../../reducers/logShiftReducer.ts";
+import { calculateUsh } from "../../../../shared/calculations/ush";
+import { calculateAdditionalHours } from "../../../../shared/calculations/additionalHours";
+import ShiftEditModalCalculation from "./ShiftEditModalCalculation";
+import logShiftReducer from "../../reducers/logShiftReducer";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import {
     CalculatedHours,
     LogShift,
     ShiftExtra,
 } from "../../../../../types/commonTypes";
-import calculateExtraPay from "../../../../shared/calculations/calculateExtraPay.ts";
-import { filterOptionsByDate } from "../../../../shared/utils/lookup.ts";
-import mockEmploymentLookup from "../../../../../tests/data/mockEmploymentLookup.ts";
+import calculateExtraPay from "../../../../shared/calculations/calculateExtraPay";
+import { filterOptionsByDate } from "../../../../shared/utils/lookup";
+import mockEmploymentLookup from "../../../../../tests/data/mockEmploymentLookup";
 import { Typeahead } from "react-bootstrap-typeahead";
-import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup.ts";
+import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
 
 const ShiftEditModal = () => {
@@ -111,7 +111,7 @@ const ShiftEditModal = () => {
             fullscreen={"lg-down"}
         >
             <Modal.Header>
-                <Modal.Title>Edit shift</Modal.Title>
+                <Modal.Title>{editState.id ? "Edit" : "Add"} shift</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div className="d-flex flex-column gap-3">
@@ -337,6 +337,14 @@ const ShiftEditModal = () => {
             <Modal.Footer>
                 {editState?.id && (
                     <>
+                        <Button
+                            onClick={() => {
+                                console.log("Copying " + editState.id);
+                            }}
+                            variant="outline-secondary"
+                        >
+                            Copy
+                        </Button>
                         <Button
                             onClick={() => {
                                 closeModal();

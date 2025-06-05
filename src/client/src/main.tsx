@@ -22,7 +22,7 @@ if (!rootElement.innerHTML) {
     const root = createRoot(rootElement);
     root.render(
         <StrictMode>
-            <div className="p-3">
+            <div className="mw-100 w-100">
                 <RouterProvider router={router} />
             </div>
         </StrictMode>

@@ -11,7 +11,8 @@ export type LogShiftReducerOptions =
               | "plannedEnd"
               | "plannedEndBlur"
               | "actualEnd"
-              | "employment_id";
+              | "employment_id"
+              | "payIdOverride";
           payload: string;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
@@ -218,6 +219,12 @@ const logShiftReducer = (
             return {
                 ...prevState,
                 overrun_type: payload,
+            };
+        }
+        case "payIdOverride": {
+            return {
+                ...prevState,
+                pay_id_override: payload || null,
             };
         }
         case "addExtra": {

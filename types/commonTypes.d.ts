@@ -33,6 +33,7 @@ export type ShiftEdit = {
     planned_end: string;
     start: string;
     type: ShiftTypes;
+    pay_id_override: string | null;
 };
 
 export type USH = {

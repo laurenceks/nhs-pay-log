@@ -1,14 +1,24 @@
 import { LogShift } from "../../../types/commonTypes";
-import { lookupPayByEmployment, lookupShiftExtra } from "../utils/lookup";
+import {
+    lookupByDate,
+    lookupPayByEmployment,
+    lookupShiftExtra,
+} from "../utils/lookup";
 import mockExtrasLookup from "../../../tests/data/mockExtrasLookup";
 import { msToDecimalHours } from "../utils/conversions";
 import { PayTableItemValue } from "../../../types/lookupTypes";
+import mockPayTable from "../../../tests/data/mockPayTable";
 
 const calculateExtraPay = (logShift: LogShift) => {
-    const pay = lookupPayByEmployment({
-        d: logShift.date,
-        employment_id: logShift.employment_id,
-    }) as PayTableItemValue;
+    const pay = logShift.pay_id_override
+        ? (lookupByDate({
+              arr: mockPayTable[logShift.pay_id_override].values,
+              d: logShift.date,
+          }) as PayTableItemValue)
+        : (lookupPayByEmployment({
+              d: logShift.date,
+              employment_id: logShift.employment_id,
+          }) as PayTableItemValue);
 
     const extrasSubtotal = (logShift.extras || []).reduce((acc, val) => {
         return acc + lookupShiftExtra(mockExtrasLookup, logShift.date, val);

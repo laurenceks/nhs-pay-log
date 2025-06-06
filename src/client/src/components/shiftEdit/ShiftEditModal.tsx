@@ -16,6 +16,7 @@ import mockEmploymentTable from "../../../../../tests/data/mockEmploymentTable";
 import { Typeahead } from "react-bootstrap-typeahead";
 import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
+import mockPayTable from "../../../../../tests/data/mockPayTable";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
@@ -69,7 +70,8 @@ const ShiftEditModal = () => {
                 | "employment_id"
                 | "plannedEnd"
                 | "start"
-                | "plannedEndBlur",
+                | "plannedEndBlur"
+                | "payIdOverride",
             payload: e.currentTarget.value,
         });
     };
@@ -237,6 +239,21 @@ const ShiftEditModal = () => {
                                     </>
                                     <option value={"OT"}>OT</option>
                                     <option value={"TOIL"}>TOIL</option>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group controlId="editPayIdOverride">
+                                <Form.Label>Pay override</Form.Label>
+                                <Form.Select
+                                    value={editState?.pay_id_override || ""}
+                                    data-field={"payIdOverride"}
+                                    onChange={changeHandler}
+                                >
+                                    <option value={""}></option>
+                                    {Object.keys(mockPayTable).map((x) => (
+                                        <option key={x} value={x}>
+                                            {mockPayTable[x].label}
+                                        </option>
+                                    ))}
                                 </Form.Select>
                             </Form.Group>
                         </div>

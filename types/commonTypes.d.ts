@@ -1,3 +1,5 @@
+import { LookupTable } from "./lookupTypes";
+
 export type Overruns = "OT" | "TOIL";
 
 export type ShiftTypes =
@@ -11,11 +13,11 @@ export type ShiftTypes =
     | Overruns;
 
 export type ShiftExtra = {
-    to?: string;
-    from?: string;
+    to: LookupTable[0]["to"];
+    from: LookupTable[0]["from"];
     name: string;
     id: string;
-    amount: number;
+    value: number;
 };
 
 export type ShiftEdit = {

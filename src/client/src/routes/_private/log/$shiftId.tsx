@@ -4,13 +4,13 @@ import mockLogData from "../../../../../../tests/data/mockLogData";
 import { formatDate } from "../../../../../shared/utils/formatDates";
 import { LogShift } from "../../../../../../types/commonTypes";
 import { filterOptionsByDate } from "../../../../../shared/utils/lookup";
-import mockEmploymentLookup from "../../../../../../tests/data/mockEmploymentLookup";
+import mockEmploymentTable from "../../../../../../tests/data/mockEmploymentTable";
 
 const createShift = () => {
     const today = formatDate(new Date(), "yyyy-mm-dd");
     const employmentSelectOptions = filterOptionsByDate<
-        (typeof mockEmploymentLookup)[0]
-    >(mockEmploymentLookup, today);
+        (typeof mockEmploymentTable)[0]
+    >(mockEmploymentTable, today);
     employmentSelectOptions.length === 1
         ? employmentSelectOptions[0].employment_id
         : "";

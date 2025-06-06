@@ -1,5 +1,31 @@
 import { ShiftExtra } from "../../../types/commonTypes";
 import { formatDate } from "./formatDates";
+import mockPayTable from "../../../tests/data/mockPayTable";
+import mockEmploymentTable from "../../../tests/data/mockEmploymentTable";
+import {
+    LookupTable,
+    PayTableItemValue,
+    PayTableStructured,
+} from "../../../types/lookupTypes";
+
+const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
+    const dSorting = formatDate(d, "yyyy-mm-dd");
+    return (
+        (!x.from && x.to && x.to >= dSorting) ||
+        (!x.to && x.from && x.from <= dSorting) ||
+        (x.to && x.from && x.to >= dSorting && x.from <= dSorting)
+    );
+};
+const withinDateRangeAndSameEmployment = <T>(
+    d: string | Date,
+    x: LookupTable<T>[0],
+    employment_id?: string
+) => {
+    return (
+        withinDateRange(d, x) &&
+        (!employment_id || x.employment_id === employment_id)
+    );
+};
 
 export const lookupByDate = <T>({
     arr = [],
@@ -7,21 +33,14 @@ export const lookupByDate = <T>({
     returnKey,
     employment_id,
 }: {
-    arr: ({
-        from?: string | Date | number;
-        to?: string | Date | number;
-        employment_id: string;
-    } & T)[];
+    arr: LookupTable<T>;
     d: string | Date;
-    employment_id: string;
+    employment_id?: string;
     returnKey?: keyof T;
 }) => {
-    const dSorting = formatDate(d, "yyyy-mm-dd");
     const result = arr.find((x) => {
         return (
-            ((!x.from && x.to && x.to >= dSorting) ||
-                (!x.to && x.from && x.from <= dSorting) ||
-                (x.to && x.from && x.to >= dSorting && x.from <= dSorting)) &&
+            withinDateRangeAndSameEmployment(d, x, employment_id) &&
             (!employment_id || x.employment_id === employment_id)
         );
     });
@@ -30,40 +49,56 @@ export const lookupByDate = <T>({
     }
     return result;
 };
+export const lookupPayByEmployment = ({
+    d = new Date(),
+    returnKey,
+    employment_id,
+}: {
+    d: string | Date;
+    employment_id: string;
+    returnKey?: keyof PayTableItemValue;
+}) => {
+    const band = lookupByDate<(typeof mockEmploymentTable)[0]>({
+        arr: mockEmploymentTable,
+        d,
+        employment_id,
+        returnKey: "pay_id",
+    }) as keyof PayTableStructured;
+
+    if (band && band in mockPayTable) {
+        const result: PayTableItemValue | undefined = lookupByDate({
+            arr: mockPayTable[band].values,
+            d,
+        }) as PayTableItemValue | undefined;
+        if (result) {
+            if (returnKey && returnKey in result) {
+                return result[returnKey];
+            } else {
+                return result;
+            }
+        }
+    }
+    return undefined;
+};
 export const lookupShiftExtra = (
     arr: ShiftExtra[],
-    d: string | Date | number,
+    d: string | Date,
     id: ShiftExtra["id"]
 ) => {
     return (
         arr.find((x) => {
             //TODO validate string dates
-            return (
-                x.id === id &&
-                ((!x.from && x.to && x.to >= d) ||
-                    (!x.to && x.from && x.from <= d) ||
-                    (x.to && x.from && x.to >= d && x.from <= d) ||
-                    (!x.from && !x.to))
-            );
-        })?.amount || 0
+            return x.id === id && withinDateRange(d, x);
+        })?.value || 0
     );
 };
 
 export const filterOptionsByDate = <T>(
-    arr: ({
-        from?: string | Date | number;
-        to?: string | Date | number;
-        employment_id?: string;
-    } & T)[] = [],
+    arr: LookupTable<T> = [],
     d: string | Date = new Date(),
     employment_id?: string
 ) => {
-    const dSorting = formatDate(d, "yyyy-mm-dd");
-    return arr.filter(
-        (x) =>
-            ((!x.from && x.to && x.to >= dSorting) ||
-                (!x.to && x.from && x.from <= dSorting) ||
-                (x.to && x.from && x.to >= dSorting && x.from <= dSorting)) &&
-            (!employment_id || x.employment_id === employment_id)
+    return arr.filter((x) =>
+        withinDateRangeAndSameEmployment(d, x, employment_id)
     );
 };

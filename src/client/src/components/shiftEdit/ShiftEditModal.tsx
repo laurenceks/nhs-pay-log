@@ -12,7 +12,7 @@ import {
 } from "../../../../../types/commonTypes";
 import calculateExtraPay from "../../../../shared/calculations/calculateExtraPay";
 import { filterOptionsByDate } from "../../../../shared/utils/lookup";
-import mockEmploymentLookup from "../../../../../tests/data/mockEmploymentLookup";
+import mockEmploymentTable from "../../../../../tests/data/mockEmploymentTable";
 import { Typeahead } from "react-bootstrap-typeahead";
 import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
@@ -36,8 +36,8 @@ const ShiftEditModal = () => {
     });
 
     const employmentSelectOptions = filterOptionsByDate<
-        (typeof mockEmploymentLookup)[0]
-    >(mockEmploymentLookup, editState.date);
+        (typeof mockEmploymentTable)[0]
+    >(mockEmploymentTable, editState.date);
 
     const selectedExtras = mockExtrasLookup.filter((x) =>
         editState.extras.includes(x.id)
@@ -275,7 +275,7 @@ const ShiftEditModal = () => {
                                                 }
                                             >
                                                 {x.name} (
-                                                {x.amount.toLocaleString(
+                                                {x.value.toLocaleString(
                                                     "en-GB",
                                                     {
                                                         style: "currency",

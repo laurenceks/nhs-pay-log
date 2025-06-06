@@ -10,7 +10,7 @@ import {
     ShiftTypes,
 } from "../../../types/commonTypes";
 import { lookupByDate } from "../utils/lookup";
-import mockEmploymentLookup from "../../../tests/data/mockEmploymentLookup";
+import mockEmploymentTable from "../../../tests/data/mockEmploymentTable";
 
 const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 
@@ -145,7 +145,7 @@ export const calculateAdditionalHours = (
                 1.35e8 - //37.5hrs
                 decimalHoursToMs(
                     (lookupByDate({
-                        arr: mockEmploymentLookup,
+                        arr: mockEmploymentTable,
                         d: fromObj,
                         returnKey: "weekly_hours",
                         employment_id: employment_id,

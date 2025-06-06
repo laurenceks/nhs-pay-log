@@ -10,10 +10,11 @@ import {
 
 const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
     const dSorting = formatDate(d, "yyyy-mm-dd");
+    console.log(x.to, x.from);
     return (
+        (x.to && x.from && x.to >= dSorting && x.from <= dSorting) ||
         (!x.from && x.to && x.to >= dSorting) ||
-        (!x.to && x.from && x.from <= dSorting) ||
-        (x.to && x.from && x.to >= dSorting && x.from <= dSorting)
+        (!x.to && x.from && x.from <= dSorting)
     );
 };
 const withinDateRangeAndSameEmployment = <T>(
@@ -39,10 +40,7 @@ export const lookupByDate = <T>({
     returnKey?: keyof T;
 }) => {
     const result = arr.find((x) => {
-        return (
-            withinDateRangeAndSameEmployment(d, x, employment_id) &&
-            (!employment_id || x.employment_id === employment_id)
-        );
+        return withinDateRangeAndSameEmployment(d, x, employment_id);
     });
     if (result && returnKey && returnKey in result) {
         return result[returnKey];

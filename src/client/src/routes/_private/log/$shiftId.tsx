@@ -11,9 +11,6 @@ const createShift = () => {
     const employmentSelectOptions = filterOptionsByDate<
         (typeof mockEmploymentTable)[0]
     >(mockEmploymentTable, today);
-    employmentSelectOptions.length === 1
-        ? employmentSelectOptions[0].employment_id
-        : "";
 
     return {
         actual_end: "",
@@ -37,6 +34,7 @@ const createShift = () => {
         time_and_half: 0,
         toil: 0,
         type: "Normal",
+        pay_id_override: null,
     } as LogShift;
 };
 

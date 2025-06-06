@@ -241,21 +241,28 @@ const ShiftEditModal = () => {
                                     <option value={"TOIL"}>TOIL</option>
                                 </Form.Select>
                             </Form.Group>
-                            <Form.Group controlId="editPayIdOverride">
-                                <Form.Label>Pay override</Form.Label>
-                                <Form.Select
-                                    value={editState?.pay_id_override || ""}
-                                    data-field={"payIdOverride"}
-                                    onChange={changeHandler}
-                                >
-                                    <option value={""}></option>
-                                    {Object.keys(mockPayTable).map((x) => (
-                                        <option key={x} value={x}>
-                                            {mockPayTable[x].label}
+                            {!!Object.keys(mockPayTable).length && (
+                                <Form.Group controlId="editPayIdOverride">
+                                    <Form.Label>Pay override</Form.Label>
+                                    <Form.Select
+                                        value={editState?.pay_id_override || ""}
+                                        data-field={"payIdOverride"}
+                                        onChange={changeHandler}
+                                        disabled={
+                                            !Object.keys(mockPayTable).length
+                                        }
+                                    >
+                                        <option value={""}>
+                                            None (default pay)
                                         </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
+                                        {Object.keys(mockPayTable).map((x) => (
+                                            <option key={x} value={x}>
+                                                {mockPayTable[x].label}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </Form.Group>
+                            )}
                         </div>
                         <div className="d-flex flex-wrap gap-3 w-100">
                             <Form.Group controlId="editExtras">

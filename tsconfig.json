@@ -20,11 +20,11 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist/client"
+    "outDir": "dist/client",
   },
   "include": [
     "src/client",
-    "src/shared"
+    "src/shared",
   ],
   "exclude": ["vite.config.mts"],
   "references": [{ "path": "./tsconfig.node.json"}]

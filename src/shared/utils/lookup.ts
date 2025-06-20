@@ -10,7 +10,7 @@ import {
 
 const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
     const dSorting = formatDate(d, "yyyy-mm-dd");
-    console.log(x.to, x.from);
+    // console.log(x.to, x.from);
     return (
         (x.to && x.from && x.to >= dSorting && x.from <= dSorting) ||
         (!x.from && x.to && x.to >= dSorting) ||

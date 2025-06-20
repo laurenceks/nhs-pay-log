@@ -1,8 +1,17 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private")({
     component: Outlet,
-    beforeLoad: () => {
-        console.log("Private route - auth check");
+    beforeLoad: async ({ context }) => {
+        if (!(await context.auth?.isAuth())) {
+            window.localStorage.setItem(
+                "redirect",
+                location.pathname + location.hash + location.search
+            );
+            context.auth?.logout();
+            throw redirect({
+                to: "/login",
+            });
+        }
     },
 });

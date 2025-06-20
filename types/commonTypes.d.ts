@@ -62,3 +62,18 @@ export type LogShift = AdditionalHours &
     };
 
 export type ShiftEditModalState = { show: boolean; shift: LogShift | null };
+
+export interface AppUser {
+    id: string;
+    email: string;
+}
+
+declare global {
+    namespace Express {
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+        interface User extends AppUser {}
+        interface Request {
+            authenticatedUser: CustomUser;
+        }
+    }
+}

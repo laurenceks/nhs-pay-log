@@ -2,15 +2,23 @@
 @import "bootstrap/scss/bootstrap";
 @import "bootswatch/dist/zephyr/bootswatch";
 
-html, body, #root{
-  height: 100%;
+@each $breakpointName, $breakpointValue in $grid-breakpoints {
+    .mw-#{$breakpointName} {
+        max-width: $breakpointValue;
+    }
 }
 
-.rbt-highlight-text{
-  @extend .fw-bolder;
-  padding: 0;
-  background: none;
-  color: inherit;
+html,
+body,
+#root {
+    height: 100%;
+}
+
+.rbt-highlight-text {
+    @extend .fw-bolder;
+    background: none;
+    padding: 0;
+    color: inherit;
 }
 
 number-flow-react::part(left),
@@ -18,5 +26,5 @@ number-flow-react::part(right),
 number-flow-react::part(left)::after,
 number-flow-react::part(right)::after,
 number-flow-react::part(symbol) {
-  padding: calc(var(--number-flow-mask-height, 0.25em) / 2) 0;
+    padding: calc(var(--number-flow-mask-height, 0.25em) / 2) 0;
 }

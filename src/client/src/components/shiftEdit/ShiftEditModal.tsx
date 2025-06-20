@@ -20,8 +20,8 @@ import mockPayTable from "../../../../../tests/data/mockPayTable";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
-    const log: LogShift[] = useLoaderData({ from: "/_private/log" });
-    const shift = useLoaderData({ from: "/_private/log/$shiftId" });
+    const { data: log } = useLoaderData({ from: "/_private/log" });
+    const { data: shift } = useLoaderData({ from: "/_private/log/$shiftId" });
     const [show, setShow] = useState<boolean>(true);
     const [editState, setEditState] = useReducer(
         logShiftReducer,

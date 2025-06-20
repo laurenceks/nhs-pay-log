@@ -1,6 +1,12 @@
-import App from "../../App";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_public/")({
-    component: App,
+    component: () => (
+        <div className="d-flex flex-column">
+            <Link to={"/log"}>Log</Link>
+            <Link to={"/login"}>Login</Link>
+            <Link to={"/logout"}>Logout</Link>
+            <Link to={"/register"}>Register</Link>
+        </div>
+    ),
 });

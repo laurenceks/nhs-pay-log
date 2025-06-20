@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import TanStackRouterVite from "@tanstack/router-plugin/vite";
 
+console.log("Config loaded");
 export default defineConfig({
-    // depending on your application, base can also be "/"
     root: "src/client/",
     base: "/",
     plugins: [
@@ -19,15 +19,12 @@ export default defineConfig({
     resolve: {
         alias: [{ find: "node_modules", replacement: "node_modules" }],
     },
-    // server: {
-    //   // this ensures that the browser opens upon server start
-    //   open: true,
-    //   proxy: {
-    //     // this allows localhost api calls
-    //     "/api": {
-    //       target: "http://localhost:5000",
-    //       changeOrigin: true,
-    //     },
-    //   },
-    // },
+    server: {
+        proxy: {
+            "/api": {
+                target: "http://localhost:5000",
+                changeOrigin: true,
+            },
+        },
+    },
 });

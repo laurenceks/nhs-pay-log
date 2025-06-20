@@ -1,10 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import ShiftEditModal from "../../../components/shiftEdit/ShiftEditModal";
-import mockLogData from "../../../../../../tests/data/mockLogData";
 import { formatDate } from "../../../../../shared/utils/formatDates";
 import { LogShift } from "../../../../../../types/commonTypes";
 import { filterOptionsByDate } from "../../../../../shared/utils/lookup";
 import mockEmploymentTable from "../../../../../../tests/data/mockEmploymentTable";
+import { getLogShiftQueryOptions } from "../../../queries/logQueries";
+import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
 
 const createShift = () => {
     const today = formatDate(new Date(), "yyyy-mm-dd");
@@ -40,22 +41,18 @@ const createShift = () => {
 
 export const Route = createFileRoute("/_private/log/$shiftId")({
     component: ShiftEditModal,
-    loader: async ({ params }): Promise<LogShift> => {
+    loader: async ({ params, context }): Promise<LogShift> => {
         if (params.shiftId === "new") {
             return createShift();
         }
-        console.log("Fetching shift...");
-        await new Promise((resolve) =>
-            setTimeout(resolve, Math.random() * 125)
+        return await context.queryClient.ensureQueryData(
+            stripQueryOptionsForEnsureQuery(
+                getLogShiftQueryOptions(params.shiftId)
+            )
         );
-        console.log("...done!");
-        const foundShift = mockLogData.find((x) => x.id === params.shiftId);
-        if (!foundShift) {
-            throw new Error("Shift not found");
-        }
-        return foundShift;
     },
-    onError: () => {
+    onError: (e) => {
+        console.log(e);
         throw redirect({ to: ".." });
     },
 });

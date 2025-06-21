@@ -14,6 +14,7 @@ import mockEmploymentTable from "../../../tests/data/mockEmploymentTable";
 
 const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 
+//TODO sickness/absence
 export const calculateCumulativeAdditionalHours = (
     from: Date,
     id: string,

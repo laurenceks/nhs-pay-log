@@ -10,23 +10,40 @@ import {
     LogShift,
     ShiftExtra,
 } from "../../../../../types/commonTypes";
-import calculateExtraPay from "../../../../shared/calculations/calculateExtraPay";
+import calculateExtraPay from "../../../../shared/calculations/extraPay";
 import { filterOptionsByDate } from "../../../../shared/utils/lookup";
 import mockEmploymentTable from "../../../../../tests/data/mockEmploymentTable";
 import { Typeahead } from "react-bootstrap-typeahead";
 import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
 import mockPayTable from "../../../../../tests/data/mockPayTable";
+import { useMutation } from "@tanstack/react-query";
+import {
+    patchLogShiftMutationOptions,
+    postLogShiftMutationOptions,
+} from "../../queries/logQueries";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
     const { data: log } = useLoaderData({ from: "/_private/log" });
     const { data: shift } = useLoaderData({ from: "/_private/log/$shiftId" });
+
     const [show, setShow] = useState<boolean>(true);
+
+    const closeModal = () => {
+        setShow(false);
+    };
+
     const [editState, setEditState] = useReducer(
         logShiftReducer,
         shift as LogShift
     );
+    const { mutate, isPending } = useMutation({
+        ...(shift.id
+            ? patchLogShiftMutationOptions(editState)
+            : postLogShiftMutationOptions(editState)),
+        onSuccess: () => closeModal(),
+    });
     const [ushState, setUshState] = useState<CalculatedHours>({
         toil: 0,
         lower_rate: 0,
@@ -44,21 +61,9 @@ const ShiftEditModal = () => {
         editState.extras.includes(x.id)
     );
 
-    const closeModal = () => {
-        setShow(false);
-    };
     const saveEdit = () => {
-        closeModal();
+        mutate();
     };
-    /*
-    useEffect(() => {
-        if (!show && !shift) {
-            setEditState({ action: "clear" });
-        } else if (shift) {
-            setEditState({ action: "set", payload: shift });
-        }
-    }, [show, shift]);
-*/
 
     const changeHandler = (
         e: ChangeEvent<HTMLInputElement> & ChangeEvent<HTMLSelectElement>
@@ -362,6 +367,7 @@ const ShiftEditModal = () => {
                 {editState?.id && (
                     <>
                         <Button
+                            disabled={isPending}
                             onClick={() => {
                                 console.log("Copying " + editState.id);
                             }}
@@ -370,6 +376,7 @@ const ShiftEditModal = () => {
                             Copy
                         </Button>
                         <Button
+                            disabled={isPending}
                             onClick={() => {
                                 closeModal();
                             }}
@@ -379,10 +386,18 @@ const ShiftEditModal = () => {
                         </Button>
                     </>
                 )}
-                <Button onClick={closeModal} variant="warning">
+                <Button
+                    disabled={isPending}
+                    onClick={closeModal}
+                    variant="warning"
+                >
                     Cancel
                 </Button>
-                <Button onClick={saveEdit} variant="success">
+                <Button
+                    disabled={isPending}
+                    onClick={saveEdit}
+                    variant="success"
+                >
                     Save changes
                 </Button>
             </Modal.Footer>

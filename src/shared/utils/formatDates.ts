@@ -29,6 +29,7 @@ export const formatDate = (
         | "dd/mm/yy hh:mm"
         | "dd/mm/yyyy"
         | "d mmm"
+        | "yy-mm"
         | "yyyy-mm-dd"
         | "yyyy-mm-dd hh:mm:ss"
         | "hh:mm"
@@ -92,6 +93,17 @@ export const formatDate = (
                     month: "2-digit",
                     year: "numeric",
                 });
+            case "yy-mm":
+                return jsDate
+                    .toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                    })
+                    .split("/")
+                    .reverse()
+                    .splice(0, 1)
+                    .join("-");
             case "sorting":
             case "yyyy-mm-dd":
                 return jsDate

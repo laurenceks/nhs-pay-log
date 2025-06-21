@@ -2,6 +2,10 @@ import { LogShift, Overruns, ShiftTypes } from "../../../../types/commonTypes";
 import { makeToAlwaysLater } from "../../../shared/utils/conversions";
 import { formatDate } from "../../../shared/utils/formatDates";
 import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup";
+import {
+    financialYear,
+    nextPayDate,
+} from "../../../shared/calculations/payDates";
 
 export type LogShiftReducerOptions =
     | {
@@ -84,32 +88,45 @@ const logShiftReducer = (
     switch (action) {
         //TODO on date change filter out extras that didn't exist on those dates/had a different value
         case "date": {
-            if (payload && prevState.start) {
-                const newFrom = makeFromTimestamp(payload, prevState.start);
-                if (prevState.planned_end) {
-                    return {
-                        ...prevState,
-                        date: payload,
-                        from: newFrom,
-                        ...makeEndTimestamps(
-                            payload as string,
-                            newFrom,
-                            prevState.planned_end,
-                            prevState.actual_end || prevState.planned_end
-                        ),
-                    };
+            if (payload) {
+                const payDate = nextPayDate(payload);
+                const payDates = {
+                    pay_date: formatDate(payDate, "yyyy-mm-dd"),
+                    pay_month: formatDate(payDate, "yy-mm"),
+                    pay_financial_year: financialYear(payDate),
+                };
+                if (payload && prevState.start) {
+                    const newFrom = makeFromTimestamp(payload, prevState.start);
+                    if (prevState.planned_end) {
+                        return {
+                            ...prevState,
+                            ...payDates,
+                            date: payload,
+                            from: newFrom,
+                            ...makeEndTimestamps(
+                                payload as string,
+                                newFrom,
+                                prevState.planned_end,
+                                prevState.actual_end || prevState.planned_end
+                            ),
+                        };
+                    } else {
+                        return {
+                            ...prevState,
+                            ...payDates,
+                            date: payload,
+                            from: newFrom,
+                        };
+                    }
                 } else {
                     return {
                         ...prevState,
+                        ...payDates,
                         date: payload,
-                        from: newFrom,
                     };
                 }
             } else {
-                return {
-                    ...prevState,
-                    date: payload,
-                };
+                return prevState;
             }
         }
         case "start": {

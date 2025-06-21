@@ -3,7 +3,7 @@ import { LogShift } from "../../../../../types/commonTypes";
 import { formatDate } from "../../../../shared/utils/formatDates";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import calculateExtraPay from "../../../../shared/calculations/calculateExtraPay";
+import calculateExtraPay from "../../../../shared/calculations/extraPay";
 import { msToTableFormat } from "../../../../shared/utils/conversions";
 
 const LogTable = ({ log }: { log: LogShift[] }) => {

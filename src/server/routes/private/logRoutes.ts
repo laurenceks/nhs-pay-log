@@ -1,24 +1,19 @@
 import { Router } from "express";
-import { sendRes } from "../../utils/sendRes";
-import mockLogData from "../../../../tests/data/mockLogData";
+import {
+    deleteLogShift,
+    getLog,
+    getLogShift,
+    patchLogShift,
+    postLogShift,
+} from "../../controllers/logController";
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
-    await setTimeout(() => true, 1000);
-    sendRes(res, {
-        title: "Log refreshed",
-        feedback: "Log data refreshed",
-        data: [...mockLogData],
-    });
-});
-router.get("/:shiftId", async (req, res) => {
-    await setTimeout(() => true, 1000);
-    sendRes(res, {
-        title: "Shift refreshed",
-        feedback: "Shift data refreshed",
-        data: { ...mockLogData.find((x) => x.id === req.params.shiftId) },
-    });
-});
+router.get("/", getLog);
+router.post("/", postLogShift);
+
+router.get("/:shiftId", getLogShift);
+router.patch("/:shiftId", patchLogShift);
+router.delete("/:shiftId", deleteLogShift);
 
 export default router;

@@ -23,7 +23,10 @@ export const fetchJson = async <T = undefined>(
     });
     const json: ApiResponse<T> = await res.json();
     if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
+        if (
+            (res.status === 401 || res.status === 403) &&
+            window.location.pathname !== "/login"
+        ) {
             //force reload to login page
             window.localStorage.setItem(
                 "redirect",

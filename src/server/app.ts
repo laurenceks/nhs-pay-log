@@ -19,12 +19,12 @@ configDotenv();
 
 async function createMySQLStore() {
     const connectMySQL = await import("express-mysql-session");
-    // @ts-ignore
-    return connectMySQL.default(session);
+    const MySQLStore = connectMySQL.default(session);
+
+    return new MySQLStore(dbOptions);
 }
 
-// Usage example:
-const MySQLStore = await createMySQLStore();
+const sessionStore = await createMySQLStore();
 
 if (process.env.NODE_ENV !== "development") {
     app.use(helmet());
@@ -52,7 +52,7 @@ const sessionOptions = {
     rolling: true,
     saveUninitialized: false,
     cookie: { secure: false, maxAge: 300000 },
-    store: new MySQLStore(dbOptions),
+    store: sessionStore,
 };
 
 if (process.env.NODE_ENV === "production") {
@@ -69,6 +69,7 @@ configPassport();
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(routes);
 
 app.listen(5000);

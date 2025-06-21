@@ -17,7 +17,6 @@ export const login = async (req: Request, res: Response) => {
                     if (!error && user) {
                         req.login(user, async (e) => {
                             if (e) {
-                                console.log(e);
                                 logoutAndDestroySession(req, res);
                                 sendErrorRes(res, "unauthorised");
                             }

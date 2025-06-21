@@ -6,6 +6,8 @@ import { filterOptionsByDate } from "../../../../../shared/utils/lookup";
 import mockEmploymentTable from "../../../../../../tests/data/mockEmploymentTable";
 import { getLogShiftQueryOptions } from "../../../queries/logQueries";
 import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
+import { financialYear } from "../../../../../shared/calculations/payDates";
+import { ApiResponse } from "../../../../../../types/responseTypes";
 
 const createShift = () => {
     const today = formatDate(new Date(), "yyyy-mm-dd");
@@ -17,6 +19,9 @@ const createShift = () => {
         actual_end: "",
         actual_to: "",
         date: today,
+        pay_date: formatDate(today, "yyyy-mm-dd"),
+        pay_month: formatDate(today, "yy-mm"),
+        pay_financial_year: financialYear(today),
         double: 0,
         employment_id:
             employmentSelectOptions.length === 1
@@ -41,9 +46,9 @@ const createShift = () => {
 
 export const Route = createFileRoute("/_private/log/$shiftId")({
     component: ShiftEditModal,
-    loader: async ({ params, context }): Promise<LogShift> => {
+    loader: async ({ params, context }): Promise<ApiResponse<LogShift>> => {
         if (params.shiftId === "new") {
-            return createShift();
+            return { data: createShift() };
         }
         return await context.queryClient.ensureQueryData(
             stripQueryOptionsForEnsureQuery(

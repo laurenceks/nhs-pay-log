@@ -66,6 +66,14 @@ const Login = () => {
                 >
                     Log in
                 </Button>
+                <Button
+                    type="button"
+                    variant="outline-secondary"
+                    onClick={() => navigate({ to: "/register" })}
+                    disabled={isPending}
+                >
+                    Sign up
+                </Button>
                 {!!error && !isPending && (
                     <div className="bg-danger text-white px-3 py-2 text-center w-100 rounded d-flex small justify-content-center">
                         {error.message}

@@ -2,12 +2,10 @@ import { execute } from "../utils/db";
 import { randomUUID } from "node:crypto";
 
 export const createUser = async (email: string, hash: string, salt: string) => {
-    await execute("INSERT INTO users VALUES (?, ?, ?, ?)", [
-        randomUUID(),
-        email,
-        hash,
-        salt,
-    ]);
+    await execute(
+        "INSERT INTO users (`id`, `email`, `hash`, `salt`) VALUES (?, ?, ?, ?)",
+        [randomUUID(), email, hash, salt]
+    );
 };
 
 export const selectUserByEmail = async (email: string) => {

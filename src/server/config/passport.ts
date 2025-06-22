@@ -6,7 +6,7 @@ import {
     type VerifyFunction,
 } from "passport-local";
 import validateHash from "../utils/crypto";
-import { selectUserByEmail, selectUserById } from "../crud/userCrud";
+import { readUserByEmail, readUserById } from "../crud/userCrud";
 import { AppUser } from "../../../types/commonTypes";
 
 const configPassport = () => {
@@ -15,7 +15,7 @@ const configPassport = () => {
     });
 
     passport.deserializeUser(async (id: string, done) => {
-        const [user] = await selectUserById(id);
+        const [user] = await readUserById(id);
         // pass result whatever it is - middleware function will validate
         done(null, user ? (user as Express.User) : false);
     });
@@ -35,7 +35,7 @@ const configPassport = () => {
                     done("invalidUsernameOrPassword", false);
                 }
                 try {
-                    const [user] = await selectUserByEmail(email);
+                    const [user] = await readUserByEmail(email);
                     if (
                         !user ||
                         !validateHash(passwordPlainText, user.hash, user.salt)

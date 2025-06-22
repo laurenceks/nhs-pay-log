@@ -8,9 +8,9 @@ export const createUser = async (email: string, hash: string, salt: string) => {
     );
 };
 
-export const selectUserByEmail = async (email: string) => {
+export const readUserByEmail = async (email: string) => {
     return await execute("SELECT * FROM `users` WHERE `email` = ?", [email]);
 };
-export const selectUserById = async (id: string) => {
+export const readUserById = async (id: string) => {
     return await execute("SELECT * FROM `users` WHERE `id` = ?", [id]);
 };

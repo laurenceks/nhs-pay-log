@@ -53,6 +53,7 @@ export type CalculatedHours = USH & AdditionalHours;
 export type LogShift = AdditionalHours &
     USH &
     ShiftEdit & {
+        employment_name: string;
         pay_date: string;
         pay_month: string;
         pay_financial_year: string;

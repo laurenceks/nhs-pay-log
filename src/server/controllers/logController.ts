@@ -1,39 +1,63 @@
 import { Request, Response } from "express";
-import mockLogData from "../../../tests/data/mockLogData";
 import { sendErrorRes, sendRes } from "../utils/sendRes";
+import {
+    createLogShift,
+    deleteLogShiftByUserIdAndShiftId,
+    readLogByUserId,
+    readLogShiftByUserIdAndShiftId,
+    updateLogShiftByUserIdAndShiftId,
+} from "../crud/logCrud";
 
-export const getLog = async (_req: Request, res: Response) => {
-    await setTimeout(() => true, 1000);
+export const getLog = async (req: Request, res: Response) => {
+    const data = await readLogByUserId(req.authenticatedUser.id);
     sendRes(res, {
         title: "Log refreshed",
         message: "Log data refreshed",
-        data: [...mockLogData],
+        data: data,
     });
 };
 export const getLogShift = async (req: Request, res: Response) => {
-    const shift = mockLogData.find((x) => x.id === req.params.shiftId);
-    if (shift) {
-        sendRes(res, { data: shift });
+    const [data] = await readLogShiftByUserIdAndShiftId(
+        req.authenticatedUser.id,
+        req.params.shiftId
+    );
+    console.log(data);
+    if (data) {
+        sendRes(res, { data: data });
     } else {
         sendErrorRes(res);
     }
 };
 export const postLogShift = async (req: Request, res: Response) => {
-    mockLogData.push({ ...req.body });
-    sendRes(res);
+    try {
+        await createLogShift(req.authenticatedUser.id, req.body);
+        sendRes(res);
+    } catch (e) {
+        console.log(e);
+        sendErrorRes(res);
+    }
 };
 export const patchLogShift = async (req: Request, res: Response) => {
-    console.log("Pathcing");
-    const index = mockLogData.findIndex((x) => x.id === req.params.shiftId);
-    if (!isNaN(index)) {
-        mockLogData[index] = { ...req.body };
+    try {
+        await updateLogShiftByUserIdAndShiftId(
+            req.authenticatedUser.id,
+            req.body
+        );
+        sendRes(res);
+    } catch (e) {
+        console.log(e);
+        sendErrorRes(res);
     }
-    sendRes(res);
 };
 export const deleteLogShift = async (req: Request, res: Response) => {
-    const index = mockLogData.findIndex((x) => x.id === req.params.shiftId);
-    if (!isNaN(index)) {
-        mockLogData.splice(index, 1);
+    try {
+        await deleteLogShiftByUserIdAndShiftId(
+            req.authenticatedUser.id,
+            req.params.shiftId
+        );
+        sendRes(res);
+    } catch (e) {
+        console.log(e);
+        sendErrorRes(res);
     }
-    sendRes(res);
 };

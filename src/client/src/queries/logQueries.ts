@@ -14,8 +14,8 @@ export const postLogShiftFetch = async (shift: ShiftEdit) => {
 export const patchLogShiftFetch = async (shift: ShiftEdit) => {
     return await fetchJson(`/api/v1/private/log/${shift.id}`, "PATCH", shift);
 };
-export const deleteLogShiftFetch = async (shift: ShiftEdit) => {
-    return await fetchJson(`/api/v1/private/log/${shift.id}`, "DELETE", shift);
+export const deleteLogShiftFetch = async (shiftId: string) => {
+    return await fetchJson(`/api/v1/private/log/${shiftId}`, "DELETE");
 };
 export const getLogQueryOptions = queryOptions({
     queryKey: ["log"],
@@ -42,5 +42,5 @@ export const deleteLogShiftMutationOptions = (
     shift: ShiftEdit
 ): MutationOptions => ({
     mutationKey: ["log", "delete"],
-    mutationFn: () => deleteLogShiftFetch(shift),
+    mutationFn: () => deleteLogShiftFetch(shift.id),
 });

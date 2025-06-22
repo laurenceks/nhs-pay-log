@@ -17,20 +17,22 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
 import mockPayTable from "../../../../../tests/data/mockPayTable";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+    deleteLogShiftMutationOptions,
     patchLogShiftMutationOptions,
     postLogShiftMutationOptions,
 } from "../../queries/logQueries";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { data: log } = useLoaderData({ from: "/_private/log" });
     const { data: shift } = useLoaderData({ from: "/_private/log/$shiftId" });
 
     const [show, setShow] = useState<boolean>(true);
 
-    const closeModal = () => {
+    const closeModal = async () => {
         setShow(false);
     };
 
@@ -38,12 +40,18 @@ const ShiftEditModal = () => {
         logShiftReducer,
         shift as LogShift
     );
-    const { mutate, isPending } = useMutation({
+    const { mutateAsync: mutateEdit, isPending: editPending } = useMutation({
         ...(shift.id
             ? patchLogShiftMutationOptions(editState)
             : postLogShiftMutationOptions(editState)),
         onSuccess: () => closeModal(),
     });
+    const { mutateAsync: mutateDelete, isPending: deletePending } = useMutation(
+        {
+            ...deleteLogShiftMutationOptions(editState),
+            onSuccess: () => closeModal(),
+        }
+    );
     const [ushState, setUshState] = useState<CalculatedHours>({
         toil: 0,
         lower_rate: 0,
@@ -58,11 +66,16 @@ const ShiftEditModal = () => {
     >(mockEmploymentTable, editState.date);
 
     const selectedExtras = mockExtrasLookup.filter((x) =>
-        editState.extras.includes(x.id)
+        editState.extras?.includes(x.id)
     );
 
-    const saveEdit = () => {
-        mutate();
+    const saveEdit = async () => {
+        await mutateEdit();
+        await queryClient.invalidateQueries({
+            queryKey: ["log"],
+            exact: true,
+            refetchType: "all",
+        });
     };
 
     const changeHandler = (
@@ -191,8 +204,8 @@ const ShiftEditModal = () => {
                                     </>
                                     {employmentSelectOptions.map((x) => (
                                         <option
-                                            key={x.employment_id}
-                                            value={x.employment_id}
+                                            key={`employment-${x.id}`}
+                                            value={x.id}
                                         >
                                             {x.name}
                                         </option>
@@ -367,7 +380,7 @@ const ShiftEditModal = () => {
                 {editState?.id && (
                     <>
                         <Button
-                            disabled={isPending}
+                            disabled={editPending || deletePending}
                             onClick={() => {
                                 console.log("Copying " + editState.id);
                             }}
@@ -376,8 +389,14 @@ const ShiftEditModal = () => {
                             Copy
                         </Button>
                         <Button
-                            disabled={isPending}
-                            onClick={() => {
+                            disabled={editPending || deletePending}
+                            onClick={async () => {
+                                await mutateDelete();
+                                await queryClient.invalidateQueries({
+                                    queryKey: ["log"],
+                                    exact: true,
+                                    refetchType: "all",
+                                });
                                 closeModal();
                             }}
                             variant="danger"
@@ -387,14 +406,14 @@ const ShiftEditModal = () => {
                     </>
                 )}
                 <Button
-                    disabled={isPending}
+                    disabled={editPending || deletePending}
                     onClick={closeModal}
                     variant="warning"
                 >
                     Cancel
                 </Button>
                 <Button
-                    disabled={isPending}
+                    disabled={editPending || deletePending}
                     onClick={saveEdit}
                     variant="success"
                 >

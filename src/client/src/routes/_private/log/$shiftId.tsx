@@ -25,7 +25,11 @@ const createShift = () => {
         double: 0,
         employment_id:
             employmentSelectOptions.length === 1
-                ? employmentSelectOptions[0].employment_id
+                ? employmentSelectOptions[0].id
+                : "",
+        employment_name:
+            employmentSelectOptions.length === 1
+                ? employmentSelectOptions[0].name
                 : "",
         extras: [],
         flat: 0,

@@ -55,7 +55,7 @@ const LogTable = ({ log }: { log: LogShift[] }) => {
                                     <td>{x.start}</td>
                                     <td>{x.planned_end}</td>
                                     <td>{x.actual_end}</td>
-                                    <td>{x.employment_id}</td>
+                                    <td>{x.employment_name}</td>
                                     <td>{x.type}</td>
                                     <td>{x.overrun_type}</td>
                                     <td>{msToTableFormat(x.toil)}</td>

@@ -9,11 +9,17 @@ const query = async (sql: string) => {
     return (await pool.query(sql))[0];
 };
 
-const execute = async (
+const executeByArray = async (
     preparedStatement: string,
     variables: (string | number | null)[] = []
 ) => {
     return (await pool.execute(preparedStatement, variables))[0];
 };
+const executeByPlaceholders = async (
+    preparedStatement: string,
+    variables: { [key: string]: string | number | null } = {}
+) => {
+    return (await pool.execute(preparedStatement, variables))[0];
+};
 
-export { createDbConnection, query, execute };
+export { createDbConnection, query, executeByArray, executeByPlaceholders };

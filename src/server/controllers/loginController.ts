@@ -21,7 +21,7 @@ export const login = async (req: Request, res: Response) => {
                                 sendErrorRes(res, "unauthorised");
                             }
                             sendRes<AppUser>(res, {
-                                data: user,
+                                data: { id: user.id, email: user.email },
                             });
                         });
                     } else {
@@ -45,5 +45,10 @@ export const login = async (req: Request, res: Response) => {
 
 export const checkLoginStatus = async (req: Request, res: Response) => {
     // if user made it to here, then their login credentials are valid
-    sendRes<AppUser>(res, { data: req.authenticatedUser });
+    sendRes<AppUser>(res, {
+        data: {
+            id: req.authenticatedUser.id,
+            email: req.authenticatedUser.email,
+        },
+    });
 };

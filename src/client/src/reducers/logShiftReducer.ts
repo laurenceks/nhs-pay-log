@@ -6,6 +6,9 @@ import {
     financialYear,
     nextPayDate,
 } from "../../../shared/calculations/payDates";
+import { EmploymentsTable } from "../../../../types/lookupTypes";
+import { filterOptionsByDate } from "../../../shared/utils/lookup";
+import mockEmploymentTable from "../../../../tests/data/mockEmploymentTable";
 
 export type LogShiftReducerOptions =
     | {
@@ -15,9 +18,18 @@ export type LogShiftReducerOptions =
               | "plannedEnd"
               | "plannedEndBlur"
               | "actualEnd"
-              | "employment_id"
               | "payIdOverride";
           payload: string;
+          // setNewToasts: (newToasts: NotificationToastType[]) => void;
+      }
+    | {
+          action: "employment";
+          payload: EmploymentsTable[0] | undefined;
+          // setNewToasts: (newToasts: NotificationToastType[]) => void;
+      }
+    | {
+          action: "employment_id";
+          payload: number;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
@@ -46,7 +58,7 @@ export type LogShiftReducerOptions =
           // setNewToasts: undefined;
       }
     | {
-          action: "clear";
+          action: "clear" | "copy";
           payload?: never;
           // setNewToasts: undefined;
       }
@@ -220,6 +232,13 @@ const logShiftReducer = (
                 };
             }
         }
+        case "employment": {
+            return {
+                ...prevState,
+                employment_id: payload?.employment_id || 0,
+                employment_name: payload?.name || "",
+            };
+        }
         case "employment_id": {
             return {
                 ...prevState,
@@ -255,6 +274,60 @@ const logShiftReducer = (
                 ...prevState,
                 extras: prevState.extras.filter((x) => x !== payload),
             };
+        }
+        case "copy": {
+            if (
+                prevState.from &&
+                prevState.planned_to &&
+                prevState.actual_to &&
+                prevState.start &&
+                prevState.planned_end &&
+                prevState.actual_end
+            ) {
+                const today = new Date();
+                const todayFormatted = formatDate(today, "yyyy-mm-dd");
+                const payDate = nextPayDate(today);
+                const payDates = {
+                    pay_date: formatDate(payDate, "yyyy-mm-dd"),
+                    pay_month: formatDate(payDate, "yy-mm"),
+                    pay_financial_year: financialYear(payDate),
+                };
+                const newFrom = makeFromTimestamp(
+                    todayFormatted,
+                    prevState.start
+                );
+                const employmentSelectOptions = filterOptionsByDate<
+                    (typeof mockEmploymentTable)[0]
+                >(mockEmploymentTable, today);
+                const employment: { id: number; name: string } =
+                    employmentSelectOptions.some(
+                        (x) => x.id === prevState.employment_id
+                    )
+                        ? {
+                              id: prevState.employment_id,
+                              name: prevState.employment_name,
+                          }
+                        : employmentSelectOptions[0];
+                return {
+                    ...prevState,
+                    ...payDates,
+                    id: 0,
+                    date: todayFormatted,
+                    from: newFrom,
+                    ...makeEndTimestamps(
+                        todayFormatted,
+                        newFrom,
+                        prevState.planned_end,
+                        prevState.actual_end || prevState.planned_end
+                    ),
+                    employment_id: employment.id || 0,
+                    employment_name: employment.name || "",
+                };
+            } else {
+                return {
+                    ...prevState,
+                };
+            }
         }
         /*case "clear": {
             return null;

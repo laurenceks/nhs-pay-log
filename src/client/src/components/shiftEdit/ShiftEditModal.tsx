@@ -27,8 +27,8 @@ import {
 const ShiftEditModal = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { data: log } = useLoaderData({ from: "/_private/log" });
-    const { data: shift } = useLoaderData({ from: "/_private/log/$shiftId" });
+    const log = useLoaderData({ from: "/_private/log" });
+    const shift = useLoaderData({ from: "/_private/log/$shiftId" });
 
     const [show, setShow] = useState<boolean>(true);
 
@@ -40,18 +40,6 @@ const ShiftEditModal = () => {
         logShiftReducer,
         shift as LogShift
     );
-    const { mutateAsync: mutateEdit, isPending: editPending } = useMutation({
-        ...(shift.id
-            ? patchLogShiftMutationOptions(editState)
-            : postLogShiftMutationOptions(editState)),
-        onSuccess: () => closeModal(),
-    });
-    const { mutateAsync: mutateDelete, isPending: deletePending } = useMutation(
-        {
-            ...deleteLogShiftMutationOptions(editState),
-            onSuccess: () => closeModal(),
-        }
-    );
     const [ushState, setUshState] = useState<CalculatedHours>({
         toil: 0,
         lower_rate: 0,
@@ -61,19 +49,47 @@ const ShiftEditModal = () => {
         double: 0,
     });
 
+    const { mutateAsync: mutatePost, isPending: postPending } = useMutation({
+        ...postLogShiftMutationOptions({ ...editState, ...ushState }),
+        onSuccess: () => closeModal(),
+    });
+    const { mutateAsync: mutatePatch, isPending: patchPending } = useMutation({
+        ...patchLogShiftMutationOptions({ ...editState, ...ushState }),
+        onSuccess: () => closeModal(),
+    });
+    const { mutateAsync: mutateDelete, isPending: deletePending } = useMutation(
+        {
+            ...deleteLogShiftMutationOptions(shift.id),
+            onSuccess: () => closeModal(),
+        }
+    );
+
     const employmentSelectOptions = filterOptionsByDate<
         (typeof mockEmploymentTable)[0]
     >(mockEmploymentTable, editState.date);
+
+    useEffect(() => {
+        if (
+            !employmentSelectOptions.some(
+                (x) => x.id === editState.employment_id
+            )
+        ) {
+            //replace current employment id with first match
+            setEditState({
+                action: "employment",
+                payload: employmentSelectOptions[0],
+            });
+        }
+    }, [editState.date]);
 
     const selectedExtras = mockExtrasLookup.filter((x) =>
         editState.extras?.includes(x.id)
     );
 
     const saveEdit = async () => {
-        await mutateEdit();
+        await (editState.id ? mutatePatch() : mutatePost());
         await queryClient.invalidateQueries({
             queryKey: ["log"],
-            exact: true,
             refetchType: "all",
         });
     };
@@ -85,7 +101,6 @@ const ShiftEditModal = () => {
             action: e.currentTarget.dataset.field as
                 | "actualEnd"
                 | "date"
-                | "employment_id"
                 | "plannedEnd"
                 | "start"
                 | "plannedEndBlur"
@@ -190,7 +205,21 @@ const ShiftEditModal = () => {
                                 <Form.Select
                                     value={editState?.employment_id}
                                     data-field={"employment_id"}
-                                    onChange={changeHandler}
+                                    onChange={(e) => {
+                                        setEditState({
+                                            action: "employment",
+                                            payload:
+                                                employmentSelectOptions.find(
+                                                    (x) =>
+                                                        x.id ===
+                                                        parseInt(
+                                                            e.currentTarget
+                                                                .value,
+                                                            10
+                                                        )
+                                                ),
+                                        });
+                                    }}
                                     disabled={
                                         employmentSelectOptions.length <= 1
                                     }
@@ -259,23 +288,24 @@ const ShiftEditModal = () => {
                                     <option value={"TOIL"}>TOIL</option>
                                 </Form.Select>
                             </Form.Group>
-                            {!!Object.keys(mockPayTable).length && (
+                            {!!mockPayTable.length && (
                                 <Form.Group controlId="editPayIdOverride">
                                     <Form.Label>Pay override</Form.Label>
                                     <Form.Select
                                         value={editState?.pay_id_override || ""}
                                         data-field={"payIdOverride"}
                                         onChange={changeHandler}
-                                        disabled={
-                                            !Object.keys(mockPayTable).length
-                                        }
+                                        disabled={!mockPayTable.length}
                                     >
                                         <option value={""}>
                                             None (default pay)
                                         </option>
-                                        {Object.keys(mockPayTable).map((x) => (
-                                            <option key={x} value={x}>
-                                                {mockPayTable[x].label}
+                                        {mockPayTable.map((x) => (
+                                            <option
+                                                key={`${x.group_id}_${x.from}_${x.to}`}
+                                                value={x.group_id}
+                                            >
+                                                {x.label}
                                             </option>
                                         ))}
                                     </Form.Select>
@@ -380,24 +410,27 @@ const ShiftEditModal = () => {
                 {editState?.id && (
                     <>
                         <Button
-                            disabled={editPending || deletePending}
+                            disabled={
+                                postPending || patchPending || deletePending
+                            }
                             onClick={() => {
-                                console.log("Copying " + editState.id);
+                                setEditState({ action: "copy" });
                             }}
                             variant="outline-secondary"
                         >
                             Copy
                         </Button>
                         <Button
-                            disabled={editPending || deletePending}
+                            disabled={
+                                postPending || patchPending || deletePending
+                            }
                             onClick={async () => {
                                 await mutateDelete();
                                 await queryClient.invalidateQueries({
                                     queryKey: ["log"],
-                                    exact: true,
                                     refetchType: "all",
                                 });
-                                closeModal();
+                                await closeModal();
                             }}
                             variant="danger"
                         >
@@ -406,14 +439,14 @@ const ShiftEditModal = () => {
                     </>
                 )}
                 <Button
-                    disabled={editPending || deletePending}
+                    disabled={postPending || patchPending || deletePending}
                     onClick={closeModal}
                     variant="warning"
                 >
                     Cancel
                 </Button>
                 <Button
-                    disabled={editPending || deletePending}
+                    disabled={postPending || patchPending || deletePending}
                     onClick={saveEdit}
                     variant="success"
                 >

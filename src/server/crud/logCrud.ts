@@ -3,7 +3,7 @@ import { LogShift } from "../../../types/commonTypes";
 
 export const readLogByUserId = async (userId: string) => {
     return await executeByPlaceholders(
-        "SELECT log.*, `employments`.`name` AS `employment_name` FROM `log` LEFT JOIN `employments` ON `log`.`employment_id` = `employments`.`id` WHERE log.`user_id` = :userId AND `employments`.`user_id` = :userId",
+        "SELECT log.*, `employments`.`name` AS `employment_name` FROM `log` LEFT JOIN `employments` ON `log`.`employment_id` = `employments`.`id` WHERE log.`user_id` = :userId AND `employments`.`user_id` = :userId ORDER BY `from`, `employment_name`",
         { userId: userId }
     );
 };
@@ -18,63 +18,63 @@ export const readLogShiftByUserIdAndShiftId = async (
 };
 
 export const createLogShift = async (userId: string, shift: LogShift) => {
-    return await executeByArray(
-        "INSERT INTO `log` (`user_id`, `employment_id`, `date`, `start`, `planned_end`, `actual_end`, `from`, `planned_to`,`actual_to`, `type`, `overrun_type`, `pay_id_override`, `pay_date`, `pay_month`, `pay_financial_year`, `toil`, `flat`, `lower_rate`, `time_and_half`, `higher_rate`, `double`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        [
-            userId,
-            shift.employment_id,
-            shift.date,
-            shift.start,
-            shift.planned_end,
-            shift.actual_end,
-            shift.from,
-            shift.actual_to,
-            shift.planned_to,
-            shift.type,
-            shift.overrun_type,
-            shift.pay_id_override,
-            shift.pay_date,
-            shift.pay_month,
-            shift.pay_financial_year,
-            shift.toil,
-            shift.flat,
-            shift.lower_rate,
-            shift.time_and_half,
-            shift.higher_rate,
-            shift.double,
-        ]
+    return await executeByPlaceholders(
+        "INSERT INTO `log` (`user_id`, `employment_id`, `date`, `start`, `planned_end`, `actual_end`, `from`, `planned_to`,`actual_to`, `type`, `overrun_type`, `pay_id_override`, `pay_date`, `pay_month`, `pay_financial_year`, `toil`, `flat`, `lower_rate`, `time_and_half`, `higher_rate`, `double`) VALUES (:userId, :employment_id, :date, :start, :planned_end, :actual_end, :from, :planned_to,:actual_to, :type, :overrun_type, :pay_id_override, :pay_date, :pay_month, :pay_financial_year, :toil, :flat, :lower_rate, :time_and_half, :higher_rate, :double)",
+        {
+            actual_end: shift.actual_end,
+            actual_to: shift.actual_to,
+            date: shift.date,
+            double: shift.double,
+            employment_id: shift.employment_id,
+            flat: shift.flat,
+            from: shift.from,
+            higher_rate: shift.higher_rate,
+            lower_rate: shift.lower_rate,
+            overrun_type: shift.overrun_type,
+            pay_date: shift.pay_date,
+            pay_financial_year: shift.pay_financial_year,
+            pay_id_override: shift.pay_id_override,
+            pay_month: shift.pay_month,
+            planned_end: shift.planned_end,
+            planned_to: shift.planned_to,
+            start: shift.start,
+            time_and_half: shift.time_and_half,
+            toil: shift.toil,
+            type: shift.type,
+            userId: userId,
+        }
     );
 };
 export const updateLogShiftByUserIdAndShiftId = async (
     userId: string,
     shift: LogShift
 ) => {
-    return await executeByArray(
-        "UPDATE `log` SET `employment_id` = ?, `date` = ?, `start` = ?, `planned_end` = ?, `actual_end` = ?, `from` = ?, `planned_to` = ?,`actual_to` = ?, `type` = ?, `overrun_type` = ?, `pay_id_override` = ?, `pay_date` = ?, `pay_month` = ?, `pay_financial_year` = ?, `toil` = ?, `flat` = ?, `lower_rate` = ?, `time_and_half` = ?, `higher_rate` = ?, `double` = ? WHERE `user_id` = ? AND `id` = ?",
-        [
-            shift.employment_id,
-            shift.date,
-            shift.start,
-            shift.planned_end,
-            shift.actual_end,
-            shift.from,
-            shift.actual_to,
-            shift.planned_to,
-            shift.type,
-            shift.overrun_type,
-            shift.pay_id_override,
-            shift.pay_date,
-            shift.pay_month,
-            shift.pay_financial_year,
-            shift.toil,
-            shift.flat,
-            shift.lower_rate,
-            shift.time_and_half,
-            shift.higher_rate,
-            shift.double,
+    return await executeByPlaceholders(
+        "UPDATE `log` SET `employment_id` = :employment_id, `date` = :date, `start` = :start, `planned_end` = :planned_end, `actual_end` = :actual_end, `from` = :from, `planned_to` = :planned_to,`actual_to` = :actual_to, `type` = :type, `overrun_type` = :overrun_type, `pay_id_override` = :pay_id_override, `pay_date` = :pay_date, `pay_month` = :pay_month, `pay_financial_year` = :pay_financial_year, `toil` = :toil, `flat` = :flat, `lower_rate` = :lower_rate, `time_and_half` = :time_and_half, `higher_rate` = :higher_rate, `double` = :double WHERE `user_id` = :userId AND `id` = :id",
+        {
+            actual_end: shift.actual_end,
+            actual_to: shift.actual_to,
+            date: shift.date,
+            double: shift.double,
+            employment_id: shift.employment_id,
+            flat: shift.flat,
+            from: shift.from,
+            higher_rate: shift.higher_rate,
+            id: shift.id,
+            lower_rate: shift.lower_rate,
+            overrun_type: shift.overrun_type,
+            pay_date: shift.pay_date,
+            pay_financial_year: shift.pay_financial_year,
+            pay_id_override: shift.pay_id_override,
+            pay_month: shift.pay_month,
+            planned_end: shift.planned_end,
+            planned_to: shift.planned_to,
+            start: shift.start,
+            time_and_half: shift.time_and_half,
+            toil: shift.toil,
+            type: shift.type,
             userId,
-            shift.id,
-        ]
+        }
     );
 };
 export const deleteLogShiftByUserIdAndShiftId = async (

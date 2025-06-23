@@ -4,7 +4,7 @@ import { Outlet, useLoaderData, useNavigate } from "@tanstack/react-router";
 
 const Log = ({ disabled }: { disabled: boolean }) => {
     const navigate = useNavigate();
-    const { data: log } = useLoaderData({ from: "/_private/log" });
+    const log = useLoaderData({ from: "/_private/log" });
     return (
         <div className="position-relative">
             <LogTable log={log} />

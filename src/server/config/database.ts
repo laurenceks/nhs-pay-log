@@ -15,8 +15,7 @@ export const dbOptions: ConnectionOptions = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_SCHEMA,
     namedPlaceholders: true,
-    /*typeCast: (field, next) =>
-        field.type === "DATE" ? field.string() : next(),*/
+    dateStrings: true,
 };
 
 export const pool = createPool(dbOptions);

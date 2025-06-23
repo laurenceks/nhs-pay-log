@@ -9,10 +9,10 @@ import { msToTableFormat } from "../../../../shared/utils/conversions";
 const LogTable = ({ log }: { log: LogShift[] }) => {
     const navigate = useNavigate();
     const openShiftModal = useCallback(
-        (id: string) =>
+        (id: number) =>
             navigate({
                 to: "/log/$shiftId",
-                params: { shiftId: id },
+                params: { shiftId: id.toString() },
             }),
         []
     );
@@ -63,7 +63,7 @@ const LogTable = ({ log }: { log: LogShift[] }) => {
                                     <td>{msToTableFormat(x.higher_rate)}</td>
                                     <td>{msToTableFormat(x.flat)}</td>
                                     <td>{msToTableFormat(x.time_and_half)}</td>
-                                    <td></td>
+                                    <td>{msToTableFormat(x.double)}</td>
                                     <td>
                                         {new Intl.NumberFormat("en-GB", {
                                             style: "currency",

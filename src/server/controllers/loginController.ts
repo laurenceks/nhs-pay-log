@@ -1,7 +1,7 @@
 import { sendErrorRes, sendRes } from "../utils/sendRes";
 import passport from "passport";
 import logoutAndDestroySession from "../utils/logoutAndDestroySession";
-import { AppUser } from "../../../types/commonTypes";
+import { ClientUser } from "../../../types/commonTypes";
 import { ErrorResponseKey } from "../../../types/responseTypes";
 import { Request, Response } from "express";
 
@@ -12,7 +12,7 @@ export const login = async (req: Request, res: Response) => {
     try {
         passport.authenticate(
             "local",
-            (error: string | null, user: AppUser) => {
+            (error: string | null | { code: string }, user: ClientUser) => {
                 try {
                     if (!error && user) {
                         req.login(user, async (e) => {
@@ -20,7 +20,7 @@ export const login = async (req: Request, res: Response) => {
                                 logoutAndDestroySession(req, res);
                                 sendErrorRes(res, "unauthorised");
                             }
-                            sendRes<AppUser>(res, {
+                            sendRes<ClientUser>(res, {
                                 data: { id: user.id, email: user.email },
                             });
                         });
@@ -29,11 +29,16 @@ export const login = async (req: Request, res: Response) => {
                         if (typeof error === "string") {
                             sendErrorRes(res, error as ErrorResponseKey);
                         } else {
-                            sendErrorRes(res, "unauthorised");
+                            if (error?.code === "ECONNREFUSED") {
+                                sendErrorRes(res);
+                            } else {
+                                sendErrorRes(res, "unauthorised");
+                            }
                         }
                     }
                 } catch (_e) {
                     logoutAndDestroySession(req, res);
+                    sendErrorRes(res);
                 }
             }
         )(req, res);
@@ -45,7 +50,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const checkLoginStatus = async (req: Request, res: Response) => {
     // if user made it to here, then their login credentials are valid
-    sendRes<AppUser>(res, {
+    sendRes<ClientUser>(res, {
         data: {
             id: req.authenticatedUser.id,
             email: req.authenticatedUser.email,

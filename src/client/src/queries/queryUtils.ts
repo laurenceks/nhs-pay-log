@@ -35,6 +35,8 @@ export const fetchJson = async <T = undefined>(
                     window.location.search
             );
             window.location.href = "/login";
+            //stall logic to prevent error registering before the redirect
+            return new Promise(() => {});
         } else {
             throw { ...new Error(json.message), status: res.status, ...json };
         }

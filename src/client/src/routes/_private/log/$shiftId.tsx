@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import ShiftEditModal from "../../../components/shiftEdit/ShiftEditModal";
 import { formatDate } from "../../../../../shared/utils/formatDates";
 import { LogShift } from "../../../../../../types/commonTypes";
@@ -60,9 +60,5 @@ export const Route = createFileRoute("/_private/log/$shiftId")({
                 )
             )
         ).data;
-    },
-    onError: (e) => {
-        console.log(e);
-        throw redirect({ to: ".." });
     },
 });

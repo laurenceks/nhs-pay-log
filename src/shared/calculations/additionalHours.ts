@@ -17,9 +17,9 @@ const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 //TODO sickness/absence
 export const calculateCumulativeAdditionalHours = (
     from: Date,
-    id: string,
+    id: number,
     log: LogShift[] = [],
-    employment: string
+    employment_id: number
 ) => {
     const prevMonday = new Date(from);
     prevMonday.setHours(0, 0, 0, 0);
@@ -35,7 +35,7 @@ export const calculateCumulativeAdditionalHours = (
             valFrom >= prevMonday &&
             valFrom < from &&
             id !== val.id &&
-            employment === val.employment_id
+            employment_id === val.employment_id
         ) {
             if (additionalHoursShiftTypes.includes(val.type)) {
                 return acc + calculateShiftHours(valFrom, valTo);
@@ -89,11 +89,11 @@ export const calculateAdditionalHours = (
     }: {
         from: string;
         actual_to: string;
-        employment_id: string;
+        employment_id: number;
         planned_to: string;
         overrun_type: string;
         type: ShiftTypes;
-        id: string;
+        id: number;
     },
     log: LogShift[]
 ) => {

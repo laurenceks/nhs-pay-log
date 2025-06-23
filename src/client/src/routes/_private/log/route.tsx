@@ -7,8 +7,12 @@ import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
 export const Route = createFileRoute("/_private/log")({
     component: memo(Log),
     loader: async ({ context }) => {
-        return await context.queryClient.ensureQueryData(
-            stripQueryOptionsForEnsureQuery(getLogQueryOptions)
+        return (
+            (
+                await context.queryClient.ensureQueryData(
+                    stripQueryOptionsForEnsureQuery(getLogQueryOptions)
+                )
+            ).data || []
         );
     },
     shouldReload: ({ params }) => {

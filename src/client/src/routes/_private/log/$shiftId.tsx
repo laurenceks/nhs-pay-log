@@ -7,7 +7,6 @@ import mockEmploymentTable from "../../../../../../tests/data/mockEmploymentTabl
 import { getLogShiftQueryOptions } from "../../../queries/logQueries";
 import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
 import { financialYear } from "../../../../../shared/calculations/payDates";
-import { ApiResponse } from "../../../../../../types/responseTypes";
 
 const createShift = () => {
     const today = formatDate(new Date(), "yyyy-mm-dd");
@@ -26,7 +25,7 @@ const createShift = () => {
         employment_id:
             employmentSelectOptions.length === 1
                 ? employmentSelectOptions[0].id
-                : "",
+                : null,
         employment_name:
             employmentSelectOptions.length === 1
                 ? employmentSelectOptions[0].name
@@ -35,7 +34,7 @@ const createShift = () => {
         flat: 0,
         from: "",
         higher_rate: 0,
-        id: "",
+        id: 0,
         lower_rate: 0,
         overrun_type: "OT",
         planned_end: "",
@@ -50,15 +49,17 @@ const createShift = () => {
 
 export const Route = createFileRoute("/_private/log/$shiftId")({
     component: ShiftEditModal,
-    loader: async ({ params, context }): Promise<ApiResponse<LogShift>> => {
+    loader: async ({ params, context }): Promise<LogShift> => {
         if (params.shiftId === "new") {
-            return { data: createShift() };
+            return createShift();
         }
-        return await context.queryClient.ensureQueryData(
-            stripQueryOptionsForEnsureQuery(
-                getLogShiftQueryOptions(params.shiftId)
+        return (
+            await context.queryClient.ensureQueryData(
+                stripQueryOptionsForEnsureQuery(
+                    getLogShiftQueryOptions(parseInt(params.shiftId, 10))
+                )
             )
-        );
+        ).data;
     },
     onError: (e) => {
         console.log(e);

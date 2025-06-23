@@ -1,6 +1,6 @@
 import logoutAndDestroySession from "../utils/logoutAndDestroySession";
 import { sendErrorRes } from "../utils/sendRes";
-import { AppUser } from "../../../types/commonTypes";
+import { ClientUser } from "../../../types/commonTypes";
 import { NextFunction, Request, Response } from "express";
 
 const authenticateRequest = async (
@@ -10,7 +10,7 @@ const authenticateRequest = async (
 ) => {
     const { user } = req;
     if (user && req.isAuthenticated()) {
-        req.authenticatedUser = user as AppUser;
+        req.authenticatedUser = user as ClientUser;
         next();
     } else {
         // user not authenticated - destroy session

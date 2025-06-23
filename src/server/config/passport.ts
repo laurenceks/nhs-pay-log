@@ -7,10 +7,10 @@ import {
 } from "passport-local";
 import validateHash from "../utils/crypto";
 import { readUserByEmail, readUserById } from "../crud/userCrud";
-import { AppUser } from "../../../types/commonTypes";
+import { ClientUser } from "../../../types/commonTypes";
 
 const configPassport = () => {
-    passport.serializeUser((user: AppUser, done) => {
+    passport.serializeUser((user: ClientUser, done) => {
         done(null, user.id);
     });
 
@@ -44,14 +44,8 @@ const configPassport = () => {
                         done("invalidUsernameOrPassword", false);
                     } else {
                         // user exists, loginController is valid, user isn't blacklisted - proceed
-                        const {
-                            createdAt,
-                            updatedAt,
-                            deleted,
-                            salt,
-                            hash,
-                            ...reqUser
-                        } = user;
+                        const { createdAt, updatedAt, salt, hash, ...reqUser } =
+                            user;
 
                         done(null, {
                             ...reqUser,

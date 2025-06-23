@@ -3,14 +3,13 @@ import { formatDate } from "./formatDates";
 import mockPayTable from "../../../tests/data/mockPayTable";
 import mockEmploymentTable from "../../../tests/data/mockEmploymentTable";
 import {
+    EmploymentsTable,
     LookupTable,
-    PayTableItemValue,
-    PayTableStructured,
+    PayTableItem,
 } from "../../../types/lookupTypes";
 
 const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
     const dSorting = formatDate(d, "yyyy-mm-dd");
-    // console.log(x.to, x.from);
     return (
         (x.to && x.from && x.to >= dSorting && x.from <= dSorting) ||
         (!x.from && x.to && x.to >= dSorting) ||
@@ -20,7 +19,7 @@ const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
 const withinDateRangeAndSameEmployment = <T>(
     d: string | Date,
     x: LookupTable<T>[0],
-    employment_id?: string
+    employment_id?: number
 ) => {
     return (
         withinDateRange(d, x) &&
@@ -36,7 +35,7 @@ export const lookupByDate = <T>({
 }: {
     arr: LookupTable<T>;
     d: string | Date;
-    employment_id?: string;
+    employment_id?: number;
     returnKey?: keyof T;
 }) => {
     const result = arr.find((x) => {
@@ -51,23 +50,29 @@ export const lookupPayByEmployment = ({
     d = new Date(),
     returnKey,
     employment_id,
+    pay_id_override,
 }: {
     d: string | Date;
-    employment_id: string;
-    returnKey?: keyof PayTableItemValue;
+    employment_id: number;
+    returnKey?: keyof PayTableItem;
+    pay_id_override?: string | null;
 }) => {
-    const band = lookupByDate<(typeof mockEmploymentTable)[0]>({
-        arr: mockEmploymentTable,
-        d,
-        employment_id,
-        returnKey: "pay_id",
-    }) as keyof PayTableStructured;
-
-    if (band && band in mockPayTable) {
-        const result: PayTableItemValue | undefined = lookupByDate({
-            arr: mockPayTable[band].values,
+    const payGroupId =
+        pay_id_override ||
+        (lookupByDate<EmploymentsTable[0]>({
+            arr: mockEmploymentTable,
             d,
-        }) as PayTableItemValue | undefined;
+            employment_id,
+            returnKey: "pay_group_id",
+        }) as keyof PayTableItem);
+
+    if (payGroupId) {
+        const result: PayTableItem | undefined = mockPayTable.find((x) => {
+            return (
+                withinDateRange<PayTableItem>(d, x) && payGroupId === x.group_id
+            );
+        });
+
         if (result) {
             if (returnKey && returnKey in result) {
                 return result[returnKey];
@@ -94,7 +99,7 @@ export const lookupShiftExtra = (
 export const filterOptionsByDate = <T>(
     arr: LookupTable<T> = [],
     d: string | Date = new Date(),
-    employment_id?: string
+    employment_id?: number
 ) => {
     return arr.filter((x) =>
         withinDateRangeAndSameEmployment(d, x, employment_id)

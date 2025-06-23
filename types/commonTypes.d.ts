@@ -25,9 +25,10 @@ export type ShiftEdit = {
     from: string;
     planned_to: string;
     actual_to: string;
-    id: string;
+    id: number;
     actual_end: string;
-    employment_id: string;
+    employment_id: number;
+    employment_name: string;
     extras: ShiftExtra["id"][];
     overrun_type: Overruns;
     planned_end: string;
@@ -67,15 +68,22 @@ export type LogShift = AdditionalHours &
 
 export type ShiftEditModalState = { show: boolean; shift: LogShift | null };
 
-export interface AppUser {
+export interface ClientUser {
     id: string;
     email: string;
+}
+
+export interface ApiUser extends ClientUser {
+    hash: string;
+    salt: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 declare global {
     namespace Express {
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-        interface User extends AppUser {}
+        interface User extends ClientUser {}
         interface Request {
             authenticatedUser: CustomUser;
         }

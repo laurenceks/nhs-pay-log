@@ -2,13 +2,13 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { useState } from "react";
-import { AppUser } from "../../../types/commonTypes";
+import { ClientUser } from "../../../types/commonTypes";
 import { getLogin } from "./queries/loginQueries";
 
 export type Auth = {
     loginCheckedOnce: boolean;
-    user: null | AppUser;
-    login: (user: AppUser) => void;
+    user: null | ClientUser;
+    login: (user: ClientUser) => void;
     logout: () => void;
     isAuth: () => Promise<boolean>;
     setRedirect: (url: string) => void;

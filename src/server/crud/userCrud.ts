@@ -1,5 +1,6 @@
 import { executeByArray } from "../utils/db";
 import { randomUUID } from "node:crypto";
+import { ApiUser } from "../../../types/commonTypes";
 
 export const createUser = async (email: string, hash: string, salt: string) => {
     await executeByArray(
@@ -9,10 +10,14 @@ export const createUser = async (email: string, hash: string, salt: string) => {
 };
 
 export const readUserByEmail = async (email: string) => {
-    return await executeByArray("SELECT * FROM `users` WHERE `email` = ?", [
-        email,
-    ]);
+    return await executeByArray<ApiUser>(
+        "SELECT * FROM `users` WHERE `email` = ?",
+        [email]
+    );
 };
 export const readUserById = async (id: string) => {
-    return await executeByArray("SELECT * FROM `users` WHERE `id` = ?", [id]);
+    return await executeByArray<ApiUser>(
+        "SELECT * FROM `users` WHERE `id` = ?",
+        [id]
+    );
 };

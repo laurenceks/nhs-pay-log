@@ -1,13 +1,21 @@
 import { ConnectionOptions, createPool } from "mysql2/promise";
 import { configDotenv } from "dotenv";
 import path from "node:path";
-import { dirname } from "dirname-filename-esm";
+import { resolvedDirname } from "../utils/dirname";
 
 // load dot env variables here as well as entry point due to hoisting
 configDotenv({
-    path: path.resolve(dirname(import.meta), "./../.env"),
+    path: path.resolve(resolvedDirname, "./../.env"),
     override: false,
 });
+
+if (!process.env.NODE_ENV) {
+    // if unresolved try server path
+    configDotenv({
+        path: path.resolve(resolvedDirname, "./.env"),
+        override: true,
+    });
+}
 export const dbOptions: ConnectionOptions = {
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT as string, 10),

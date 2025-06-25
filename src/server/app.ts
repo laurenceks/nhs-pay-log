@@ -4,27 +4,20 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { dirname } from "dirname-filename-esm";
 import { dbOptions } from "./config/database";
 import routes from "./routes/routes";
 import configPassport from "./config/passport";
 import passport from "passport";
+import { resolvedDirname } from "./utils/dirname";
+import expressMySqlSession from "express-mysql-session";
 
-const __dirname = dirname(import.meta);
-
-process.chdir(__dirname);
+process.chdir(resolvedDirname);
 
 const app = express();
 configDotenv();
 
-async function createMySQLStore() {
-    const connectMySQL = await import("express-mysql-session");
-    const MySQLStore = connectMySQL.default(session);
-
-    return new MySQLStore(dbOptions);
-}
-
-const sessionStore = await createMySQLStore();
+const MySQLStore = expressMySqlSession(session);
+const sessionStore = new MySQLStore(dbOptions);
 
 if (process.env.NODE_ENV !== "development") {
     app.use(helmet());
@@ -72,8 +65,8 @@ app.use(passport.session());
 
 app.use(routes);
 
-app.listen(5000);
+app.listen(process.env.API_PORT);
 
 if (process.env.NODE_ENV === "development") {
-    console.log("Express server now running on port 5000");
+    console.log(`Express server now running on port ${process.env.API_PORT}`);
 }

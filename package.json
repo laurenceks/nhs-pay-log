@@ -6,7 +6,8 @@
   "scripts": {
     "client": "vite --host",
     "server": "tsx watch ./src/server/app.ts",
-    "build": "tsc -b && vite build",
+    "buildClient": "tsc -b && vite build",
+    "buildServer": "tsx esbuild.ts",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
@@ -15,6 +16,7 @@
     "-": "^0.0.1",
     "@number-flow/react": "^0.5.9",
     "@tanstack/react-query": "^5.80.7",
+    "@tanstack/react-query-devtools": "^5.81.2",
     "@tanstack/react-router": "^1.120.5",
     "@tanstack/react-router-devtools": "^1.120.6",
     "bootstrap": "^5.3.6",
@@ -56,6 +58,7 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "cross-env": "^7.0.3",
+    "esbuild": "^0.25.5",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-import-resolver-typescript": "^4.4.2",

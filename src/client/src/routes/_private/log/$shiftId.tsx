@@ -61,4 +61,5 @@ export const Route = createFileRoute("/_private/log/$shiftId")({
             )
         ).data;
     },
+    gcTime: 0,
 });

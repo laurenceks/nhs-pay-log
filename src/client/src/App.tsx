@@ -4,6 +4,7 @@ import { routeTree } from "./routeTree.gen";
 import { useState } from "react";
 import { ClientUser } from "../../../types/commonTypes";
 import { getLogin } from "./queries/loginQueries";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export type Auth = {
     loginCheckedOnce: boolean;
@@ -14,10 +15,9 @@ export type Auth = {
     setRedirect: (url: string) => void;
 };
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 const router = createRouter({
     routeTree,
-    pathParamsAllowedCharacters: [":"],
     defaultPendingMinMs: 0,
     context: { queryClient, auth: undefined },
 });
@@ -67,7 +67,6 @@ const App = () => {
                                 if (!auth.loginCheckedOnce) {
                                     try {
                                         const loginStatus = await getLogin();
-                                        console.log(loginStatus);
                                         if (loginStatus?.success) {
                                             setAuth((prevState) => {
                                                 return {
@@ -96,6 +95,7 @@ const App = () => {
                     }}
                 />
             </div>
+            <ReactQueryDevtools />
         </QueryClientProvider>
     );
 };

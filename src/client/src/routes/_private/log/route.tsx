@@ -15,8 +15,4 @@ export const Route = createFileRoute("/_private/log")({
             ).data || []
         );
     },
-    shouldReload: ({ params }) => {
-        return !Object.keys(params).length;
-    },
-    pendingMs: 0,
 });

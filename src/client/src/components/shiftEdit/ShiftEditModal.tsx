@@ -17,7 +17,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
 import mockPayTable from "../../../../../tests/data/mockPayTable";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
     deleteLogShiftMutationOptions,
     patchLogShiftMutationOptions,
@@ -26,7 +26,6 @@ import {
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
     const log = useLoaderData({ from: "/_private/log" });
     const shift = useLoaderData({ from: "/_private/log/$shiftId" });
 
@@ -51,16 +50,13 @@ const ShiftEditModal = () => {
 
     const { mutateAsync: mutatePost, isPending: postPending } = useMutation({
         ...postLogShiftMutationOptions({ ...editState, ...ushState }),
-        onSuccess: () => closeModal(),
     });
     const { mutateAsync: mutatePatch, isPending: patchPending } = useMutation({
         ...patchLogShiftMutationOptions({ ...editState, ...ushState }),
-        onSuccess: () => closeModal(),
     });
     const { mutateAsync: mutateDelete, isPending: deletePending } = useMutation(
         {
             ...deleteLogShiftMutationOptions(shift.id),
-            onSuccess: () => closeModal(),
         }
     );
 
@@ -88,10 +84,7 @@ const ShiftEditModal = () => {
 
     const saveEdit = async () => {
         await (editState.id ? mutatePatch() : mutatePost());
-        await queryClient.invalidateQueries({
-            queryKey: ["log"],
-            refetchType: "all",
-        });
+        await closeModal();
     };
 
     const changeHandler = (
@@ -140,7 +133,6 @@ const ShiftEditModal = () => {
             show={show}
             onExited={() => {
                 navigate({ to: "/log" });
-                // setModalState({ show: false, shift: null });
             }}
             size="lg"
             fullscreen={"lg-down"}
@@ -426,10 +418,6 @@ const ShiftEditModal = () => {
                             }
                             onClick={async () => {
                                 await mutateDelete();
-                                await queryClient.invalidateQueries({
-                                    queryKey: ["log"],
-                                    refetchType: "all",
-                                });
                                 await closeModal();
                             }}
                             variant="danger"

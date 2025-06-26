@@ -1,4 +1,9 @@
-import { LogShift, Overruns, ShiftTypes } from "../../../../types/commonTypes";
+import {
+    Employment,
+    LogShift,
+    Overruns,
+    ShiftTypes,
+} from "../../../../types/commonTypes";
 import { makeToAlwaysLater } from "../../../shared/utils/conversions";
 import { formatDate } from "../../../shared/utils/formatDates";
 import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup";
@@ -6,7 +11,6 @@ import {
     financialYear,
     nextPayDate,
 } from "../../../shared/calculations/payDates";
-import { EmploymentsTable } from "../../../../types/lookupTypes";
 import { filterOptionsByDate } from "../../../shared/utils/lookup";
 import mockEmploymentTable from "../../../../tests/data/mockEmploymentTable";
 
@@ -24,7 +28,7 @@ export type LogShiftReducerOptions =
       }
     | {
           action: "employment";
-          payload: EmploymentsTable[0] | undefined;
+          payload: Employment | undefined;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
@@ -235,7 +239,7 @@ const logShiftReducer = (
         case "employment": {
             return {
                 ...prevState,
-                employment_id: payload?.employment_id || 0,
+                employment_id: payload?.id || 0,
                 employment_name: payload?.name || "",
             };
         }

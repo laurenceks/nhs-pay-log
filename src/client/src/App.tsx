@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { useState } from "react";
 import { ClientUser } from "../../../types/commonTypes";
-import { getLogin } from "./queries/loginQueries";
+import { getLoginFetch } from "./queries/loginQueries";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export type Auth = {
@@ -38,6 +38,7 @@ const App = () => {
         isAuth: async () => false,
     });
     const logout = () =>
+        //TODO invalidate all queries
         setAuth((prevState) => ({
             ...prevState,
             loginCheckedOnce: true,
@@ -66,7 +67,8 @@ const App = () => {
                                 }
                                 if (!auth.loginCheckedOnce) {
                                     try {
-                                        const loginStatus = await getLogin();
+                                        const loginStatus =
+                                            await getLoginFetch();
                                         if (loginStatus?.success) {
                                             setAuth((prevState) => {
                                                 return {

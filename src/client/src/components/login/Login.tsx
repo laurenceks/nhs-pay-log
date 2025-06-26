@@ -1,7 +1,7 @@
 import { Button, Form } from "react-bootstrap";
 import { ChangeEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { postLogin } from "../../queries/loginQueries";
+import { postLoginFetch } from "../../queries/loginQueries";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 
 const Login = () => {
@@ -10,7 +10,7 @@ const Login = () => {
     const [formState, setFormState] = useState({ email: "", password: "" });
     const { mutate, error, isPending } = useMutation({
         mutationKey: ["login"],
-        mutationFn: postLogin,
+        mutationFn: postLoginFetch,
         onSuccess: (response) => {
             if (response.success) {
                 context.auth?.login(response.data);

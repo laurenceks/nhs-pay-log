@@ -7,12 +7,12 @@ import logShiftReducer from "../../reducers/logShiftReducer";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import {
     CalculatedHours,
+    Employment,
     LogShift,
     ShiftExtra,
 } from "../../../../../types/commonTypes";
 import calculateExtraPay from "../../../../shared/calculations/extraPay";
 import { filterOptionsByDate } from "../../../../shared/utils/lookup";
-import mockEmploymentTable from "../../../../../tests/data/mockEmploymentTable";
 import { Typeahead } from "react-bootstrap-typeahead";
 import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
@@ -27,7 +27,9 @@ import {
 const ShiftEditModal = () => {
     const navigate = useNavigate();
     const log = useLoaderData({ from: "/_private/log" });
-    const shift = useLoaderData({ from: "/_private/log/$shiftId" });
+    const { shift, employments } = useLoaderData({
+        from: "/_private/log/$shiftId",
+    });
 
     const [show, setShow] = useState<boolean>(true);
 
@@ -60,9 +62,10 @@ const ShiftEditModal = () => {
         }
     );
 
-    const employmentSelectOptions = filterOptionsByDate<
-        (typeof mockEmploymentTable)[0]
-    >(mockEmploymentTable, editState.date);
+    const employmentSelectOptions = filterOptionsByDate<Employment>(
+        employments,
+        editState.date
+    );
 
     useEffect(() => {
         if (
@@ -70,6 +73,7 @@ const ShiftEditModal = () => {
                 (x) => x.id === editState.employment_id
             )
         ) {
+            console.log(employmentSelectOptions[0]);
             //replace current employment id with first match
             setEditState({
                 action: "employment",

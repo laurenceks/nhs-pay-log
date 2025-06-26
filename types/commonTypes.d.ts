@@ -89,3 +89,12 @@ declare global {
         }
     }
 }
+
+export type Employment = {
+    id: number;
+    name: string;
+    from: string | null;
+    to: string | null;
+    pay_group_id: string;
+    weekly_hours: number;
+};

@@ -1,24 +1,28 @@
 import { Button, Form } from "react-bootstrap";
 import { ChangeEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { postRegister } from "../../queries/loginQueries";
-import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { postRegisterFetch } from "../../queries/loginQueries";
+import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { formatDate } from "../../../../shared/utils/formatDates";
 
 const Login = () => {
     const navigate = useNavigate();
-    const context = useRouteContext({ strict: false });
+    const payBands = useLoaderData({ from: "/_public/_login/register" });
     const [formState, setFormState] = useState({
         email: "",
         password1: "",
         password2: "",
+        pay_group_id: "",
+        employment_from: "",
+        employment_name: "My job",
+        weekly_hours: 37.5,
     });
     const { mutate, error, isPending } = useMutation({
         mutationKey: ["register"],
-        mutationFn: postRegister,
-        onSuccess: (response) => {
+        mutationFn: postRegisterFetch,
+        onSuccess: async (response) => {
             if (response.success) {
-                context.auth?.login(response.data);
-                navigate({
+                await navigate({
                     to: "/",
                 });
             }
@@ -70,6 +74,60 @@ const Login = () => {
                         onChange={changeHandler}
                     />
                 </Form.Group>
+                <Form.Group controlId="editEmploymentName">
+                    <Form.Label>Employment name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="My job"
+                        value={formState.employment_name}
+                        data-field={"employment_name"}
+                        onChange={changeHandler}
+                    />
+                </Form.Group>
+                <Form.Group controlId="editEmploymentFrom">
+                    <Form.Label>Employment start</Form.Label>
+                    <Form.Control
+                        type="date"
+                        placeholder=""
+                        max={formatDate(new Date(), "yyyy-mm-dd")}
+                        value={formState.employment_from}
+                        data-field={"employment_from"}
+                        onChange={changeHandler}
+                    />
+                </Form.Group>
+                <Form.Group controlId="editEmploymentPayBand">
+                    <Form.Label>Pay band</Form.Label>
+                    <Form.Select
+                        value={formState?.pay_group_id}
+                        data-field={"pay_group_id"}
+                        onChange={changeHandler}
+                        disabled={payBands.length <= 1}
+                    >
+                        <>
+                            {!formState?.pay_group_id && (
+                                <option>Select your pay band</option>
+                            )}
+                        </>
+                        {payBands.map((x) => (
+                            <option key={x.pay_group_id} value={x.pay_group_id}>
+                                {x.label}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="editEmploymentWeeklyHours">
+                    <Form.Label>Weekly hours</Form.Label>
+                    <Form.Control
+                        type="number"
+                        max={37.5}
+                        min={0}
+                        step={0.01}
+                        placeholder="37.5"
+                        value={formState.weekly_hours}
+                        data-field={"weekly_hours"}
+                        onChange={changeHandler}
+                    />
+                </Form.Group>
                 <Button
                     type="submit"
                     disabled={
@@ -77,6 +135,10 @@ const Login = () => {
                         !formState.email ||
                         !formState.password1 ||
                         !formState.password2 ||
+                        !formState.employment_name ||
+                        !formState.employment_from ||
+                        !formState.pay_group_id ||
+                        !formState.weekly_hours ||
                         formState.password1 !== formState.password2
                     }
                 >

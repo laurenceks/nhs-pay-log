@@ -1,22 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ShiftEditModal from "../../../components/shiftEdit/ShiftEditModal";
 import { formatDate } from "../../../../../shared/utils/formatDates";
-import { Employment, LogShift } from "../../../../../../types/commonTypes";
-import { filterOptionsByDate } from "../../../../../shared/utils/lookup";
+import { Contract, LogShift } from "../../../../../../types/commonTypes";
 import { getLogShiftQueryOptions } from "../../../queries/logQueries";
 import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
 import { financialYear } from "../../../../../shared/calculations/payDates";
-import { getEmploymentsQueryOptions } from "../../../queries/employmentQueries";
+import { getContractsQueryOptions } from "../../../queries/contractQueries";
+import { updateShiftContract } from "../../../../../shared/utils/updateShiftContract";
 
 export const Route = createFileRoute("/_private/log/$shiftId")({
     component: ShiftEditModal,
     loader: async ({
         params,
         context,
-    }): Promise<{ shift: LogShift; employments: Employment[] }> => {
-        const employments = (
+    }): Promise<{ shift: LogShift; contracts: Contract[] }> => {
+        const contracts = (
             await context.queryClient.ensureQueryData(
-                stripQueryOptionsForEnsureQuery(getEmploymentsQueryOptions)
+                stripQueryOptionsForEnsureQuery(getContractsQueryOptions)
             )
         ).data.map((x) => ({ ...x, weekly_hours: Number(x.weekly_hours) }));
 
@@ -28,13 +28,18 @@ export const Route = createFileRoute("/_private/log/$shiftId")({
                     )
                 )
             ).data;
-            return { shift, employments };
+            return { shift, contracts };
         } else {
             const today = formatDate(new Date(), "yyyy-mm-dd");
-            const employmentSelectOptions = filterOptionsByDate<Employment>(
-                employments,
+            const [, , filteredContracts] = updateShiftContract(
+                null,
+                null,
+                contracts,
                 today
             );
+            const onlyContract =
+                filteredContracts.length === 1 ? filteredContracts[0] : null;
+            console.log(onlyContract);
             const shift: LogShift = {
                 actual_end: "",
                 actual_to: "",
@@ -43,14 +48,10 @@ export const Route = createFileRoute("/_private/log/$shiftId")({
                 pay_month: formatDate(today, "yy-mm"),
                 pay_financial_year: financialYear(today),
                 double: 0,
-                employment_id:
-                    employmentSelectOptions.length === 1
-                        ? employmentSelectOptions[0].id
-                        : 0,
-                employment_name:
-                    employmentSelectOptions.length === 1
-                        ? employmentSelectOptions[0].name
-                        : "",
+                employment_id: onlyContract?.employment_id || 0,
+                employment_name: onlyContract?.employment_name || "",
+                contract_id: onlyContract?.id || 0,
+                contract_name: onlyContract?.name || "",
                 extras: [],
                 flat: 0,
                 from: "",
@@ -65,8 +66,9 @@ export const Route = createFileRoute("/_private/log/$shiftId")({
                 toil: 0,
                 type: "Normal",
                 pay_id_override: null,
+                weekly_hours: onlyContract?.weekly_hours || 37.5,
             };
-            return { shift, employments };
+            return { shift, contracts };
         }
     },
     gcTime: 0,

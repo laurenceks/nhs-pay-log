@@ -3,19 +3,17 @@ import { executeByArray, executeByPlaceholders } from "../utils/db";
 export const createEmployment = async (
     userId: string,
     from: string,
-    payGroupId: string,
-    name: string,
-    weeklyHours: number
+    name: string
 ) => {
     return await executeByPlaceholders(
-        "INSERT INTO `employments` (`user_id`, `from`, `pay_group_id`, `name`, `weekly_hours`) VALUES (:userId, :from, :payGroupId, :name, :weeklyHours)",
-        { userId, from, payGroupId, name, weeklyHours }
+        "INSERT INTO `employments` (`user_id`, `from`, `name`) VALUES (:userId, :from, :name)",
+        { userId, from, name }
     );
 };
 
 export const readEmploymentsByUserId = async (userId: string) => {
     return await executeByArray(
-        "SELECT `id`, `name`, `from`, `to`, `weekly_hours`, `pay_group_id` FROM `employments` WHERE `user_id` = ? ORDER BY `from`, `to`, `name`",
+        "SELECT `id`, `name`, `from`, `to` FROM `employments` WHERE `user_id` = ? ORDER BY `from`, `to`, `name`",
         [userId]
     );
 };

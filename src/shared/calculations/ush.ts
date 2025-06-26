@@ -134,7 +134,6 @@ export const calculateUsh = (
     if (from && to && ushTypes.includes(type)) {
         //TODO is making sure timestamps are always later still necessary now that they are set using the reducer which makes sure already?
         const { fromObj, toObj } = makeToAlwaysLater(from, to);
-        const hoursOverThresholdMs = hoursOverThreshold * 60 * 60 * 1000;
 
         lowerRateRaw = calculateRawLowerRate(
             new Date(fromObj),
@@ -152,7 +151,7 @@ export const calculateUsh = (
 
         if (hoursOverThreshold) {
             //recalculate USH based on new end
-            toObj.setTime(toObj.getTime() + hoursOverThresholdMs * -1);
+            toObj.setTime(toObj.getTime() + hoursOverThreshold * -1);
             lowerRateRaw = calculateRawLowerRate(
                 new Date(fromObj),
                 new Date(toObj)
@@ -169,13 +168,13 @@ export const calculateUsh = (
                 // only lower rate
                 lowerRateRaw = Math.max(
                     0,
-                    shiftLength - remainingBreak - hoursOverThresholdMs
+                    shiftLength - remainingBreak - hoursOverThreshold
                 );
             } else if (!lowerRateRaw) {
                 // only higher rate
                 higherRateRaw = Math.max(
                     0,
-                    shiftLength - remainingBreak - hoursOverThresholdMs
+                    shiftLength - remainingBreak - hoursOverThreshold
                 );
             } else {
                 if (hoursOverThreshold) {

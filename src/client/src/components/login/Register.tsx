@@ -15,6 +15,7 @@ const Login = () => {
         pay_group_id: "",
         employment_from: "",
         employment_name: "My job",
+        contract_name: "My contract",
         weekly_hours: 37.5,
     });
     const { mutate, error, isPending } = useMutation({
@@ -28,7 +29,9 @@ const Login = () => {
             }
         },
     });
-    const changeHandler = (e: ChangeEvent<HTMLInputElement>) =>
+    const changeHandler = (
+        e: ChangeEvent<HTMLInputElement> & ChangeEvent<HTMLSelectElement>
+    ) =>
         setFormState((prevState) => ({
             ...prevState,
             [e.target.dataset.field as string]: e.target.value,
@@ -81,6 +84,16 @@ const Login = () => {
                         placeholder="My job"
                         value={formState.employment_name}
                         data-field={"employment_name"}
+                        onChange={changeHandler}
+                    />
+                </Form.Group>
+                <Form.Group controlId="editContractName">
+                    <Form.Label>Employment name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="My contract"
+                        value={formState.contract_name}
+                        data-field={"contract_name"}
                         onChange={changeHandler}
                     />
                 </Form.Group>

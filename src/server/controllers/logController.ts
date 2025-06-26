@@ -21,7 +21,6 @@ export const getLogShift = async (req: Request, res: Response) => {
         req.authenticatedUser.id,
         req.params.shiftId
     );
-    console.log(data);
     if (data) {
         sendRes(res, { data: data });
     } else {

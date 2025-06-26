@@ -7,7 +7,6 @@ import logShiftReducer from "../../reducers/logShiftReducer";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import {
     CalculatedHours,
-    Employment,
     LogShift,
     ShiftExtra,
 } from "../../../../../types/commonTypes";
@@ -23,11 +22,12 @@ import {
     patchLogShiftMutationOptions,
     postLogShiftMutationOptions,
 } from "../../queries/logQueries";
+import { updateShiftContract } from "../../../../shared/utils/updateShiftContract";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
     const log = useLoaderData({ from: "/_private/log" });
-    const { shift, employments } = useLoaderData({
+    const { shift, contracts } = useLoaderData({
         from: "/_private/log/$shiftId",
     });
 
@@ -62,22 +62,19 @@ const ShiftEditModal = () => {
         }
     );
 
-    const employmentSelectOptions = filterOptionsByDate<Employment>(
-        employments,
-        editState.date
-    );
+    const [contractValidOnDate, newContract, contractSelectOptions] =
+        updateShiftContract(
+            editState.contract_id,
+            editState.employment_id,
+            contracts,
+            editState.date
+        );
 
     useEffect(() => {
-        if (
-            !employmentSelectOptions.some(
-                (x) => x.id === editState.employment_id
-            )
-        ) {
-            console.log(employmentSelectOptions[0]);
-            //replace current employment id with first match
+        if (!contractValidOnDate) {
             setEditState({
-                action: "employment",
-                payload: employmentSelectOptions[0],
+                action: "contract",
+                payload: newContract,
             });
         }
     }, [editState.date]);
@@ -197,42 +194,36 @@ const ShiftEditModal = () => {
                         </div>
                         <div className="d-flex flex-wrap gap-3">
                             <Form.Group controlId="editEmployment">
-                                <Form.Label>Employment</Form.Label>
+                                <Form.Label>Contract</Form.Label>
                                 <Form.Select
-                                    value={editState?.employment_id}
-                                    data-field={"employment_id"}
+                                    value={editState?.contract_id}
+                                    data-field={"contract_id"}
                                     onChange={(e) => {
                                         setEditState({
-                                            action: "employment",
-                                            payload:
-                                                employmentSelectOptions.find(
-                                                    (x) =>
-                                                        x.id ===
-                                                        parseInt(
-                                                            e.currentTarget
-                                                                .value,
-                                                            10
-                                                        )
-                                                ),
+                                            action: "contract",
+                                            payload: contractSelectOptions.find(
+                                                (x) =>
+                                                    x.id ===
+                                                    parseInt(
+                                                        e.currentTarget.value,
+                                                        10
+                                                    )
+                                            ),
                                         });
                                     }}
-                                    disabled={
-                                        employmentSelectOptions.length <= 1
-                                    }
+                                    disabled={contractSelectOptions.length <= 1}
                                 >
                                     <>
-                                        {!editState?.employment_id && (
-                                            <option>
-                                                Pick an employment type
-                                            </option>
+                                        {!editState?.contract_id && (
+                                            <option>Pick a contract</option>
                                         )}
                                     </>
-                                    {employmentSelectOptions.map((x) => (
+                                    {contractSelectOptions.map((x) => (
                                         <option
-                                            key={`employment-${x.id}`}
+                                            key={`contract-${x.id}`}
                                             value={x.id}
                                         >
-                                            {x.name}
+                                            {`${x.employment_name} - ${x.name}`}
                                         </option>
                                     ))}
                                 </Form.Select>
@@ -403,7 +394,7 @@ const ShiftEditModal = () => {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                {editState?.id && (
+                {!!editState?.id && (
                     <>
                         <Button
                             disabled={

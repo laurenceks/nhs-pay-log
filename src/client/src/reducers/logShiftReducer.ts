@@ -1,5 +1,5 @@
 import {
-    Employment,
+    Contract,
     LogShift,
     Overruns,
     ShiftTypes,
@@ -11,8 +11,8 @@ import {
     financialYear,
     nextPayDate,
 } from "../../../shared/calculations/payDates";
-import { filterOptionsByDate } from "../../../shared/utils/lookup";
-import mockEmploymentTable from "../../../../tests/data/mockEmploymentTable";
+import { updateShiftContract } from "../../../shared/utils/updateShiftContract";
+import { queryClient } from "../App";
 
 export type LogShiftReducerOptions =
     | {
@@ -27,13 +27,8 @@ export type LogShiftReducerOptions =
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
-          action: "employment";
-          payload: Employment | undefined;
-          // setNewToasts: (newToasts: NotificationToastType[]) => void;
-      }
-    | {
-          action: "employment_id";
-          payload: number;
+          action: "contract";
+          payload: Contract | undefined;
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
@@ -236,17 +231,12 @@ const logShiftReducer = (
                 };
             }
         }
-        case "employment": {
+        case "contract": {
             return {
                 ...prevState,
-                employment_id: payload?.id || 0,
-                employment_name: payload?.name || "",
-            };
-        }
-        case "employment_id": {
-            return {
-                ...prevState,
-                employment_id: payload,
+                contract_id: payload?.id || 0,
+                contract_name: payload?.name || "",
+                employment_id: payload?.employment_id || 0,
             };
         }
         case "type": {
@@ -300,18 +290,13 @@ const logShiftReducer = (
                     todayFormatted,
                     prevState.start
                 );
-                const employmentSelectOptions = filterOptionsByDate<
-                    (typeof mockEmploymentTable)[0]
-                >(mockEmploymentTable, today);
-                const employment: { id: number; name: string } =
-                    employmentSelectOptions.some(
-                        (x) => x.id === prevState.employment_id
-                    )
-                        ? {
-                              id: prevState.employment_id,
-                              name: prevState.employment_name,
-                          }
-                        : employmentSelectOptions[0];
+                const [, newContract] = updateShiftContract(
+                    prevState.contract_id,
+                    prevState.employment_id,
+                    queryClient.getQueryData(["contract"]),
+                    prevState.date
+                );
+
                 return {
                     ...prevState,
                     ...payDates,
@@ -324,8 +309,17 @@ const logShiftReducer = (
                         prevState.planned_end,
                         prevState.actual_end || prevState.planned_end
                     ),
-                    employment_id: employment.id || 0,
-                    employment_name: employment.name || "",
+                    contract_id: newContract?.id || prevState.contract_id || 0,
+                    contract_name:
+                        newContract?.name || prevState.contract_name || "",
+                    employment_id:
+                        newContract?.employment_id ||
+                        prevState.employment_id ||
+                        0,
+                    employment_name:
+                        newContract?.employment_name ||
+                        prevState.employment_name ||
+                        "",
                 };
             } else {
                 return {

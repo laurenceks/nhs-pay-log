@@ -6,11 +6,11 @@ import {
 } from "./shiftLengths";
 import {
     AdditionalHours,
+    Contract,
     LogShift,
+    ShiftEdit,
     ShiftTypes,
 } from "../../../types/commonTypes";
-import { lookupByDate } from "../utils/lookup";
-import mockEmploymentTable from "../../../tests/data/mockEmploymentTable";
 
 const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 
@@ -86,6 +86,7 @@ export const calculateAdditionalHours = (
         type,
         id,
         employment_id,
+        weekly_hours,
     }: {
         from: string;
         actual_to: string;
@@ -93,7 +94,8 @@ export const calculateAdditionalHours = (
         planned_to: string;
         overrun_type: string;
         type: ShiftTypes;
-        id: number;
+        id: ShiftEdit["id"];
+        weekly_hours: Contract["weekly_hours"];
     },
     log: LogShift[]
 ) => {
@@ -143,15 +145,8 @@ export const calculateAdditionalHours = (
 
         if (paidAdditionalHours || overrunHours) {
             const weeklyOtThresholdHours =
-                1.35e8 - //37.5hrs
-                decimalHoursToMs(
-                    (lookupByDate({
-                        arr: mockEmploymentTable,
-                        d: fromObj,
-                        returnKey: "weekly_hours",
-                        employment_id: employment_id,
-                    }) as number) ?? 1.35e8 //37.5hrs
-                );
+                1.35e8 -
+                (weekly_hours ? decimalHoursToMs(weekly_hours) : 1.35e8); //37.5hrs fallback
             if (type === "OT" || type === "Normal") {
                 additionalHoursBreakdown.flat = Math.max(
                     0,

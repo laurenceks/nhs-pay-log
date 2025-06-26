@@ -21,20 +21,22 @@ export type ShiftExtra = {
 };
 
 export type ShiftEdit = {
-    date: string;
-    from: string;
-    planned_to: string;
-    actual_to: string;
-    id: number;
     actual_end: string;
-    employment_id: number;
-    employment_name: string;
+    actual_to: string;
+    contract_id: Contract["id"];
+    contract_name: Contract["name"];
+    date: string;
+    employment_id: Employment["id"];
+    employment_name: Employment["name"];
     extras: ShiftExtra["id"][];
+    from: string;
+    id: number;
     overrun_type: Overruns;
+    pay_id_override: string | null;
     planned_end: string;
+    planned_to: string;
     start: string;
     type: ShiftTypes;
-    pay_id_override: string | null;
 };
 
 export type USH = {
@@ -54,10 +56,10 @@ export type CalculatedHours = USH & AdditionalHours;
 export type LogShift = AdditionalHours &
     USH &
     ShiftEdit & {
-        employment_name: string;
         pay_date: string;
         pay_month: string;
         pay_financial_year: string;
+        weekly_hours: Contract["weekly_hours"];
         // incentive: number;
         // incentiveHours: number;
         // incentiveType: number;
@@ -80,6 +82,24 @@ export interface ApiUser extends ClientUser {
     updatedAt: string;
 }
 
+export type Employment = {
+    id: number;
+    name: string;
+    from: string | null;
+    to: string | null;
+};
+
+export type Contract = {
+    id: number;
+    name: string;
+    from: string | null;
+    to: string | null;
+    weekly_hours: number;
+    employment_id: Employment["id"];
+    employment_name: Employment["name"];
+    pay_group_id: number;
+};
+
 declare global {
     namespace Express {
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -89,12 +109,3 @@ declare global {
         }
     }
 }
-
-export type Employment = {
-    id: number;
-    name: string;
-    from: string | null;
-    to: string | null;
-    pay_group_id: string;
-    weekly_hours: number;
-};

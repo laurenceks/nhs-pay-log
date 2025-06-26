@@ -2,8 +2,17 @@ import { createUser } from "../crud/userCrud";
 import { createHashSaltPair } from "../utils/crypto";
 import { sendErrorRes, sendRes } from "../utils/sendRes";
 import { Request, Response } from "express";
+import { readPayBandsForRegistering } from "../crud/payBandsCrud";
 
-const registerController = async (req: Request, res: Response) => {
+export const getRegisterOptions = async (_req: Request, res: Response) => {
+    try {
+        const options = await readPayBandsForRegistering();
+        sendRes(res, { data: options });
+    } catch (_e) {
+        sendErrorRes(res);
+    }
+};
+export const postRegister = async (req: Request, res: Response) => {
     const { hash, salt } = createHashSaltPair("password", req.body.password1);
     try {
         await createUser(req.body.email, hash, salt);
@@ -20,5 +29,3 @@ const registerController = async (req: Request, res: Response) => {
         }
     }
 };
-
-export default registerController;

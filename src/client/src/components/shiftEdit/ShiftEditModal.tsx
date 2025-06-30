@@ -26,8 +26,8 @@ import { updateShiftContract } from "../../../../shared/utils/updateShiftContrac
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
-    const log = useLoaderData({ from: "/_private/log" });
-    const { shift, contracts } = useLoaderData({
+    const { log, contracts } = useLoaderData({ from: "/_private/log" });
+    const shift = useLoaderData({
         from: "/_private/log/$shiftId",
     });
 

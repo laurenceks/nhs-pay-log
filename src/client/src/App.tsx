@@ -80,7 +80,7 @@ const App = () => {
                                             return true;
                                         }
                                     } catch (_e) {
-                                        console.log("Note logged in");
+                                        console.log("Not logged in");
                                         logout();
                                         return false;
                                     }

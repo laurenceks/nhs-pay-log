@@ -1,12 +1,7 @@
-import { ShiftExtra } from "../../../types/commonTypes";
+import { Contract, ShiftExtra } from "../../../types/commonTypes";
 import { formatDate } from "./formatDates";
 import mockPayTable from "../../../tests/data/mockPayTable";
-import mockEmploymentTable from "../../../tests/data/mockEmploymentTable";
-import {
-    EmploymentsTable,
-    LookupTable,
-    PayTableItem,
-} from "../../../types/lookupTypes";
+import { LookupTable, PayBand } from "../../../types/lookupTypes";
 
 const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
     const dSorting = formatDate(d, "yyyy-mm-dd");
@@ -16,71 +11,66 @@ const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
         (!x.to && x.from && x.from <= dSorting)
     );
 };
-const withinDateRangeAndSameEmployment = <T>(
+const withinDateRangeAndMatchingKey = <T>(
     d: string | Date,
     x: LookupTable<T>[0],
-    employment_id?: number
+    matchKey?: keyof LookupTable<T>[0],
+    matchValue?: string | number | null
 ) => {
     return (
         withinDateRange(d, x) &&
-        (!employment_id || x.employment_id === employment_id)
+        (!matchKey || !matchValue || x[matchKey] === matchValue)
     );
 };
-
 export const lookupByDate = <T>({
     arr = [],
     d = new Date(),
     returnKey,
-    employment_id,
+    matchKey,
+    matchValue,
 }: {
     arr: LookupTable<T>;
     d: string | Date;
-    employment_id?: number;
+    matchKey?: keyof LookupTable<T>[0];
     returnKey?: keyof T;
+    matchValue: string | number | null;
 }) => {
-    const result = arr.find((x) => {
-        return withinDateRangeAndSameEmployment(d, x, employment_id);
-    });
+    const result = arr.find((x) =>
+        withinDateRangeAndMatchingKey(d, x, matchKey, matchValue)
+    );
+
     if (result && returnKey && returnKey in result) {
         return result[returnKey];
     }
     return result;
 };
-export const lookupPayByEmployment = ({
+export const lookupPayByContract = ({
     d = new Date(),
-    returnKey,
-    employment_id,
-    pay_id_override,
+    contractId,
+    payIdOverride,
+    contracts,
 }: {
     d: string | Date;
-    employment_id: number;
-    returnKey?: keyof PayTableItem;
-    pay_id_override?: string | null;
-}) => {
+    contractId: number;
+    payIdOverride?: string | null;
+    contracts: Contract[];
+}): PayBand | undefined => {
     const payGroupId =
-        pay_id_override ||
-        (lookupByDate<EmploymentsTable[0]>({
-            arr: mockEmploymentTable,
+        payIdOverride ||
+        (lookupByDate<Contract>({
+            arr: contracts,
             d,
-            employment_id,
             returnKey: "pay_group_id",
-        }) as keyof PayTableItem);
+            matchKey: "id",
+            matchValue: contractId,
+        }) as keyof PayBand);
 
     if (payGroupId) {
-        const result: PayTableItem | undefined = mockPayTable.find((x) => {
-            return (
-                withinDateRange<PayTableItem>(d, x) && payGroupId === x.group_id
-            );
+        return mockPayTable.find((x) => {
+            return withinDateRange<PayBand>(d, x) && payGroupId === x.group_id;
         });
-
-        if (result) {
-            if (returnKey && returnKey in result) {
-                return result[returnKey];
-            } else {
-                return result;
-            }
-        }
     }
+
     return undefined;
 };
 export const lookupShiftExtra = (
@@ -102,6 +92,6 @@ export const filterOptionsByDate = <T>(
     employment_id?: number
 ) => {
     return arr.filter((x) =>
-        withinDateRangeAndSameEmployment(d, x, employment_id)
+        withinDateRangeAndMatchingKey(d, x, "employment_id", employment_id)
     );
 };

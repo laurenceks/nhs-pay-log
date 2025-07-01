@@ -4,8 +4,7 @@ import { formatDate } from "../../../../shared/utils/formatDates";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import calculateExtraPay from "../../../../shared/calculations/extraPay";
-import { msToTableFormat } from "../../../../shared/utils/conversions";
-import NumberFlow from "@number-flow/react";
+import CalculationNumberFlow from "../common/CalculationNumberFlow";
 
 const LogTable = ({ log }: { log: LogShift[] }) => {
     const navigate = useNavigate();
@@ -59,20 +58,37 @@ const LogTable = ({ log }: { log: LogShift[] }) => {
                                     <td>{x.employment_name}</td>
                                     <td>{x.type}</td>
                                     <td>{x.overrun_type}</td>
-                                    <td>{msToTableFormat(x.toil)}</td>
-                                    <td>{msToTableFormat(x.lower_rate)}</td>
-                                    <td>{msToTableFormat(x.higher_rate)}</td>
-                                    <td>{msToTableFormat(x.flat)}</td>
-                                    <td>{msToTableFormat(x.time_and_half)}</td>
-                                    <td>{msToTableFormat(x.double)}</td>
                                     <td>
-                                        <NumberFlow
+                                        <CalculationNumberFlow value={x.toil} />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={x.lower_rate}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={x.higher_rate}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow value={x.flat} />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={x.time_and_half}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={x.double}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
                                             value={calculateExtraPay(x)}
-                                            format={{
-                                                style: "currency",
-                                                currency: "GBP",
-                                            }}
-                                        ></NumberFlow>
+                                            currency={true}
+                                        />
                                     </td>
                                 </tr>
                             );

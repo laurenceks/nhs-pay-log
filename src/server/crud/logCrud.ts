@@ -2,7 +2,7 @@ import { executeByArray, executeByPlaceholders } from "../utils/db";
 import { LogShift } from "../../../types/commonTypes";
 
 export const readLogByUserId = async (userId: string) => {
-    return await executeByPlaceholders(
+    return await executeByPlaceholders<LogShift>(
         "SELECT log.*, `employments`.`name` AS `employment_name`, `contracts`.`name` AS `contract_name`, `contracts`.`weekly_hours` FROM `log` LEFT JOIN `contracts` ON `log`.`contract_id` = `contracts`.`id` LEFT JOIN `employments` ON `log`.`employment_id` = `employments`.`id` WHERE `contracts`.`user_id` = :userId AND log.`user_id` = :userId AND `employments`.`user_id` = :userId ORDER BY `from`, `employment_name`",
         { userId: userId }
     );
@@ -11,9 +11,18 @@ export const readLogShiftByUserIdAndShiftId = async (
     userId: string,
     shiftId: string
 ) => {
-    return await executeByPlaceholders(
-        "SELECT log.*, `contracts`.`weekly_hours` FROM `log` LEFT JOIN `contracts` ON `log`.`contract_id` = `contracts`.`id` WHERE `log`.`user_id` = :userId AND `contracts`.`user_id` = :userId AND `log`.`id` = :shiftId",
+    return await executeByPlaceholders<LogShift>(
+        "SELECT log.*, `contracts`.`weekly_hours` FROM `log` LEFT JOIN `contracts` ON `log`.`contract_id` = `contracts`.`id` WHERE `log`.`user_id` = :userId AND `contracts`.`user_id` = :userId AND `log`.`id` = :shiftId ORDER BY `log`.`from`",
         { userId, shiftId }
+    );
+};
+export const readAffectedLogByUserIdAndShiftId = async (
+    userId: string,
+    from: string
+) => {
+    return await executeByPlaceholders<LogShift>(
+        "SELECT log.*, `contracts`.`weekly_hours` FROM `log` LEFT JOIN `contracts` ON `log`.`contract_id` = `contracts`.`id` WHERE `log`.`user_id` = :userId AND `contracts`.`user_id` = :userId AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL WEEKDAY(:from) DAY) AND log.`from` < DATE_ADD(DATE(:from), INTERVAL (7 - WEEKDAY(:from)) DAY) ORDER BY `log`.`from`",
+        { userId, from }
     );
 };
 

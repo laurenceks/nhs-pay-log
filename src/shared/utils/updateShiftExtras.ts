@@ -15,8 +15,6 @@ export const updateShiftExtras = (
         searchDate
     );
 
-    console.log(extras, filteredExtrasByDate);
-
     const updatedExtras: ShiftExtra[] = [];
     const updatedExtrasGroupIds: number[] = [];
 

@@ -55,7 +55,6 @@ export const getLogShift = async (req: Request, res: Response) => {
     }
 };
 export const postLogShift = async (req: Request, res: Response) => {
-    //TODO FOR ALL log mutations - recalculate additional hours and ush for that week
     try {
         await createLogShift(req.authenticatedUser.id, req.body);
         await updateAffectedShifts(req.authenticatedUser.id, req.body.from);

@@ -13,6 +13,7 @@ import {
 } from "../../../shared/calculations/payDates";
 import { updateShiftContract } from "../../../shared/utils/updateShiftContract";
 import { queryClient } from "../App";
+import toast from "react-hot-toast";
 
 export type LogShiftReducerOptions =
     | {
@@ -301,6 +302,10 @@ const logShiftReducer = (
                     queryClient.getQueryData(["contract"]),
                     prevState.date
                 );
+
+                toast.success("Shift copied", {
+                    id: `shift-${prevState.id}-copy`,
+                });
 
                 return {
                     ...prevState,

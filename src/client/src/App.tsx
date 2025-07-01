@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ClientUser } from "../../../types/commonTypes";
 import { getLoginFetch } from "./queries/loginQueries";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "react-hot-toast";
 
 export type Auth = {
     loginCheckedOnce: boolean;
@@ -38,7 +39,7 @@ const App = () => {
         isAuth: async () => false,
     });
     const logout = () =>
-        //TODO invalidate all queries
+        //TODO tell server without infinite rerenders
         setAuth((prevState) => ({
             ...prevState,
             loginCheckedOnce: true,
@@ -46,59 +47,62 @@ const App = () => {
         }));
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <div className="mw-100 w-100 h-100">
-                <RouterProvider
-                    router={router}
-                    context={{
-                        queryClient: queryClient,
-                        auth: {
-                            ...auth,
-                            login: (user) =>
-                                setAuth((prevState) => ({
-                                    ...prevState,
-                                    loginCheckedOnce: true,
-                                    user,
-                                })),
-                            logout,
-                            isAuth: async () => {
-                                if (auth.user && auth.loginCheckedOnce) {
-                                    return true;
-                                }
-                                if (!auth.loginCheckedOnce) {
-                                    try {
-                                        const loginStatus =
-                                            await getLoginFetch();
-                                        if (loginStatus?.success) {
-                                            setAuth((prevState) => {
-                                                return {
-                                                    ...prevState,
-                                                    user: loginStatus.data!,
-                                                    loginCheckedOnce: true,
-                                                };
-                                            });
-                                            return true;
-                                        }
-                                    } catch (_e) {
-                                        console.log("Not logged in");
-                                        logout();
-                                        return false;
+        <>
+            <Toaster />
+            <QueryClientProvider client={queryClient}>
+                <div className="mw-100 w-100 h-100">
+                    <RouterProvider
+                        router={router}
+                        context={{
+                            queryClient: queryClient,
+                            auth: {
+                                ...auth,
+                                login: (user) =>
+                                    setAuth((prevState) => ({
+                                        ...prevState,
+                                        loginCheckedOnce: true,
+                                        user,
+                                    })),
+                                logout,
+                                isAuth: async () => {
+                                    if (auth.user && auth.loginCheckedOnce) {
+                                        return true;
                                     }
-                                }
-                                logout();
-                                return false;
+                                    if (!auth.loginCheckedOnce) {
+                                        try {
+                                            const loginStatus =
+                                                await getLoginFetch();
+                                            if (loginStatus?.success) {
+                                                setAuth((prevState) => {
+                                                    return {
+                                                        ...prevState,
+                                                        user: loginStatus.data!,
+                                                        loginCheckedOnce: true,
+                                                    };
+                                                });
+                                                return true;
+                                            }
+                                        } catch (_e) {
+                                            console.log("Not logged in");
+                                            logout();
+                                            return false;
+                                        }
+                                    }
+                                    logout();
+                                    return false;
+                                },
+                                setRedirect: (url: string) =>
+                                    setAuth((prevState) => ({
+                                        ...prevState,
+                                        redirect: url,
+                                    })),
                             },
-                            setRedirect: (url: string) =>
-                                setAuth((prevState) => ({
-                                    ...prevState,
-                                    redirect: url,
-                                })),
-                        },
-                    }}
-                />
-            </div>
-            <ReactQueryDevtools />
-        </QueryClientProvider>
+                        }}
+                    />
+                </div>
+                <ReactQueryDevtools />
+            </QueryClientProvider>
+        </>
     );
 };
 

@@ -23,6 +23,8 @@ import { updateShiftContract } from "../../../../shared/utils/updateShiftContrac
 import { updateShiftExtras } from "../../../../shared/utils/updateShiftExtras";
 import { filterOptionsByDate } from "../../../../shared/utils/lookup";
 import { PayBand } from "../../../../../types/lookupTypes";
+import toast from "react-hot-toast";
+import { ApiResponse } from "../../../../../types/responseTypes";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
@@ -33,6 +35,7 @@ const ShiftEditModal = () => {
     });
 
     const [show, setShow] = useState<boolean>(true);
+    const [toastMessage, setToastMessage] = useState<string>("");
 
     const closeModal = async () => {
         setShow(false);
@@ -90,8 +93,19 @@ const ShiftEditModal = () => {
         }
     }, [editState.date]);
     const saveEdit = async () => {
-        await (editState.id ? mutatePatch() : mutatePost());
-        await closeModal();
+        try {
+            await (editState.id ? mutatePatch() : mutatePost());
+            setToastMessage("Shift saved");
+            await closeModal();
+        } catch (e) {
+            toast.error(
+                (e as ApiResponse).message ||
+                    "There was a problem saving the shift, please try again",
+                {
+                    id: `shift-${shift.id}-save-error`,
+                }
+            );
+        }
     };
 
     const changeHandler = (
@@ -139,6 +153,11 @@ const ShiftEditModal = () => {
         <Modal
             show={show}
             onExited={() => {
+                if (toastMessage) {
+                    toast.success(toastMessage, {
+                        id: `shift-${shift.id}-success-message`,
+                    });
+                }
                 navigate({ to: "/log" });
             }}
             size="lg"
@@ -415,8 +434,19 @@ const ShiftEditModal = () => {
                                 postPending || patchPending || deletePending
                             }
                             onClick={async () => {
-                                await mutateDelete();
-                                await closeModal();
+                                try {
+                                    setToastMessage("Shift deleted");
+                                    await mutateDelete();
+                                    await closeModal();
+                                } catch (e) {
+                                    toast.error(
+                                        (e as ApiResponse).message ||
+                                            "There was a problem deleting the shift, please try again",
+                                        {
+                                            id: `shift-${shift.id}-delete-error`,
+                                        }
+                                    );
+                                }
                             }}
                             variant="danger"
                         >

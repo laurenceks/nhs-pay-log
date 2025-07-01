@@ -2,11 +2,11 @@ import {
     Contract,
     LogShift,
     Overruns,
+    ShiftExtra,
     ShiftTypes,
 } from "../../../../types/commonTypes";
 import { makeToAlwaysLater } from "../../../shared/utils/conversions";
 import { formatDate } from "../../../shared/utils/formatDates";
-import mockExtrasLookup from "../../../../tests/data/mockExtrasLookup";
 import {
     financialYear,
     nextPayDate,
@@ -43,12 +43,12 @@ export type LogShiftReducerOptions =
       }
     | {
           action: "addExtra";
-          payload: typeof mockExtrasLookup;
+          payload: ShiftExtra[];
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
           action: "removeExtra";
-          payload: string;
+          payload: ShiftExtra["id"];
           // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
@@ -260,13 +260,18 @@ const logShiftReducer = (
         case "addExtra": {
             return {
                 ...prevState,
-                extras: [...payload.map((x) => x.id)],
+                selectedExtras: payload,
+                extras: [...payload.map((x) => x.group_id)].join(","),
             };
         }
         case "removeExtra": {
+            const newSelection = prevState.selectedExtras?.filter(
+                (x) => x.group_id !== payload
+            );
             return {
                 ...prevState,
-                extras: prevState.extras.filter((x) => x !== payload),
+                selectedExtras: newSelection,
+                extras: newSelection.map((x) => x.group_id).join(","),
             };
         }
         case "copy": {

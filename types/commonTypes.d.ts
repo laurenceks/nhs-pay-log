@@ -15,9 +15,10 @@ export type ShiftTypes =
 export type ShiftExtra = {
     to: LookupTable[0]["to"];
     from: LookupTable[0]["from"];
-    name: string;
-    id: string;
-    value: number;
+    label: string;
+    id: number;
+    group_id: number;
+    value: string | number;
 };
 
 export type ShiftEdit = {
@@ -28,7 +29,8 @@ export type ShiftEdit = {
     date: string;
     employment_id: Employment["id"];
     employment_name: Employment["name"];
-    extras: ShiftExtra["id"][];
+    selectedExtras: ShiftExtra[];
+    extras: string;
     from: string;
     id: number;
     overrun_type: Overruns;

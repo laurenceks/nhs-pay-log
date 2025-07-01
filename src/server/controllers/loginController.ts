@@ -19,10 +19,11 @@ export const login = async (req: Request, res: Response) => {
                             if (e) {
                                 logoutAndDestroySession(req, res);
                                 sendErrorRes(res, "unauthorised");
+                            } else {
+                                sendRes<ClientUser>(res, {
+                                    data: { id: user.id, email: user.email },
+                                });
                             }
-                            sendRes<ClientUser>(res, {
-                                data: { id: user.id, email: user.email },
-                            });
                         });
                     } else {
                         logoutAndDestroySession(req, res);

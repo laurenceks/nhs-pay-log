@@ -5,6 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import calculateExtraPay from "../../../../shared/calculations/extraPay";
 import { msToTableFormat } from "../../../../shared/utils/conversions";
+import NumberFlow from "@number-flow/react";
 
 const LogTable = ({ log }: { log: LogShift[] }) => {
     const navigate = useNavigate();
@@ -65,10 +66,13 @@ const LogTable = ({ log }: { log: LogShift[] }) => {
                                     <td>{msToTableFormat(x.time_and_half)}</td>
                                     <td>{msToTableFormat(x.double)}</td>
                                     <td>
-                                        {new Intl.NumberFormat("en-GB", {
-                                            style: "currency",
-                                            currency: "GBP",
-                                        }).format(calculateExtraPay(x))}
+                                        <NumberFlow
+                                            value={calculateExtraPay(x)}
+                                            format={{
+                                                style: "currency",
+                                                currency: "GBP",
+                                            }}
+                                        ></NumberFlow>
                                     </td>
                                 </tr>
                             );

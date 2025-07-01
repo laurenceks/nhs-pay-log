@@ -1,7 +1,8 @@
 import { Contract, ShiftExtra } from "../../../types/commonTypes";
 import { formatDate } from "./formatDates";
-import mockPayTable from "../../../tests/data/mockPayTable";
-import { LookupTable, PayBand } from "../../../types/lookupTypes";
+import { LookupTable, PayBand, PayBandTable } from "../../../types/lookupTypes";
+import { queryClient } from "../../client/src/App";
+import { ApiResponse } from "../../../types/responseTypes";
 
 const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
     const dSorting = formatDate(d, "yyyy-mm-dd");
@@ -66,7 +67,9 @@ export const lookupPayByContract = ({
         }) as keyof PayBand);
 
     if (payGroupId) {
-        return mockPayTable.find((x) => {
+        return (
+            queryClient.getQueryData(["payBands"]) as ApiResponse<PayBandTable>
+        ).data?.find((x) => {
             return withinDateRange<PayBand>(d, x) && payGroupId === x.group_id;
         });
     }
@@ -74,24 +77,27 @@ export const lookupPayByContract = ({
     return undefined;
 };
 export const lookupShiftExtra = (
-    arr: ShiftExtra[],
     d: string | Date,
-    id: ShiftExtra["id"]
-) => {
-    return (
-        arr.find((x) => {
-            //TODO validate string dates
-            return x.id === id && withinDateRange(d, x);
-        })?.value || 0
-    );
+    id: ShiftExtra["group_id"]
+): number => {
+    const foundValue = (
+        queryClient.getQueryData(["extras"]) as ApiResponse<ShiftExtra[]>
+    ).data?.find((x) => {
+        //TODO validate string dates
+        return x.group_id === id && withinDateRange(d, x);
+    })?.value;
+    return foundValue && typeof foundValue === "string"
+        ? parseInt(foundValue, 10)
+        : 0;
 };
 
 export const filterOptionsByDate = <T>(
     arr: LookupTable<T> = [],
     d: string | Date = new Date(),
-    employment_id?: number
+    matchKey?: keyof LookupTable<T>[0],
+    matchValue?: string | number | null
 ) => {
     return arr.filter((x) =>
-        withinDateRangeAndMatchingKey(d, x, "employment_id", employment_id)
+        withinDateRangeAndMatchingKey(d, x, matchKey, matchValue)
     );
 };

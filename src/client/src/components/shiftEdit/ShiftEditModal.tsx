@@ -11,11 +11,8 @@ import {
     ShiftExtra,
 } from "../../../../../types/commonTypes";
 import calculateExtraPay from "../../../../shared/calculations/extraPay";
-import { filterOptionsByDate } from "../../../../shared/utils/lookup";
 import { Typeahead } from "react-bootstrap-typeahead";
-import mockExtrasLookup from "../../../../../tests/data/mockExtrasLookup";
 import { FiX } from "react-icons/fi";
-import mockPayTable from "../../../../../tests/data/mockPayTable";
 import { useMutation } from "@tanstack/react-query";
 import {
     deleteLogShiftMutationOptions,
@@ -23,10 +20,14 @@ import {
     postLogShiftMutationOptions,
 } from "../../queries/logQueries";
 import { updateShiftContract } from "../../../../shared/utils/updateShiftContract";
+import { updateShiftExtras } from "../../../../shared/utils/updateShiftExtras";
+import { filterOptionsByDate } from "../../../../shared/utils/lookup";
+import { PayBand } from "../../../../../types/lookupTypes";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
     const { log, contracts } = useLoaderData({ from: "/_private/log" });
+    const { extras, payBands } = useLoaderData({ from: "/_private" });
     const shift = useLoaderData({
         from: "/_private/log/$shiftId",
     });
@@ -37,10 +38,15 @@ const ShiftEditModal = () => {
         setShow(false);
     };
 
-    const [editState, setEditState] = useReducer(
-        logShiftReducer,
-        shift as LogShift
-    );
+    const { updatedExtras, updatedExtrasGroupIds, filteredExtras } =
+        updateShiftExtras(shift.extras, extras, shift.date);
+
+    const [editState, setEditState] = useReducer(logShiftReducer, {
+        ...shift,
+        extras: updatedExtrasGroupIds,
+        selectedExtras: updatedExtras,
+    } as LogShift);
+
     const [ushState, setUshState] = useState<CalculatedHours>({
         toil: 0,
         lower_rate: 0,
@@ -49,6 +55,11 @@ const ShiftEditModal = () => {
         time_and_half: 0,
         double: 0,
     });
+
+    const filteredPayBands = filterOptionsByDate<PayBand>(
+        payBands,
+        editState.date
+    );
 
     const { mutateAsync: mutatePost, isPending: postPending } = useMutation({
         ...postLogShiftMutationOptions({ ...editState, ...ushState }),
@@ -78,11 +89,6 @@ const ShiftEditModal = () => {
             });
         }
     }, [editState.date]);
-
-    const selectedExtras = mockExtrasLookup.filter((x) =>
-        editState.extras?.includes(x.id)
-    );
-
     const saveEdit = async () => {
         await (editState.id ? mutatePatch() : mutatePost());
         await closeModal();
@@ -275,19 +281,19 @@ const ShiftEditModal = () => {
                                     <option value={"TOIL"}>TOIL</option>
                                 </Form.Select>
                             </Form.Group>
-                            {!!mockPayTable.length && (
+                            {!!filteredPayBands.length && (
                                 <Form.Group controlId="editPayIdOverride">
                                     <Form.Label>Pay override</Form.Label>
                                     <Form.Select
                                         value={editState?.pay_id_override || ""}
                                         data-field={"payIdOverride"}
                                         onChange={changeHandler}
-                                        disabled={!mockPayTable.length}
+                                        disabled={filteredPayBands.length <= 1}
                                     >
                                         <option value={""}>
                                             None (default pay)
                                         </option>
-                                        {mockPayTable.map((x) => (
+                                        {filteredPayBands.map((x) => (
                                             <option
                                                 key={`${x.group_id}_${x.from}_${x.to}`}
                                                 value={x.group_id}
@@ -304,23 +310,20 @@ const ShiftEditModal = () => {
                                 <Form.Label>Extras</Form.Label>
                                 <div className="d-flex gap-3 flex-wrap flex-md-fill">
                                     <Typeahead
-                                        options={filterOptionsByDate<
-                                            (typeof mockExtrasLookup)[0]
-                                        >(mockExtrasLookup, editState.date)}
+                                        options={filteredExtras}
                                         multiple
-                                        selected={selectedExtras}
+                                        selected={editState.selectedExtras}
                                         onChange={(e) =>
                                             setEditState({
                                                 action: "addExtra",
                                                 payload: e as ShiftExtra[],
                                             })
                                         }
-                                        labelKey={"name"}
                                         renderToken={() => null}
                                         className="flex-shrink-0"
                                     />
                                     <div className="d-flex flex-wrap gap-1">
-                                        {selectedExtras.map((x) => (
+                                        {editState.selectedExtras.map((x) => (
                                             <Button
                                                 key={x.id}
                                                 variant="outline-light"
@@ -329,11 +332,11 @@ const ShiftEditModal = () => {
                                                 onClick={() =>
                                                     setEditState({
                                                         action: "removeExtra",
-                                                        payload: x.id,
+                                                        payload: x.group_id,
                                                     })
                                                 }
                                             >
-                                                {x.name} (
+                                                {x.label} (
                                                 {x.value.toLocaleString(
                                                     "en-GB",
                                                     {

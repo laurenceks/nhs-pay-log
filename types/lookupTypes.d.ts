@@ -2,9 +2,10 @@ export type LookupTable<T> = (T & {
     from: string | null;
     to: string | null;
     employment_id?: number;
+    contract_id?: number;
 })[];
 
-export type PayTable = LookupTable<{
+export type PayBandTable = LookupTable<{
     group_id: string;
     label: string;
     band: string;
@@ -23,4 +24,4 @@ export type EmploymentsTable = LookupTable<{
     pay_group_id: string;
 }>;
 
-export type PayTableItem = PayTable[0];
+export type PayBand = PayBandTable[0];

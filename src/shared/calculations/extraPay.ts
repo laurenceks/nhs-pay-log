@@ -1,6 +1,5 @@
 import { Contract, LogShift } from "../../../types/commonTypes";
 import { lookupPayByContract, lookupShiftExtra } from "../utils/lookup";
-import mockExtrasLookup from "../../../tests/data/mockExtrasLookup";
 import { msToDecimalHours } from "../utils/conversions";
 import { queryClient } from "../../client/src/App";
 import { ApiResponse } from "../../../types/responseTypes";
@@ -15,9 +14,12 @@ const calculateExtraPay = (logShift: LogShift) => {
                 ?.data || [],
     });
 
-    const extrasSubtotal = (logShift.extras || []).reduce((acc, val) => {
-        return acc + lookupShiftExtra(mockExtrasLookup, logShift.date, val);
-    }, 0);
+    const extrasSubtotal = (logShift.extras.split("") || []).reduce(
+        (acc, val) => {
+            return acc + lookupShiftExtra(logShift.date, parseInt(val, 10));
+        },
+        0
+    );
 
     if (pay) {
         return (

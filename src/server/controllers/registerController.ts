@@ -2,7 +2,7 @@ import { createUser, readUserByEmail } from "../crud/userCrud";
 import { createHashSaltPair } from "../utils/crypto";
 import { sendErrorRes, sendRes } from "../utils/sendRes";
 import { Request, Response } from "express";
-import { readPayBandsForRegistering } from "../crud/payBandsCrud";
+import { readPayBandsForRegistering } from "../crud/payBandCrud";
 import {
     createEmployment,
     readEmploymentsByUserId,

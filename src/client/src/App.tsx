@@ -48,7 +48,16 @@ const App = () => {
 
     return (
         <>
-            <Toaster />
+            <Toaster
+                toastOptions={{
+                    success: {
+                        iconTheme: { primary: "#2fb380", secondary: "#ffffff" },
+                    },
+                    error: {
+                        iconTheme: { primary: "#da292e", secondary: "#ffffff" },
+                    },
+                }}
+            />
             <QueryClientProvider client={queryClient}>
                 <div className="mw-100 w-100 h-100">
                     <RouterProvider

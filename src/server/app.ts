@@ -24,9 +24,10 @@ if (process.env.NODE_ENV !== "development") {
     app.use(
         rateLimit({
             windowMs: 15 * 60 * 1000,
-            max: 100,
+            limit: 100,
             standardHeaders: true,
             legacyHeaders: false,
+            skipSuccessfulRequests: true,
             message: {
                 success: false,
                 code: 429,

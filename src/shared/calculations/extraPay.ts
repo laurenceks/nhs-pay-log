@@ -14,12 +14,10 @@ const calculateExtraPay = (logShift: LogShift) => {
                 ?.data || [],
     });
 
-    const extrasSubtotal = (logShift.extras.split("") || []).reduce(
-        (acc, val) => {
+    const extrasSubtotal =
+        (logShift.extras?.split("") || []).reduce((acc, val) => {
             return acc + lookupShiftExtra(logShift.date, parseInt(val, 10));
-        },
-        0
-    );
+        }, 0) || 0;
 
     if (pay) {
         return (

@@ -10,6 +10,7 @@ import {
 } from "../crud/logCrud";
 import { calculateUsh } from "../../shared/calculations/ush";
 import { calculateAdditionalHours } from "../../shared/calculations/additionalHours";
+import { createLogExtra, deleteLogExtraByShiftId } from "../crud/logExtraCrud";
 
 const updateAffectedShifts = async (userId: string, from: string) => {
     const affectedShifts = await readAffectedLogByUserIdAndShiftId(
@@ -35,6 +36,16 @@ const updateAffectedShifts = async (userId: string, from: string) => {
         });
     }
 };
+
+const updateLogExtras = async (
+    shiftId: string | number,
+    extrasIdsString: string
+) => {
+    const extraIds = extrasIdsString?.split(",").filter(Boolean);
+    for (const extraId of extraIds) {
+        await createLogExtra(shiftId, extraId);
+    }
+};
 export const getLog = async (req: Request, res: Response) => {
     const data = await readLogByUserId(req.authenticatedUser.id);
     sendRes(res, {
@@ -56,9 +67,17 @@ export const getLogShift = async (req: Request, res: Response) => {
 };
 export const postLogShift = async (req: Request, res: Response) => {
     try {
-        await createLogShift(req.authenticatedUser.id, req.body);
-        await updateAffectedShifts(req.authenticatedUser.id, req.body.from);
-        sendRes(res);
+        const { insertId } = await createLogShift(
+            req.authenticatedUser.id,
+            req.body
+        );
+        if (insertId) {
+            await updateAffectedShifts(req.authenticatedUser.id, req.body.from);
+            await updateLogExtras(insertId, req.body.extras);
+            sendRes(res);
+        } else {
+            sendErrorRes(res);
+        }
     } catch (e) {
         console.log(e);
         sendErrorRes(res);
@@ -71,6 +90,8 @@ export const patchLogShift = async (req: Request, res: Response) => {
             req.body
         );
         await updateAffectedShifts(req.authenticatedUser.id, req.body.from);
+        await deleteLogExtraByShiftId(req.params.shiftId);
+        await updateLogExtras(req.params.shiftId, req.body.extras);
         sendRes(res);
     } catch (e) {
         console.log(e);

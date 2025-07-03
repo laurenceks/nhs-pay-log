@@ -1,6 +1,7 @@
 import {
     ConnectionOptions,
     createConnection,
+    ResultSetHeader,
     RowDataPacket,
 } from "mysql2/promise";
 import { dbOptions, pool } from "../config/database";
@@ -13,17 +14,40 @@ const query = async (sql: string) => {
     return (await pool.query(sql))[0];
 };
 
-const executeByArray = async <T = RowDataPacket>(
+const executeReadByArray = async <T = RowDataPacket>(
     preparedStatement: string,
     variables: (string | number | null)[] = []
 ): Promise<T[]> => {
     return (await pool.execute(preparedStatement, variables))[0] as T[];
 };
-const executeByPlaceholders = async <T = RowDataPacket>(
+const executeWriteByArray = async (
+    preparedStatement: string,
+    variables: (string | number | null)[] = []
+): Promise<ResultSetHeader> => {
+    return (
+        await pool.execute(preparedStatement, variables)
+    )[0] as ResultSetHeader;
+};
+const executeReadByPlaceholders = async <T = RowDataPacket>(
     preparedStatement: string,
     variables: { [key: string]: string | number | null } = {}
 ): Promise<T[]> => {
     return (await pool.execute(preparedStatement, variables))[0] as T[];
 };
+const executeWriteByPlaceholders = async (
+    preparedStatement: string,
+    variables: { [key: string]: string | number | null } = {}
+): Promise<ResultSetHeader> => {
+    return (
+        await pool.execute(preparedStatement, variables)
+    )[0] as ResultSetHeader;
+};
 
-export { createDbConnection, query, executeByArray, executeByPlaceholders };
+export {
+    createDbConnection,
+    query,
+    executeReadByArray,
+    executeWriteByArray,
+    executeReadByPlaceholders,
+    executeWriteByPlaceholders,
+};

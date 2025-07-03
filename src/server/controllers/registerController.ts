@@ -1,4 +1,4 @@
-import { createUser, readUserByEmail } from "../crud/userCrud";
+import { createUser } from "../crud/userCrud";
 import { createHashSaltPair } from "../utils/crypto";
 import { sendErrorRes, sendRes } from "../utils/sendRes";
 import { Request, Response } from "express";
@@ -20,16 +20,15 @@ export const getRegisterOptions = async (_req: Request, res: Response) => {
 export const postRegister = async (req: Request, res: Response) => {
     const { hash, salt } = createHashSaltPair("password", req.body.password1);
     try {
-        await createUser(req.body.email, hash, salt);
-        const [newUser] = await readUserByEmail(req.body.email);
+        const { insertId } = await createUser(req.body.email, hash, salt);
         await createEmployment(
-            newUser.id,
+            insertId,
             req.body.employment_from,
             req.body.employment_name
         );
-        const [newEmployment] = await readEmploymentsByUserId(newUser.id);
+        const [newEmployment] = await readEmploymentsByUserId(insertId);
         await createContract(
-            newUser.id,
+            insertId,
             req.body.employment_from,
             newEmployment.id,
             req.body.pay_group_id,

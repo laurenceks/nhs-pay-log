@@ -70,6 +70,6 @@ export const deleteLogShiftMutationOptions = (
     mutationFn: () => deleteLogShiftFetch(shiftId),
     onSuccess: async () => {
         await invalidateLogQuery();
-        await invalidateLogShiftQuery(shiftId);
+        queryClient.removeQueries({ queryKey: ["log", shiftId] });
     },
 });

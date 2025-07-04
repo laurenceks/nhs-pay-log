@@ -23,7 +23,7 @@ import { updateShiftContract } from "../../../../shared/utils/updateShiftContrac
 import { updateShiftExtras } from "../../../../shared/utils/updateShiftExtras";
 import { filterOptionsByDate } from "../../../../shared/utils/lookup";
 import { PayBand } from "../../../../../types/lookupTypes";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { ApiResponse } from "../../../../../types/responseTypes";
 
 const ShiftEditModal = () => {

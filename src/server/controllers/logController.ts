@@ -42,8 +42,10 @@ const updateLogExtras = async (
     extrasIdsString: string
 ) => {
     const extraIds = extrasIdsString?.split(",").filter(Boolean);
-    for (const extraId of extraIds) {
-        await createLogExtra(shiftId, extraId);
+    if (extraIds?.length) {
+        for (const extraId of extraIds) {
+            await createLogExtra(shiftId, extraId);
+        }
     }
 };
 export const getLog = async (req: Request, res: Response) => {
@@ -73,7 +75,7 @@ export const postLogShift = async (req: Request, res: Response) => {
         );
         if (insertId) {
             await updateAffectedShifts(req.authenticatedUser.id, req.body.from);
-            await updateLogExtras(insertId, req.body.extras);
+            await updateLogExtras(insertId, req.body.extras_ids_string);
             sendRes(res);
         } else {
             sendErrorRes(res);
@@ -91,7 +93,7 @@ export const patchLogShift = async (req: Request, res: Response) => {
         );
         await updateAffectedShifts(req.authenticatedUser.id, req.body.from);
         await deleteLogExtraByShiftId(req.params.shiftId);
-        await updateLogExtras(req.params.shiftId, req.body.extras);
+        await updateLogExtras(req.params.shiftId, req.body.extras_ids_string);
         sendRes(res);
     } catch (e) {
         console.log(e);

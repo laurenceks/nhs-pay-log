@@ -7,7 +7,7 @@ import logShiftReducer from "../../reducers/logShiftReducer";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import {
     CalculatedHours,
-    LogShift,
+    ClientShift,
     ShiftExtra,
 } from "../../../../../types/commonTypes";
 import calculateExtraPay from "../../../../shared/calculations/extraPay";
@@ -42,13 +42,13 @@ const ShiftEditModal = () => {
     };
 
     const { updatedExtras, updatedExtrasGroupIds, filteredExtras } =
-        updateShiftExtras(shift.extras, extras, shift.date);
+        updateShiftExtras(shift.extras_ids_string, extras, shift.date);
 
     const [editState, setEditState] = useReducer(logShiftReducer, {
         ...shift,
-        extras: updatedExtrasGroupIds,
+        extras_ids_string: updatedExtrasGroupIds,
         selectedExtras: updatedExtras,
-    } as LogShift);
+    } as ClientShift);
 
     const [ushState, setUshState] = useState<CalculatedHours>({
         toil: 0,

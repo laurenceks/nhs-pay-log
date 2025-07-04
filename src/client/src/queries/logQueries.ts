@@ -1,13 +1,13 @@
 import { MutationOptions, queryOptions } from "@tanstack/react-query";
 import { fetchJson } from "./queryUtils";
-import { LogShift, ShiftEdit } from "../../../../types/commonTypes";
+import { ApiShift, ShiftEdit } from "../../../../types/commonTypes";
 import { queryClient } from "../App";
 
 export const getLogFetch = async () => {
-    return await fetchJson<LogShift[]>("/api/v1/private/log");
+    return await fetchJson<ApiShift[]>("/api/v1/private/log");
 };
 export const getLogShiftFetch = async (shiftId: number) => {
-    return await fetchJson<LogShift>(`/api/v1/private/log/${shiftId}`);
+    return await fetchJson<ApiShift>(`/api/v1/private/log/${shiftId}`);
 };
 export const postLogShiftFetch = async (shift: ShiftEdit) => {
     return await fetchJson(`/api/v1/private/log`, "POST", shift);

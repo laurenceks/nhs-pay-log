@@ -1,10 +1,10 @@
-import { Contract, LogShift } from "../../../types/commonTypes";
+import { ClientShift, Contract } from "../../../types/commonTypes";
 import { lookupPayByContract, lookupShiftExtra } from "../utils/lookup";
 import { msToDecimalHours } from "../utils/conversions";
 import { queryClient } from "../../client/src/App";
 import { ApiResponse } from "../../../types/responseTypes";
 
-const calculateExtraPay = (logShift: LogShift) => {
+const calculateExtraPay = (logShift: ClientShift) => {
     const pay = lookupPayByContract({
         d: logShift.date,
         contractId: logShift.contract_id,
@@ -15,7 +15,7 @@ const calculateExtraPay = (logShift: LogShift) => {
     });
 
     const extrasSubtotal =
-        (logShift.extras?.split("") || []).reduce((acc, val) => {
+        (logShift.extras_ids_string?.split("") || []).reduce((acc, val) => {
             return acc + lookupShiftExtra(logShift.date, parseInt(val, 10));
         }, 0) || 0;
 

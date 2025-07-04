@@ -1,12 +1,11 @@
 import { Table } from "react-bootstrap";
-import { LogShift } from "../../../../../types/commonTypes";
+import { ParsedApiShift } from "../../../../../types/commonTypes";
 import { formatDate } from "../../../../shared/utils/formatDates";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import calculateExtraPay from "../../../../shared/calculations/extraPay";
 import CalculationNumberFlow from "../common/CalculationNumberFlow";
 
-const LogTable = ({ log }: { log: LogShift[] }) => {
+const LogTable = ({ log }: { log: ParsedApiShift[] }) => {
     const navigate = useNavigate();
     const openShiftModal = useCallback(
         (id: number) =>
@@ -86,7 +85,7 @@ const LogTable = ({ log }: { log: LogShift[] }) => {
                                     </td>
                                     <td>
                                         <CalculationNumberFlow
-                                            value={calculateExtraPay(x)}
+                                            value={x.extra_pay}
                                             currency={true}
                                         />
                                     </td>

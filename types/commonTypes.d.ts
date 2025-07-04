@@ -21,7 +21,7 @@ export type ShiftExtra = {
     value: string | number;
 };
 
-export type ShiftEdit = {
+export interface ShiftEdit {
     actual_end: string;
     actual_to: string;
     contract_id: Contract["id"];
@@ -30,7 +30,7 @@ export type ShiftEdit = {
     employment_id: Employment["id"];
     employment_name: Employment["name"];
     selectedExtras: ShiftExtra[];
-    extras: string;
+    extras_ids_string: string;
     from: string;
     id: number;
     overrun_type: Overruns;
@@ -39,7 +39,7 @@ export type ShiftEdit = {
     planned_to: string;
     start: string;
     type: ShiftTypes;
-};
+}
 
 export type USH = {
     higher_rate: number;
@@ -55,22 +55,35 @@ export type AdditionalHours = {
 
 export type CalculatedHours = USH & AdditionalHours;
 
-export type LogShift = AdditionalHours &
-    USH &
-    ShiftEdit & {
-        pay_date: string;
-        pay_month: string;
-        pay_financial_year: string;
-        weekly_hours: Contract["weekly_hours"];
-        // incentive: number;
-        // incentiveHours: number;
-        // incentiveType: number;
-        // mileage: number;
-        // mileageLocation: string;
-        // mileageType: string;
-    };
+export interface ClientShift extends AdditionalHours, USH, ShiftEdit {
+    pay_date: string;
+    pay_month: string;
+    pay_financial_year: string;
+    weekly_hours: Contract["weekly_hours"];
+    // incentive: number;
+    // incentiveHours: number;
+    // incentiveType: number;
+    // mileage: number;
+    // mileageLocation: string;
+    // mileageType: string;
+}
 
-export type ShiftEditModalState = { show: boolean; shift: LogShift | null };
+interface ShiftStringToNumberKeys {
+    extra_hours: string;
+    extra_pay: string;
+    extras_pay: string;
+    rate: string;
+    shift_pay: string;
+    total_ush: string;
+}
+
+export interface ApiShift
+    extends Omit<ClientShift, "selectedExtras">,
+        ShiftStringToNumberKeys {}
+
+export type ParsedApiShift = Omit<ApiShift, keyof ShiftStringToNumberKeys> & {
+    [K in keyof ShiftStringToNumberKeys]: number;
+};
 
 export interface ClientUser {
     id: string;

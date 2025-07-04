@@ -6,8 +6,9 @@ import {
 } from "./shiftLengths";
 import {
     AdditionalHours,
+    ClientShift,
     Contract,
-    LogShift,
+    ParsedApiShift,
     ShiftEdit,
     ShiftTypes,
 } from "../../../types/commonTypes";
@@ -18,7 +19,7 @@ const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 export const calculateCumulativeAdditionalHours = (
     from: Date,
     id: number,
-    log: LogShift[] = [],
+    log: ClientShift[] | ParsedApiShift[] = [],
     employment_id: number
 ) => {
     const prevMonday = new Date(from);
@@ -97,7 +98,7 @@ export const calculateAdditionalHours = (
         id: ShiftEdit["id"];
         weekly_hours: Contract["weekly_hours"];
     },
-    log: LogShift[]
+    log: ClientShift[] | ParsedApiShift[]
 ) => {
     const additionalHoursBreakdown: AdditionalHours = {
         flat: 0,

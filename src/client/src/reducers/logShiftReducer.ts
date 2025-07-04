@@ -1,6 +1,6 @@
 import {
+    ClientShift,
     Contract,
-    LogShift,
     Overruns,
     ShiftExtra,
     ShiftTypes,
@@ -54,7 +54,7 @@ export type LogShiftReducerOptions =
       }
     | {
           action: "set";
-          payload: LogShift;
+          payload: ClientShift;
           // setNewToasts: undefined;
       }
     | {
@@ -65,14 +65,14 @@ export type LogShiftReducerOptions =
     | {
           // default case in switch
           action: undefined | null;
-          payload: LogShift | null;
+          payload: ClientShift | null;
           // setNewToasts: undefined;
       };
 
 export type LogShiftReducer = (
-    prevState: LogShift | null,
+    prevState: ClientShift | null,
     options: LogShiftReducerOptions
-) => LogShift | null;
+) => ClientShift | null;
 
 const makeFromTimestamp = (date: string, start: string) =>
     formatDate(date + " " + start, "yyyy-mm-dd hh:mm:ss");
@@ -94,11 +94,11 @@ const makeEndTimestamps = (
     };
 };
 const logShiftReducer = (
-    prevState: LogShift,
+    prevState: ClientShift,
     { action, payload }: LogShiftReducerOptions
 ) => {
     switch (action) {
-        //TODO on date change filter out extras that didn't exist on those dates/had a different value
+        //TODO on date change filter out extras_ids_string that didn't exist on those dates/had a different value
         case "date": {
             if (payload) {
                 const payDate = nextPayDate(payload);
@@ -259,20 +259,26 @@ const logShiftReducer = (
             };
         }
         case "addExtra": {
+            console.log(payload);
             return {
                 ...prevState,
                 selectedExtras: payload,
-                extras: [...payload.map((x) => x.group_id)].join(","),
+                extras_ids_string: [...payload.map((x) => x.group_id)].join(
+                    ","
+                ),
             };
         }
         case "removeExtra": {
             const newSelection = prevState.selectedExtras?.filter(
                 (x) => x.group_id !== payload
             );
+            console.log(newSelection);
             return {
                 ...prevState,
                 selectedExtras: newSelection,
-                extras: newSelection.map((x) => x.group_id).join(","),
+                extras_ids_string: newSelection
+                    .map((x) => x.group_id)
+                    .join(","),
             };
         }
         case "copy": {

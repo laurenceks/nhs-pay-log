@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ShiftEditModal from "../../../components/shiftEdit/ShiftEditModal";
 import { formatDate } from "../../../../../shared/utils/formatDates";
-import { Contract, LogShift } from "../../../../../../types/commonTypes";
+import { ClientShift, Contract } from "../../../../../../types/commonTypes";
 import { getLogShiftQueryOptions } from "../../../queries/logQueries";
 import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
 import { financialYear } from "../../../../../shared/calculations/payDates";
@@ -11,7 +11,7 @@ import { ApiResponse } from "../../../../../../types/responseTypes";
 
 export const Route = createFileRoute("/_private/log/$shiftId")({
     component: ShiftEditModal,
-    loader: async ({ params, context }): Promise<LogShift> => {
+    loader: async ({ params, context }): Promise<ClientShift> => {
         if (params.shiftId !== "new") {
             return (
                 await context.queryClient.ensureQueryData(
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/_private/log/$shiftId")({
                 employment_name: onlyContract?.employment_name || "",
                 contract_id: onlyContract?.id || 0,
                 contract_name: onlyContract?.name || "",
-                extras: "",
+                extras_ids_string: "",
                 selectedExtras: [],
                 flat: 0,
                 from: "",

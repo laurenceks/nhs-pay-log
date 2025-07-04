@@ -86,10 +86,27 @@ const ShiftEditModal = () => {
 
     useEffect(() => {
         if (!contractValidOnDate) {
+            toast.error(
+                "The selected contract is not valid on this date and has been replaced with the best option available"
+            );
             setEditState({
                 action: "contract",
                 payload: newContract,
             });
+        }
+        const {
+            updatedExtras: newExtras,
+            updatedExtrasGroupIds: newExtrasIdsString,
+        } = updateShiftExtras(
+            editState.extras_ids_string,
+            extras,
+            editState.date
+        );
+        if (newExtrasIdsString !== editState.extras_ids_string) {
+            toast.error(
+                "One or more of the selected extras is not valid on this date and has been removed"
+            );
+            setEditState({ action: "addExtra", payload: newExtras });
         }
     }, [editState.date]);
     const saveEdit = async () => {

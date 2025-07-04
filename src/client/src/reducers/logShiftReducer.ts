@@ -25,54 +25,40 @@ export type LogShiftReducerOptions =
               | "actualEnd"
               | "payIdOverride";
           payload: string;
-          // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
           action: "contract";
           payload: Contract | undefined;
-          // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
           action: "type";
           payload: ShiftTypes;
-          // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
           action: "overrunType";
           payload: Overruns;
-          // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
           action: "addExtra";
           payload: ShiftExtra[];
-          // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
           action: "removeExtra";
           payload: ShiftExtra["id"];
-          // setNewToasts: (newToasts: NotificationToastType[]) => void;
       }
     | {
           action: "set";
           payload: ClientShift;
-          // setNewToasts: undefined;
       }
     | {
           action: "clear" | "copy";
           payload?: never;
-          // setNewToasts: undefined;
       }
     | {
           // default case in switch
           action: undefined | null;
           payload: ClientShift | null;
-          // setNewToasts: undefined;
       };
-
-export type LogShiftReducer = (
-    prevState: ClientShift | null,
-    options: LogShiftReducerOptions
-) => ClientShift | null;
 
 const makeFromTimestamp = (date: string, start: string) =>
     formatDate(date + " " + start, "yyyy-mm-dd hh:mm:ss");
@@ -98,7 +84,6 @@ const logShiftReducer = (
     { action, payload }: LogShiftReducerOptions
 ) => {
     switch (action) {
-        //TODO on date change filter out extras_ids_string that didn't exist on those dates/had a different value
         case "date": {
             if (payload) {
                 const payDate = nextPayDate(payload);
@@ -259,7 +244,6 @@ const logShiftReducer = (
             };
         }
         case "addExtra": {
-            console.log(payload);
             return {
                 ...prevState,
                 selectedExtras: payload,
@@ -272,7 +256,6 @@ const logShiftReducer = (
             const newSelection = prevState.selectedExtras?.filter(
                 (x) => x.group_id !== payload
             );
-            console.log(newSelection);
             return {
                 ...prevState,
                 selectedExtras: newSelection,
@@ -343,12 +326,6 @@ const logShiftReducer = (
                 };
             }
         }
-        /*case "clear": {
-            return null;
-        }
-        case "set": {
-            return payload;
-        }*/
         case undefined:
         case null:
         default: {

@@ -36,6 +36,7 @@ export const formatDate = (
         | "iso"
         | "sorting"
         | "long"
+        | "pay"
 ): string => {
     // takes a string or date and returns a formatted string
     if (
@@ -137,6 +138,15 @@ export const formatDate = (
                     minute: "2-digit",
                 });
                 break;
+            case "pay":
+                return `${jsDate.toLocaleDateString("en-GB", { month: "long" })} (${jsDate.toLocaleDateString(
+                    "en-GB",
+                    {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                    }
+                )})`;
             case "iso":
             default:
                 return jsDate.toISOString();

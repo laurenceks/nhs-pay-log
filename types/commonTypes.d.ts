@@ -76,13 +76,26 @@ interface ShiftStringToNumberKeys {
     shift_pay: string;
     total_ush: string;
 }
+interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
+    basic_pay: string;
+    gross_pay: string;
+}
 
 export interface ApiShift
     extends Omit<ClientShift, "selectedExtras">,
         ShiftStringToNumberKeys {}
+export interface ApiPay
+    extends Omit<ClientShift, "selectedExtras">,
+        PayStringToNumberKeys {
+    gross_pay: string;
+}
 
 export type ParsedApiShift = Omit<ApiShift, keyof ShiftStringToNumberKeys> & {
     [K in keyof ShiftStringToNumberKeys]: number;
+};
+
+export type ParsedApiPay = Omit<ApiPay, keyof PayStringToNumberKeys> & {
+    [K in keyof PayStringToNumberKeys]: number;
 };
 
 export interface ClientUser {
@@ -95,6 +108,7 @@ export interface ApiUser extends ClientUser {
     salt: string;
     createdAt: string;
     updatedAt: string;
+    verified: boolean;
 }
 
 export type Employment = {

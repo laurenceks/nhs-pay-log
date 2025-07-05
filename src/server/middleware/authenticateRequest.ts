@@ -1,6 +1,6 @@
 import logoutAndDestroySession from "../utils/logoutAndDestroySession";
 import { sendErrorRes } from "../utils/sendRes";
-import { ClientUser } from "../../../types/commonTypes";
+import { ApiUser, ClientUser } from "../../../types/commonTypes";
 import { NextFunction, Request, Response } from "express";
 
 const authenticateRequest = async (
@@ -9,7 +9,7 @@ const authenticateRequest = async (
     next: NextFunction
 ) => {
     const { user } = req;
-    if (user && req.isAuthenticated()) {
+    if (user && req.isAuthenticated() && (user as ApiUser).verified) {
         req.authenticatedUser = user as ClientUser;
         next();
     } else {

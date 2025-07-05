@@ -5,7 +5,7 @@ import {
     Strategy,
     type VerifyFunction,
 } from "passport-local";
-import validateHash from "../utils/crypto";
+import { validateHash } from "../utils/crypto";
 import { readUserByEmail, readUserById } from "../crud/userCrud";
 import { ClientUser } from "../../../types/commonTypes";
 
@@ -17,7 +17,7 @@ const configPassport = () => {
     passport.deserializeUser(async (id: string, done) => {
         const [user] = await readUserById(id);
         // pass result whatever it is - middleware function will validate
-        done(null, user ? (user as Express.User) : false);
+        done(null, user || false);
     });
 
     passport.use(
@@ -42,6 +42,9 @@ const configPassport = () => {
                     ) {
                         // user was not found, or they deleted their account, or password wrong
                         done("invalidUsernameOrPassword", false);
+                    } else if (!user.verified) {
+                        // user not verified
+                        done("userNotVerified", false);
                     } else {
                         // user exists, loginController is valid, user isn't blacklisted - proceed
                         const { createdAt, updatedAt, salt, hash, ...reqUser } =

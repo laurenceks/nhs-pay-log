@@ -129,6 +129,15 @@ export type Contract = {
     pay_group_id: number;
 };
 
+export type VerificationToken = {
+    user_id: string;
+    selector: string;
+    token: string;
+    hash: string;
+    salt: string;
+    expires_at: string;
+};
+
 declare global {
     namespace Express {
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type

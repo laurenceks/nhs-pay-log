@@ -1,7 +1,7 @@
 import { sendErrorRes, sendRes } from "../utils/sendRes";
 import passport from "passport";
 import logoutAndDestroySession from "../utils/logoutAndDestroySession";
-import { ClientUser } from "../../../types/commonTypes";
+import { ApiUser, ClientUser } from "../../../types/commonTypes";
 import { ErrorResponseKey } from "../../../types/responseTypes";
 import { Request, Response } from "express";
 
@@ -12,7 +12,7 @@ export const login = async (req: Request, res: Response) => {
     try {
         passport.authenticate(
             "local",
-            (error: string | null | { code: string }, user: ClientUser) => {
+            (error: string | null | { code: string }, user: ApiUser) => {
                 try {
                     if (!error && user) {
                         req.login(user, async (e) => {
@@ -21,7 +21,10 @@ export const login = async (req: Request, res: Response) => {
                                 sendErrorRes(res, "unauthorised");
                             } else {
                                 sendRes<ClientUser>(res, {
-                                    data: { id: user.id, email: user.email },
+                                    data: {
+                                        id: user.id,
+                                        email: user.email,
+                                    },
                                 });
                             }
                         });

@@ -1,5 +1,4 @@
 import { createUser } from "../crud/userCrud";
-import { createHashSaltPair } from "../utils/crypto";
 import { sendErrorRes, sendRes } from "../utils/sendRes";
 import { Request, Response } from "express";
 import { readPayBandsForRegistering } from "../crud/payBandCrud";
@@ -8,6 +7,8 @@ import {
     readEmploymentsByUserId,
 } from "../crud/employmentsCrud";
 import { createContract } from "../crud/contractCrud";
+import { createHashSaltPair, createTokenSelector } from "../utils/crypto";
+import { randomUUID } from "node:crypto";
 
 export const getRegisterOptions = async (_req: Request, res: Response) => {
     try {
@@ -18,27 +19,35 @@ export const getRegisterOptions = async (_req: Request, res: Response) => {
     }
 };
 export const postRegister = async (req: Request, res: Response) => {
-    const { hash, salt } = createHashSaltPair("password", req.body.password1);
+    //TODO validate passwords match
+    const { hash, salt } = createHashSaltPair(req.body.password1);
     try {
-        const { insertId } = await createUser(req.body.email, hash, salt);
+        const userId = randomUUID();
+        await createUser(userId, req.body.email, hash, salt);
         await createEmployment(
-            insertId,
+            userId,
             req.body.employment_from,
             req.body.employment_name
         );
-        const [newEmployment] = await readEmploymentsByUserId(insertId);
+        const [newEmployment] = await readEmploymentsByUserId(userId);
+
         await createContract(
-            insertId,
+            userId,
             req.body.employment_from,
             newEmployment.id,
             req.body.pay_group_id,
             req.body.contract_name,
             req.body.weekly_hours
         );
+
+        const { url } = await createTokenSelector(userId);
+
+        console.log(url);
+
         sendRes(res, {
             title: "Registration successful",
             message:
-                "You have successfully registered your account and can now login",
+                "You have successfully registered your account, please check your inbox for a verification email",
         });
     } catch (e) {
         console.log(e);

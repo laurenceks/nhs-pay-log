@@ -92,6 +92,8 @@ export type ErrorResponseKey =
     | "unauthorised"
     | "userNotFound"
     | "invalidUsernameOrPassword"
+    | "invalidToken"
+    | "expiredToken"
     | "userNotVerified"
     | "userNotAdmin"
     | "userNotSuperAdmin"

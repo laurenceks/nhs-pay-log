@@ -1,11 +1,15 @@
 import { executeReadByArray, executeWriteByArray } from "../utils/db";
-import { randomUUID } from "node:crypto";
 import { ApiUser } from "../../../types/commonTypes";
 
-export const createUser = async (email: string, hash: string, salt: string) => {
+export const createUser = async (
+    userId: string,
+    email: string,
+    hash: string,
+    salt: string
+) => {
     return await executeWriteByArray(
         "INSERT INTO users (`id`, `email`, `hash`, `salt`) VALUES (?, ?, ?, ?)",
-        [randomUUID(), email, hash, salt]
+        [userId, email, hash, salt]
     );
 };
 
@@ -18,6 +22,13 @@ export const readUserByEmail = async (email: string) => {
 export const readUserById = async (id: string) => {
     return await executeReadByArray<ApiUser>(
         "SELECT * FROM `users` WHERE `id` = ?",
+        [id]
+    );
+};
+
+export const updateUserVerificationById = async (id: string) => {
+    return await executeWriteByArray(
+        "UPDATE `users` SET `verified` = TRUE WHERE `id` = ?",
         [id]
     );
 };

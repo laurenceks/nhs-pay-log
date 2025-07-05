@@ -48,6 +48,16 @@ const sendErrorRes = (
             code: 400,
             message: "No token/selector passed",
         },
+        invalidToken: {
+            code: 400,
+            message: "The token passed is not valid",
+            title: "Invalid token",
+        },
+        expiredToken: {
+            code: 400,
+            message: "The token passed has expired and is no longer valid",
+            title: "Expired token",
+        },
         targetUserNotFound: {
             code: 400,
             message: "A user with those credentials could not be found",

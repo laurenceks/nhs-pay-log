@@ -1,49 +1,52 @@
 import crypto from "crypto";
+import { formatDate } from "../../shared/utils/formatDates";
+import { createVerification } from "../crud/verificationCrud";
 
-export const createSalt = () => crypto.randomBytes(32).toString("base64");
+export const createSalt = () => crypto.randomBytes(32).toString("hex");
 
-export const createToken = () => crypto.randomBytes(48).toString("base64");
+export const createToken = () => crypto.randomBytes(48).toString("hex");
 
 export const createHash = (plainText: string, salt: string) =>
     crypto.pbkdf2Sync(plainText, salt, 210000, 64, "sha512").toString("hex");
 
-export const createHashSaltPair = (
-    type: "password" | "token" = "password",
-    plainText: string | null = null
-) => {
+export const createHashSaltPair = (plainText: string) => {
     const salt = createSalt();
-    let token: string | null = null;
-    let hash: string | null = null;
-    let selector: string | null = null;
-    if (type === "password") {
-        if (plainText) {
-            hash = createHash(plainText, salt);
-        } else {
-            throw new Error(
-                "plainText argument must be string to create a hash-salt pair"
-            );
-        }
-    } else if (type === "token") {
-        token = createToken();
-        hash = createHash(token, salt);
-        selector = crypto.randomBytes(48).toString("base64");
-    } else {
-        throw new Error("type argument must equal password or token");
-    }
+    return {
+        salt,
+        hash: createHash(plainText, salt),
+    };
+};
+export const createTokenSelector = async (
+    userId: string,
+    expiresInSeconds: number | null = 86400,
+    route: string = "verify"
+) => {
+    const token = createToken();
+    console.log("New token:");
+    console.log(token);
+    const { hash, salt } = createHashSaltPair(token);
+    const selector = createToken();
+    const expiresAt = expiresInSeconds
+        ? formatDate(
+              new Date().setTime(
+                  new Date().getTime() + 1000 * expiresInSeconds
+              ),
+              "yyyy-mm-dd hh:mm:ss"
+          )
+        : null;
+
+    await createVerification(userId, selector, hash, salt, expiresAt);
+
     return {
         salt,
         hash,
-        ...(type === "token" && selector
-            ? {
-                  selector,
-                  base64Selector: btoa(selector),
-              }
-            : {}),
-        ...(type === "token" && token
-            ? { token, base64Token: btoa(token) }
-            : {}),
+        selector,
+        token,
+        expiresAt,
+        url: `http${process.env.NODE_ENV === "development" ? "" : "s"}://${
+            process.env.DOMAIN
+        }/${route}?selector=${encodeURIComponent(selector)}&token=${encodeURIComponent(token)}`,
     };
 };
-const validateHash = (plainText: string, hash: string, salt: string) =>
+export const validateHash = (plainText: string, hash: string, salt: string) =>
     hash === createHash(plainText, salt);
-export default validateHash;

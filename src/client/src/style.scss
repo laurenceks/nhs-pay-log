@@ -28,3 +28,31 @@ number-flow-react::part(right)::after,
 number-flow-react::part(symbol) {
     padding: calc(var(--number-flow-mask-height, 0.25em) / 2) 0;
 }
+
+.loading-container {
+    $dotSize: 1rem;
+
+    @keyframes dot-bounce {
+        0% {
+            transform: translateX(0%);
+        }
+        50% {
+            transform: translateX(calc(100% - #{$dotSize}));
+        }
+        100% {
+            transform: translateX(0%);
+        }
+    }
+
+    .loading-dot-container {
+        margin-right: auto;
+        margin-left: auto;
+        width: 50%;
+        animation: dot-bounce 1s cubic-bezier(0.85, 0.09, 0.15, 0.91) infinite;
+        > .loading-dot {
+            border-radius: 50%;
+            width: $dotSize;
+            height: $dotSize;
+        }
+    }
+}

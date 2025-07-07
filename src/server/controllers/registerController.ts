@@ -9,6 +9,7 @@ import {
 import { createContract } from "../crud/contractCrud";
 import { createHashSaltPair, createTokenSelector } from "../utils/crypto";
 import { randomUUID } from "node:crypto";
+import nodemailer from "nodemailer";
 
 export const getRegisterOptions = async (_req: Request, res: Response) => {
     try {
@@ -42,7 +43,22 @@ export const postRegister = async (req: Request, res: Response) => {
 
         const { url } = await createTokenSelector(userId);
 
-        console.log(url);
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
+            secure: process.env.NODE_ENV !== "development",
+            auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        });
+
+        await transporter.sendMail({
+            to: req.body.email,
+            from: `"NHS Pay Log <no-reply@${process.env.DOMAIN}`,
+            subject: "Verify your email address",
+            text: `Copy and past the link into your browser to get started
+
+${url}`,
+            html: `<p>Thank you for signing up to use NHS Pay Log. Please click the link below to verify your email address:</p><p><a href="${url}">Verify</a></p>`,
+        });
 
         sendRes(res, {
             title: "Registration successful",

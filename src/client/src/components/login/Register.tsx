@@ -5,7 +5,7 @@ import { postRegisterFetch } from "../../queries/loginQueries";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { formatDate } from "../../../../shared/utils/formatDates";
 
-const Login = () => {
+const Register = () => {
     const navigate = useNavigate();
     const payBands = useLoaderData({ from: "/_public/_login/register" });
     const [formState, setFormState] = useState({
@@ -167,4 +167,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;

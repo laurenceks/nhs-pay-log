@@ -5,10 +5,19 @@ import {
 } from "@tanstack/react-query";
 import { ApiResponse } from "../../../../types/responseTypes";
 
-export const fetchJson = async <T = undefined>(
+export const publicFetchJson = async <T = undefined>(
     url: string,
     method = "GET",
     body?: object
+): Promise<ApiResponse<T>> => {
+    return await fetchJson(url, method, body, false);
+};
+
+export const fetchJson = async <T = undefined>(
+    url: string,
+    method = "GET",
+    body?: object,
+    redirectIfUnauthorised?: boolean
 ): Promise<ApiResponse<T>> => {
     const res = await fetch(url, {
         method: method,
@@ -25,7 +34,7 @@ export const fetchJson = async <T = undefined>(
     if (!res.ok) {
         if (
             (res.status === 401 || res.status === 403) &&
-            window.location.pathname !== "/login"
+            redirectIfUnauthorised
         ) {
             //force reload to login page
             window.localStorage.setItem(

@@ -22,7 +22,7 @@ const validateTimestamp = (timestamp: string | Date): boolean => {
 };
 
 export const formatDate = (
-    dt: string | Date | null | undefined,
+    dt: string | number | Date | null | undefined,
     format:
         | "do mmm"
         | "dd/mm/yy"
@@ -41,10 +41,14 @@ export const formatDate = (
     // takes a string or date and returns a formatted string
     if (
         dt &&
-        (validateTimestamp(dt) ||
+        (typeof dt === "number" ||
+            validateTimestamp(dt) ||
             (typeof dt === "string" && regExpDate.test(dt)))
     ) {
-        const jsDate = typeof dt === "string" ? new Date(dt) : dt;
+        const jsDate =
+            typeof dt === "string" || typeof dt === "number"
+                ? new Date(dt)
+                : dt;
         switch (format) {
             case "long":
                 return `${jsDate.toLocaleDateString("en-GB", {
@@ -137,7 +141,6 @@ export const formatDate = (
                     hour: "2-digit",
                     minute: "2-digit",
                 });
-                break;
             case "pay":
                 return `${jsDate.toLocaleDateString("en-GB", { month: "long" })} (${jsDate.toLocaleDateString(
                     "en-GB",

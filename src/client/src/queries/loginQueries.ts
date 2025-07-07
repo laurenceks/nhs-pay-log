@@ -1,10 +1,15 @@
-import { fetchJson } from "./queryUtils";
+import { fetchJson, publicFetchJson } from "./queryUtils";
 import { ClientUser } from "../../../../types/commonTypes";
 import { queryOptions } from "@tanstack/react-query";
 
 export const getRegisterOptionsFetch = async () => {
-    return await fetchJson<{ pay_group_id: string; label: string }[]>(
+    return await publicFetchJson<{ pay_group_id: string; label: string }[]>(
         "/api/v1/public/register"
+    );
+};
+export const getVerifyFetch = async (selector: string, token: string) => {
+    return await publicFetchJson(
+        `/api/v1/public/verify?selector=${selector}&token=${token}`
     );
 };
 
@@ -12,12 +17,21 @@ export const getRegisterOptionsQueryOptions = queryOptions({
     queryKey: ["registerOptions"],
     queryFn: getRegisterOptionsFetch,
 });
+export const getVerifyQueryOptions = (selector: string, token: string) =>
+    queryOptions({
+        queryKey: ["verify", selector],
+        queryFn: () => getVerifyFetch(selector, token),
+    });
 
 export const postLoginFetch = async (body: {
     email: string;
     password: string;
 }) => {
-    return await fetchJson<ClientUser>("/api/v1/public/login", "POST", body);
+    return await publicFetchJson<ClientUser>(
+        "/api/v1/public/login",
+        "POST",
+        body
+    );
 };
 export const postRegisterFetch = async (body: {
     email: string;
@@ -28,7 +42,7 @@ export const postRegisterFetch = async (body: {
     pay_group_id: string;
     weekly_hours: number;
 }) => {
-    return await fetchJson("/api/v1/public/register", "POST", body);
+    return await publicFetchJson("/api/v1/public/register", "POST", body);
 };
 export const getLoginFetch = async () => {
     return await fetchJson<ClientUser>("/api/v1/public/login");

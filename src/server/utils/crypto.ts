@@ -22,8 +22,6 @@ export const createTokenSelector = async (
     route: string = "verify"
 ) => {
     const token = createToken();
-    console.log("New token:");
-    console.log(token);
     const { hash, salt } = createHashSaltPair(token);
     const selector = createToken();
     const expiresAt = expiresInSeconds

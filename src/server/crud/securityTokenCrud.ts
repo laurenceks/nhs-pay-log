@@ -8,26 +8,26 @@ export const createSecurityToken = async (
     expiresAt: string | null
 ) => {
     return await executeWriteByArray(
-        "INSERT INTO `verification_tokens` VALUES (?,?,?,?,?)",
+        "INSERT INTO `security_tokens` VALUES (?,?,?,?,?)",
         [userId, selector, hash, salt, expiresAt]
     );
 };
 export const readSecurityTokenBySelector = async (selector: string) => {
     return await executeReadByArray(
-        "SELECT * FROM `verification_tokens` WHERE `selector` = ?",
+        "SELECT * FROM `security_tokens` WHERE `selector` = ?",
         [selector]
     );
 };
 
 export const deleteSecurityTokensByUserId = async (userId: string) => {
     return await executeWriteByArray(
-        "DELETE FROM `verification_tokens` WHERE `user_id` = ?",
+        "DELETE FROM `security_tokens` WHERE `user_id` = ?",
         [userId]
     );
 };
 export const deleteExpiredSecurityTokensByUserId = async (userId: string) => {
     return await executeWriteByArray(
-        "DELETE FROM `verification_tokens` WHERE `user_id` = ? AND `expires_at` <= NOW()",
+        "DELETE FROM `security_tokens` WHERE `user_id` = ? AND `expires_at` <= NOW()",
         [userId]
     );
 };

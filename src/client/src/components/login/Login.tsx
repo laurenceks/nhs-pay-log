@@ -4,7 +4,6 @@ import { useMutation } from "@tanstack/react-query";
 import { postLoginFetch } from "../../queries/loginQueries";
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import ResponseFeedback from "../common/ResponseFeedback";
-import { ApiResponse } from "../../../../../types/responseTypes";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -80,10 +79,11 @@ const Login = () => {
                 </Button>
                 <Link to={"/forgot"}>Forgot password</Link>
                 <ResponseFeedback isPending={isPending} error={error} />
-                {(error && (error as ApiResponse).errorCode) ===
-                    "userNotVerified" && (
-                    <Link to={"/verify/resend"}>Resend verification</Link>
-                )}
+                {error &&
+                    "errorCode" in error &&
+                    error.errorCode === "userNotVerified" && (
+                        <Link to={"/verify/resend"}>Resend verification</Link>
+                    )}
             </Form>
         </div>
     );

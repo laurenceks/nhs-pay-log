@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { postRegisterFetch } from "../../queries/loginQueries";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { formatDate } from "../../../../shared/utils/formatDates";
+import ResponseFeedback from "../common/ResponseFeedback";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Register = () => {
         contract_name: "My contract",
         weekly_hours: 37.5,
     });
-    const { mutate, error, isPending } = useMutation({
+    const { mutate, data, error, isPending } = useMutation({
         mutationKey: ["register"],
         mutationFn: postRegisterFetch,
         onSuccess: async (response) => {
@@ -55,6 +56,7 @@ const Register = () => {
                         value={formState.email}
                         data-field={"email"}
                         onChange={changeHandler}
+                        autoComplete={"email"}
                     />
                 </Form.Group>
                 <Form.Group controlId="editPassword1">
@@ -65,6 +67,7 @@ const Register = () => {
                         value={formState.password1}
                         data-field={"password1"}
                         onChange={changeHandler}
+                        autoComplete={"new-password"}
                     />
                 </Form.Group>
                 <Form.Group controlId="editPassword2">
@@ -75,6 +78,7 @@ const Register = () => {
                         value={formState.password2}
                         data-field={"password2"}
                         onChange={changeHandler}
+                        autoComplete={"new-password"}
                     />
                 </Form.Group>
                 <Form.Group controlId="editEmploymentName">
@@ -157,11 +161,11 @@ const Register = () => {
                 >
                     Register
                 </Button>
-                {!!error && !isPending && (
-                    <div className="bg-danger text-white px-3 py-2 text-center w-100 rounded d-flex small justify-content-center">
-                        {error.message}
-                    </div>
-                )}
+                <ResponseFeedback
+                    response={data}
+                    error={error}
+                    isPending={isPending}
+                ></ResponseFeedback>
             </Form>
         </div>
     );

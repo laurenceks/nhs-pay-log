@@ -2,7 +2,9 @@ import { Button, Form } from "react-bootstrap";
 import { ChangeEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { postLoginFetch } from "../../queries/loginQueries";
-import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
+import ResponseFeedback from "../common/ResponseFeedback";
+import { ApiResponse } from "../../../../../types/responseTypes";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -46,6 +48,7 @@ const Login = () => {
                         value={formState.email}
                         data-field={"email"}
                         onChange={changeHandler}
+                        autoComplete={"email"}
                     />
                 </Form.Group>
                 <Form.Group controlId="editPassword">
@@ -56,6 +59,7 @@ const Login = () => {
                         value={formState.password}
                         data-field={"password"}
                         onChange={changeHandler}
+                        autoComplete={"current-password"}
                     />
                 </Form.Group>
                 <Button
@@ -74,10 +78,11 @@ const Login = () => {
                 >
                     Sign up
                 </Button>
-                {!!error && !isPending && (
-                    <div className="bg-danger text-white px-3 py-2 text-center w-100 rounded d-flex small justify-content-center">
-                        {error.message}
-                    </div>
+                <Link to={"/forgot"}>Forgot password</Link>
+                <ResponseFeedback isPending={isPending} error={error} />
+                {(error && (error as ApiResponse).errorCode) ===
+                    "userNotVerified" && (
+                    <Link to={"/verify/resend"}>Resend verification</Link>
                 )}
             </Form>
         </div>

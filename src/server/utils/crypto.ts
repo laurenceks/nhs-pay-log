@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { formatDate } from "../../shared/utils/formatDates";
-import { createVerification } from "../crud/verificationCrud";
+import { createSecurityToken } from "../crud/securityTokenCrud";
 
 export const createSalt = () => crypto.randomBytes(32).toString("hex");
 
@@ -33,7 +33,7 @@ export const createTokenSelector = async (
           )
         : null;
 
-    await createVerification(userId, selector, hash, salt, expiresAt);
+    await createSecurityToken(userId, selector, hash, salt, expiresAt);
 
     return {
         salt,

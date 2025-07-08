@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_public")({
         }
     },
     component: () => (
-        <div className="p-3 h-100">
+        <div className="p-3" style={{ minHeight: "100%" }}>
             <Outlet />
         </div>
     ),

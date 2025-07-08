@@ -144,6 +144,7 @@ declare global {
         interface User extends ClientUser {}
         interface Request {
             authenticatedUser: CustomUser;
+            userId: string;
         }
     }
 }

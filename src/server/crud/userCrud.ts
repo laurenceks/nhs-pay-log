@@ -32,3 +32,13 @@ export const updateUserVerificationById = async (id: string) => {
         [id]
     );
 };
+export const updateUserPasswordById = async (
+    hash: string,
+    salt: string,
+    id: string
+) => {
+    return await executeWriteByArray(
+        "UPDATE `users` SET `hash` = ?, `salt` = ? WHERE `id` = ?",
+        [hash, salt, id]
+    );
+};

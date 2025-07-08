@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
-import { getVerifyQueryOptions } from "../../../queries/loginQueries";
-import Verify from "../../../components/login/Verify";
-import Loading from "../../../components/common/Loading";
+import Verify from "../../../../components/login/Verify";
+import Loading from "../../../../components/common/Loading";
+import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
+import { getVerifyQueryOptions } from "../../../../queries/loginQueries";
 
-export const Route = createFileRoute("/_public/_login/verify")({
+export const Route = createFileRoute("/_public/_login/verify/")({
     component: () => (
         <Verify
             success={true}
-            message="You have successfully verified your account and can now log in"
+            message="You have verified your account and can now log in"
         />
     ),
     errorComponent: ({ error }) => (
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_public/_login/verify")({
     },
     loaderDeps: ({ search: { selector, token } }) => ({ selector, token }),
     loader: async ({ context, deps: { selector, token } }) => {
-        await new Promise((resolve) => setTimeout(resolve, 100000000000000000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return await context.queryClient.ensureQueryData(
             stripQueryOptionsForEnsureQuery(
                 getVerifyQueryOptions(selector, token)

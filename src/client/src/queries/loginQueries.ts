@@ -44,6 +44,32 @@ export const postRegisterFetch = async (body: {
 }) => {
     return await publicFetchJson("/api/v1/public/register", "POST", body);
 };
+export const postVerifyFetch = async (body: { email: string }) => {
+    return await publicFetchJson("/api/v1/public/verify", "POST", body);
+};
+export const postForgotFetch = async (body: { email: string }) => {
+    return await publicFetchJson("/api/v1/public/forgot", "POST", body);
+};
+export const patchForgotFetch = async ({
+    formState,
+    selector,
+    token,
+}: {
+    formState: {
+        email: string;
+        password: string;
+        newPassword1: string;
+        newPassword2: string;
+    };
+    selector: string;
+    token: string;
+}) => {
+    return await publicFetchJson(
+        `/api/v1/public/forgot?selector=${selector}&token=${token}`,
+        "PATCH",
+        formState
+    );
+};
 export const getLoginFetch = async () => {
     return await fetchJson<ClientUser>("/api/v1/public/login");
 };

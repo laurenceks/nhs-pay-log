@@ -29,7 +29,7 @@ export interface ShiftEdit {
     date: string;
     employment_id: Employment["id"];
     employment_name: Employment["name"];
-    selectedExtras: ShiftExtra[];
+    selectedExtras?: ShiftExtra[];
     extras_ids_string: string;
     from: string;
     id: number;

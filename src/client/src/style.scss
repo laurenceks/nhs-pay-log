@@ -14,6 +14,10 @@ body,
     height: 100%;
 }
 
+.minh-100 {
+    min-height: 100%;
+}
+
 .rbt-highlight-text {
     @extend .fw-bolder;
     background: none;

@@ -28,10 +28,10 @@ import { ApiResponse } from "../../../../../types/responseTypes";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
-    const { log, contracts } = useLoaderData({ from: "/_private/log" });
+    const { log, contracts } = useLoaderData({ from: "/_private/_table/log" });
     const { extras, payBands } = useLoaderData({ from: "/_private" });
     const shift = useLoaderData({
-        from: "/_private/log/$shiftId",
+        from: "/_private/_table/log/$shiftId",
     });
 
     const [show, setShow] = useState<boolean>(true);
@@ -359,7 +359,7 @@ const ShiftEditModal = () => {
                                         className="flex-shrink-0"
                                     />
                                     <div className="d-flex flex-wrap gap-1">
-                                        {editState.selectedExtras.map((x) => (
+                                        {editState.selectedExtras?.map((x) => (
                                             <Button
                                                 key={x.id}
                                                 variant="outline-light"

@@ -2,10 +2,7 @@ import { Outlet } from "@tanstack/react-router";
 
 const LoginWrapper = () => {
     return (
-        <div
-            className="w-100 d-flex justify-content-center"
-            style={{ minHeight: "100%" }}
-        >
+        <div className="w-100 d-flex justify-content-center minh-100">
             <div style={{ maxWidth: "15rem" }}>
                 <div className="d-flex align-items-center justify-content-center">
                     <img

@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Log from "../../../components/log/Log";
 import { memo } from "react";
-import { getLogQueryOptions } from "../../../queries/logQueries";
-import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
-import { getContractsQueryOptions } from "../../../queries/contractQueries";
-import { ParsedApiShift } from "../../../../../../types/commonTypes";
+import Log from "../../../../components/log/Log";
+import { ParsedApiShift } from "../../../../../../../types/commonTypes";
+import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
+import { getLogQueryOptions } from "../../../../queries/logQueries";
+import { getContractsQueryOptions } from "../../../../queries/contractQueries";
 
-export const Route = createFileRoute("/_private/log")({
+export const Route = createFileRoute("/_private/_table/log")({
     component: memo(Log),
     loader: async ({ context }) => {
         const log: ParsedApiShift[] =

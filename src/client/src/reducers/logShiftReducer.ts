@@ -253,9 +253,10 @@ const logShiftReducer = (
             };
         }
         case "removeExtra": {
-            const newSelection = prevState.selectedExtras?.filter(
-                (x) => x.group_id !== payload
-            );
+            const newSelection =
+                prevState.selectedExtras?.filter(
+                    (x) => x.group_id !== payload
+                ) || [];
             return {
                 ...prevState,
                 selectedExtras: newSelection,

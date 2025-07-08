@@ -10,14 +10,14 @@ export const publicFetchJson = async <T = undefined>(
     method = "GET",
     body?: object
 ): Promise<ApiResponse<T>> => {
-    return await fetchJson(url, method, body, false);
+    return await fetchJson(url, method, body, true);
 };
 
 export const fetchJson = async <T = undefined>(
     url: string,
     method = "GET",
     body?: object,
-    redirectIfUnauthorised?: boolean
+    ignoreUnauthorised?: boolean
 ): Promise<ApiResponse<T>> => {
     const res = await fetch(url, {
         method: method,
@@ -32,10 +32,7 @@ export const fetchJson = async <T = undefined>(
     });
     const json: ApiResponse<T> = await res.json();
     if (!res.ok) {
-        if (
-            (res.status === 401 || res.status === 403) &&
-            redirectIfUnauthorised
-        ) {
+        if ((res.status === 401 || res.status === 403) && !ignoreUnauthorised) {
             //force reload to login page
             window.localStorage.setItem(
                 "redirect",
@@ -49,6 +46,24 @@ export const fetchJson = async <T = undefined>(
         } else {
             throw { ...new Error(json.message), status: res.status, ...json };
         }
+    }
+    return json;
+};
+export const fetchLogout = async (): Promise<ApiResponse> => {
+    const res = await fetch("/api/v1/public/logout", {
+        method: "GET",
+        mode: "same-origin",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        referrerPolicy: "same-origin",
+        cache: "no-store",
+    });
+    const json: ApiResponse = await res.json();
+    if (!res.ok) {
+        throw { ...new Error(json.message), status: res.status, ...json };
     }
     return json;
 };

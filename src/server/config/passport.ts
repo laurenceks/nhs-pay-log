@@ -36,7 +36,7 @@ const configPassport = () => {
                 }
                 try {
                     const [user] = await readUserByEmail(email);
-                    console.log(user);
+
                     if (
                         !user ||
                         !validateHash(passwordPlainText, user.hash, user.salt)

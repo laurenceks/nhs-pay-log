@@ -1,11 +1,12 @@
-import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { createRouter, redirect, RouterProvider } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { useState } from "react";
 import { ClientUser } from "../../../types/commonTypes";
 import { getLoginFetch } from "./queries/loginQueries";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
+import { fetchLogout } from "./queries/queryUtils";
 
 export type Auth = {
     loginCheckedOnce: boolean;
@@ -38,13 +39,16 @@ const App = () => {
         setRedirect: (_url) => {},
         isAuth: async () => false,
     });
-    const logout = () =>
-        //TODO tell server without infinite rerenders
+    const logout = async () => {
         setAuth((prevState) => ({
             ...prevState,
             loginCheckedOnce: true,
             user: null,
         }));
+        await fetchLogout();
+        redirect({ to: "/login" });
+        toast.success("You have been logged out", { id: "logout" });
+    };
 
     return (
         <>
@@ -92,12 +96,11 @@ const App = () => {
                                                 return true;
                                             }
                                         } catch (_e) {
-                                            console.log("Not logged in");
-                                            logout();
+                                            await logout();
                                             return false;
                                         }
                                     }
-                                    logout();
+                                    await logout();
                                     return false;
                                 },
                                 setRedirect: (url: string) =>

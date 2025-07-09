@@ -77,6 +77,7 @@ interface ShiftStringToNumberKeys {
     total_ush: string;
 }
 interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
+    hca_pay: string;
     basic_pay: string;
     gross_pay: string;
 }
@@ -85,10 +86,18 @@ export interface ApiShift
     extends Omit<ClientShift, "selectedExtras">,
         ShiftStringToNumberKeys {}
 export interface ApiPay
-    extends Omit<ClientShift, "selectedExtras">,
-        PayStringToNumberKeys {
-    gross_pay: string;
-}
+    extends Omit<
+            ClientShift,
+            | "selectedExtras"
+            | "from"
+            | "planned_to"
+            | "actual_to"
+            | "start"
+            | "planned_end"
+            | "actual_end"
+            | "id"
+        >,
+        PayStringToNumberKeys {}
 
 export type ParsedApiShift = Omit<ApiShift, keyof ShiftStringToNumberKeys> & {
     [K in keyof ShiftStringToNumberKeys]: number;
@@ -124,6 +133,7 @@ export type Contract = {
     from: string | null;
     to: string | null;
     weekly_hours: number;
+    hca_perc: number;
     employment_id: Employment["id"];
     employment_name: Employment["name"];
     pay_group_id: number;

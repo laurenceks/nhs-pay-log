@@ -13,14 +13,19 @@ const Pay = () => {
                     <tr className="sticky-top">
                         <th>Pay Date</th>
                         <th>Basic pay</th>
-                        <th>Extra pay</th>
+                        <th>HCA pay</th>
+                        <th>Extras pay</th>
+                        <th>Shift pay</th>
                         <th>Gross pay</th>
                     </tr>
                 </thead>
                 <tbody>
                     {pay.map((x) => {
                         return (
-                            <tr key={x.id} style={{ cursor: "pointer" }}>
+                            <tr
+                                key={x.pay_date + x.employment_name}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <td>{formatDate(x.pay_date, "pay")}</td>
                                 <td>
                                     <CalculationNumberFlow
@@ -30,7 +35,19 @@ const Pay = () => {
                                 </td>
                                 <td>
                                     <CalculationNumberFlow
-                                        value={x.extra_pay}
+                                        value={x.hca_pay}
+                                        currency
+                                    />
+                                </td>
+                                <td>
+                                    <CalculationNumberFlow
+                                        value={x.extras_pay}
+                                        currency
+                                    />
+                                </td>
+                                <td>
+                                    <CalculationNumberFlow
+                                        value={x.shift_pay}
                                         currency
                                     />
                                 </td>

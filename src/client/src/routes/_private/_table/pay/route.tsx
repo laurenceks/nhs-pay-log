@@ -23,6 +23,7 @@ export const Route = createFileRoute("/_private/_table/pay")({
                     shift_pay: Number(x.shift_pay),
                     total_ush: Number(x.total_ush),
                     basic_pay: Number(x.basic_pay),
+                    hca_pay: Number(x.hca_pay),
                     gross_pay: Number(x.gross_pay),
                 };
             }) || [];

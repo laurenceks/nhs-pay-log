@@ -16,8 +16,8 @@ const LogTable = ({ log }: { log: ParsedApiShift[] }) => {
         []
     );
     return (
-        <div className="overflow-x-scroll">
-            <Table striped={true} hover={true}>
+        <div>
+            <Table striped={true} hover={true} responsive={true}>
                 <thead>
                     <tr>
                         <th colSpan={7}>Shift</th>

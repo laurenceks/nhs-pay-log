@@ -147,7 +147,9 @@ export const calculateAdditionalHours = (
         if (paidAdditionalHours || overrunHours) {
             const weeklyOtThresholdHours =
                 1.35e8 -
-                (weekly_hours ? decimalHoursToMs(weekly_hours) : 1.35e8); //37.5hrs fallback
+                (weekly_hours && weekly_hours !== 0
+                    ? decimalHoursToMs(weekly_hours)
+                    : 1.35e8); //37.5hrs fallback
             if (type === "OT" || type === "Normal") {
                 additionalHoursBreakdown.flat = Math.max(
                     0,

@@ -77,6 +77,8 @@ interface ShiftStringToNumberKeys {
     total_ush: string;
 }
 interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
+    pensionable_pay: string;
+    taxable_pay: string;
     hca_pay: string;
     basic_pay: string;
     gross_pay: string;

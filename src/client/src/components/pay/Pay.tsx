@@ -12,11 +12,13 @@ const Pay = () => {
                 <thead>
                     <tr className="sticky-top">
                         <th>Pay Date</th>
-                        <th>Basic pay</th>
-                        <th>HCA pay</th>
-                        <th>Extras pay</th>
-                        <th>Shift pay</th>
-                        <th>Gross pay</th>
+                        <th>Basic</th>
+                        <th>HCA</th>
+                        <th>Extras</th>
+                        <th>Shifts</th>
+                        <th>Gross</th>
+                        <th>Pensionable</th>
+                        <th>Taxable</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,6 +56,18 @@ const Pay = () => {
                                 <td>
                                     <CalculationNumberFlow
                                         value={x.gross_pay}
+                                        currency
+                                    />
+                                </td>
+                                <td>
+                                    <CalculationNumberFlow
+                                        value={x.pensionable_pay}
+                                        currency
+                                    />
+                                </td>
+                                <td>
+                                    <CalculationNumberFlow
+                                        value={x.taxable_pay}
                                         currency
                                     />
                                 </td>

@@ -25,6 +25,10 @@ export const Route = createFileRoute("/_private/_table/pay")({
                     basic_pay: Number(x.basic_pay),
                     hca_pay: Number(x.hca_pay),
                     gross_pay: Number(x.gross_pay),
+                    pensionable_pay: Number(x.pensionable_pay),
+                    taxable_pay: Number(x.taxable_pay),
+                    flowers_hours: Number(x.flowers_hours),
+                    flowers_pay: Number(x.flowers_pay),
                 };
             }) || [];
 

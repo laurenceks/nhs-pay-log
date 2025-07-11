@@ -82,6 +82,8 @@ interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
     hca_pay: string;
     basic_pay: string;
     gross_pay: string;
+    flowers_hours: string;
+    flowers_pay: string;
 }
 
 export interface ApiShift

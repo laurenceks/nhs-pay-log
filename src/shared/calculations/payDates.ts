@@ -3,7 +3,7 @@ export const nextPayDate = (date: string | Date, t = 24): Date => {
     p.setMonth(p.getMonth() + 1);
     p.setDate(t);
     if (p.getDay() === 0 || p.getDay() === 6) {
-        p.setDate(p.getDate() - (p.getDay() ? 2 : 1));
+        p.setDate(p.getDate() - (p.getDay() ? 1 : 2));
     }
     return p;
 };

@@ -107,7 +107,7 @@ export const formatDate = (
                     })
                     .split("/")
                     .reverse()
-                    .splice(0, 1)
+                    .slice(0, 2)
                     .join("-");
             case "sorting":
             case "yyyy-mm-dd":

@@ -57,7 +57,6 @@ export const patchForgotFetch = async ({
 }: {
     formState: {
         email: string;
-        password: string;
         newPassword1: string;
         newPassword2: string;
     };

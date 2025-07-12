@@ -136,12 +136,11 @@ export const registerValidationSchema: Schema = {
 
 export const forgotValidationSchema: Schema = {
     email: { ...registerValidationSchema.email },
-    password: { ...registerValidationSchema.password1 },
     newPassword1: { ...registerValidationSchema.password1 },
     newPassword2: {
         custom: {
             options: (val, { req }) => {
-                return val === req.body.password1;
+                return val === req.body.newPassword1;
             },
         },
         errorMessage: "Passwords must match",

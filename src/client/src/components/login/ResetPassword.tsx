@@ -9,7 +9,6 @@ import Loading from "../common/Loading";
 const ResetPassword = () => {
     const [formState, setFormState] = useState({
         email: "",
-        password: "",
         newPassword1: "",
         newPassword2: "",
     });
@@ -52,19 +51,9 @@ const ResetPassword = () => {
                                 onChange={changeHandler}
                             />
                         </Form.Group>
-                        <Form.Group controlId="editPassword">
-                            <Form.Label>Current password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder=""
-                                value={formState.password}
-                                data-field={"password"}
-                                onChange={changeHandler}
-                                autoComplete={"current-password"}
-                            />
-                        </Form.Group>
+                        <Form.Group controlId="editPassword"></Form.Group>
                         <Form.Group controlId="editNewPassword1">
-                            <Form.Label>Password</Form.Label>
+                            <Form.Label>New password</Form.Label>
                             <Form.Control
                                 type="password"
                                 placeholder=""
@@ -75,7 +64,7 @@ const ResetPassword = () => {
                             />
                         </Form.Group>
                         <Form.Group controlId="editNewPassword2">
-                            <Form.Label>Confirm password</Form.Label>
+                            <Form.Label>Confirm new password</Form.Label>
                             <Form.Control
                                 type="password"
                                 placeholder=""
@@ -90,7 +79,6 @@ const ResetPassword = () => {
                             disabled={
                                 isPending ||
                                 !formState.email ||
-                                !formState.password ||
                                 !formState.newPassword1 ||
                                 !formState.newPassword2 ||
                                 formState.newPassword1 !==

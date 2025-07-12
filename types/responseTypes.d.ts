@@ -98,4 +98,5 @@ export type ErrorResponseKey =
     | "userNotAdmin"
     | "userNotSuperAdmin"
     | "targetIsSuperAdmin"
+    | "validationError"
     | "emailError";

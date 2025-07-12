@@ -117,6 +117,13 @@ const sendErrorRes = (
             message: "There was an error sending an email",
             title: "Email error",
         },
+        validationError: {
+            code: 422,
+            message:
+                (feedbackArgs?.message as string) ||
+                "A value passed is not valid",
+            title: "Invalid value passed",
+        },
     };
     const errorType: SendResOptions<null> =
         type && types[type]

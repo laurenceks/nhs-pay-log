@@ -102,7 +102,7 @@ export const patchLogShift = async (req: Request, res: Response) => {
 };
 export const deleteLogShift = async (req: Request, res: Response) => {
     try {
-        const [{ from }] = await readLogShiftByUserIdAndShiftId(
+        const [result] = await readLogShiftByUserIdAndShiftId(
             req.authenticatedUser.id,
             req.params.shiftId
         );
@@ -110,8 +110,8 @@ export const deleteLogShift = async (req: Request, res: Response) => {
             req.authenticatedUser.id,
             req.params.shiftId
         );
-        if (from) {
-            await updateAffectedShifts(req.authenticatedUser.id, from);
+        if (result?.from) {
+            await updateAffectedShifts(req.authenticatedUser.id, result?.from);
         }
         sendRes(res);
     } catch (e) {

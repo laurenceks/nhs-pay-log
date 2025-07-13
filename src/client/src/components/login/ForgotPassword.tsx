@@ -1,54 +1,57 @@
 import { Button, Form } from "react-bootstrap";
-import { ChangeEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { postForgotFetch } from "../../queries/loginQueries";
 import ResponseFeedback from "../common/ResponseFeedback";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FormFeedback from "../common/FormFeedback";
+import { z } from "zod";
 
 const ForgotPassword = () => {
-    const [formState, setFormState] = useState({
-        email: "",
+    const {
+        register,
+        formState: { isValid, errors },
+        handleSubmit,
+    } = useForm({
+        mode: "onChange",
+        defaultValues: {
+            email: "",
+        },
+        resolver: zodResolver(
+            z.object({
+                email: z.string().email("Enter a valid email address"),
+            })
+        ),
     });
     const { mutate, error, isPending, data } = useMutation({
         mutationKey: ["forgot"],
         mutationFn: postForgotFetch,
     });
-    const changeHandler = (
-        e: ChangeEvent<HTMLInputElement> & ChangeEvent<HTMLSelectElement>
-    ) =>
-        setFormState((prevState) => ({
-            ...prevState,
-            [e.target.dataset.field as string]: e.target.value,
-        }));
 
     return (
         <div className="position-relative">
             <Form
                 className="d-flex flex-column gap-3"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    mutate(formState);
-                }}
+                onSubmit={handleSubmit((formData) => mutate(formData))}
             >
                 <h3 className="mb-0">Forgot password</h3>
                 <Form.Group controlId="editEmail">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
+                        {...register("email")}
                         type="email"
-                        placeholder=""
-                        value={formState.email}
-                        data-field={"email"}
                         autoComplete={"email"}
-                        onChange={changeHandler}
                     />
                 </Form.Group>
                 {!data && (
-                    <Button
-                        type="submit"
-                        disabled={isPending || !formState.email}
-                    >
+                    <Button type="submit" disabled={isPending || !isValid}>
                         Send reset link
                     </Button>
                 )}
+                <FormFeedback
+                    show={Object.keys(errors).length > 0}
+                    errors={errors}
+                />
                 <ResponseFeedback
                     response={data}
                     error={error}

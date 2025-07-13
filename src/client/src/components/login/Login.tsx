@@ -64,7 +64,7 @@ const Login = () => {
                         isInvalid={!!errors.password}
                     />
                 </Form.Group>
-                <Button type="submit" disabled={!isValid}>
+                <Button type="submit" disabled={isPending || !isValid}>
                     Log in
                 </Button>
                 <Button

@@ -1,16 +1,27 @@
 import { Button, Form } from "react-bootstrap";
-import { ChangeEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { patchForgotFetch } from "../../queries/loginQueries";
 import ResponseFeedback from "../common/ResponseFeedback";
 import { Link, useSearch } from "@tanstack/react-router";
 import Loading from "../common/Loading";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { forgotSchema } from "../../../../shared/validationSchemas/commonValidationSchemas";
+import FormFeedback from "../common/FormFeedback";
 
 const ResetPassword = () => {
-    const [formState, setFormState] = useState({
-        email: "",
-        newPassword1: "",
-        newPassword2: "",
+    const {
+        register,
+        formState: { isValid, errors },
+        handleSubmit,
+    } = useForm({
+        mode: "onChange",
+        defaultValues: {
+            email: "",
+            newPassword1: "",
+            newPassword2: "",
+        },
+        resolver: zodResolver(forgotSchema),
     });
 
     const { selector, token } = useSearch({
@@ -21,74 +32,49 @@ const ResetPassword = () => {
         mutationKey: ["resetPassword"],
         mutationFn: patchForgotFetch,
     });
-    const changeHandler = (
-        e: ChangeEvent<HTMLInputElement> & ChangeEvent<HTMLSelectElement>
-    ) =>
-        setFormState((prevState) => ({
-            ...prevState,
-            [e.target.dataset.field as string]: e.target.value,
-        }));
 
     return (
         <div className="position-relative">
             <Form
                 className="d-flex flex-column gap-3"
-                onSubmit={(e) => {
-                    e.preventDefault();
+                onSubmit={handleSubmit((formState) => {
                     mutate({ formState, selector, token });
-                }}
+                })}
             >
                 <h3 className="mb-0">Reset password</h3>
                 {!submittedAt && (
                     <>
                         <Form.Group controlId="editEmail">
                             <Form.Label>Email</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder=""
-                                value={formState.email}
-                                data-field={"email"}
-                                onChange={changeHandler}
-                            />
+                            <Form.Control {...register("email")} type="email" />
                         </Form.Group>
                         <Form.Group controlId="editPassword"></Form.Group>
                         <Form.Group controlId="editNewPassword1">
                             <Form.Label>New password</Form.Label>
                             <Form.Control
+                                {...register("newPassword1")}
                                 type="password"
-                                placeholder=""
-                                value={formState.newPassword1}
-                                data-field={"newPassword1"}
-                                onChange={changeHandler}
                                 autoComplete={"new-password"}
                             />
                         </Form.Group>
                         <Form.Group controlId="editNewPassword2">
                             <Form.Label>Confirm new password</Form.Label>
                             <Form.Control
+                                {...register("newPassword2")}
                                 type="password"
                                 placeholder=""
-                                value={formState.newPassword2}
-                                data-field={"newPassword2"}
-                                onChange={changeHandler}
                                 autoComplete={"new-password"}
                             />
                         </Form.Group>
-                        <Button
-                            type="submit"
-                            disabled={
-                                isPending ||
-                                !formState.email ||
-                                !formState.newPassword1 ||
-                                !formState.newPassword2 ||
-                                formState.newPassword1 !==
-                                    formState.newPassword2
-                            }
-                        >
+                        <Button type="submit" disabled={isPending || !isValid}>
                             Reset password
                         </Button>
                     </>
                 )}
+                <FormFeedback
+                    show={Object.keys(errors).length > 0}
+                    errors={errors}
+                />
                 {!!(submittedAt && isPending) && <Loading />}
                 <ResponseFeedback
                     response={data}

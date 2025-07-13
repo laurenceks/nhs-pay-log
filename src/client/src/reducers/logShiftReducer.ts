@@ -9,6 +9,7 @@ import { makeToAlwaysLater } from "../../../shared/utils/conversions";
 import { formatDate } from "../../../shared/utils/formatDates";
 import {
     financialYear,
+    flowersPayMonth,
     nextPayDate,
 } from "../../../shared/calculations/payDates";
 import { updateShiftContract } from "../../../shared/utils/updateShiftContract";
@@ -91,6 +92,7 @@ const logShiftReducer = (
                     pay_date: formatDate(payDate, "yyyy-mm-dd"),
                     pay_month: formatDate(payDate, "yy-mm"),
                     pay_financial_year: financialYear(payDate),
+                    flowers_pay_month: flowersPayMonth(payDate),
                 };
                 if (payload && prevState.start) {
                     const newFrom = makeFromTimestamp(payload, prevState.start);

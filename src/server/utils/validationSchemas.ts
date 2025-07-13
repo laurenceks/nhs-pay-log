@@ -47,6 +47,20 @@ export const shiftTimeSchema = (
         },
     };
 };
+export const shiftPayMonthSchema = (
+    fieldName: string,
+    messageName?: string
+): Schema => {
+    return {
+        [fieldName]: {
+            notEmpty: true,
+            custom: {
+                options: (val) => dayjs(val, "YY-MM", true).isValid(),
+            },
+            errorMessage: `${messageName || fieldName} must be a valid date in the format YY-MM`,
+        },
+    };
+};
 export const shiftDurationIntSchema = (
     fieldName: string,
     messageName?: string
@@ -205,13 +219,8 @@ export const logShiftValidationSchema: Schema = {
         errorMessage: "Invalid pay override ID",
         optional: { options: { values: "null" } },
     },
-    pay_month: {
-        notEmpty: true,
-        custom: {
-            options: (val) => dayjs(val, "YY-MM", true).isValid(),
-        },
-        errorMessage: `Pay month must be a valid date in the format YY-MM`,
-    },
+    ...shiftPayMonthSchema("pay_month", "Pay month"),
+    ...shiftPayMonthSchema("flowers_pay_month", "Flowers pay month"),
 };
 
 export const {

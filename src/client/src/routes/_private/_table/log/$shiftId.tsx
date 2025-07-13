@@ -7,7 +7,10 @@ import { formatDate } from "../../../../../../shared/utils/formatDates";
 import { queryClient } from "../../../../App";
 import { ApiResponse } from "../../../../../../../types/responseTypes";
 import { updateShiftContract } from "../../../../../../shared/utils/updateShiftContract";
-import { financialYear } from "../../../../../../shared/calculations/payDates";
+import {
+    financialYear,
+    flowersPayMonth,
+} from "../../../../../../shared/calculations/payDates";
 
 export const Route = createFileRoute("/_private/_table/log/$shiftId")({
     component: ShiftEditModal,
@@ -44,6 +47,7 @@ export const Route = createFileRoute("/_private/_table/log/$shiftId")({
                 pay_date: formatDate(today, "yyyy-mm-dd"),
                 pay_month: formatDate(today, "yy-mm"),
                 pay_financial_year: financialYear(today),
+                flowers_pay_month: flowersPayMonth(today),
                 double: 0,
                 employment_id: onlyContract?.employment_id || 0,
                 employment_name: onlyContract?.employment_name || "",

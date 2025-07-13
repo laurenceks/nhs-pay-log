@@ -59,6 +59,7 @@ export interface ClientShift extends AdditionalHours, USH, ShiftEdit {
     pay_date: string;
     pay_month: string;
     pay_financial_year: string;
+    flowers_pay_month: string;
     weekly_hours: Contract["weekly_hours"];
     // incentive: number;
     // incentiveHours: number;

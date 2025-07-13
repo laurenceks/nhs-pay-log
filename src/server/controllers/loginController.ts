@@ -4,48 +4,54 @@ import logoutAndDestroySession from "../utils/logoutAndDestroySession";
 import { ApiUser, ClientUser } from "../../../types/commonTypes";
 import { ErrorResponseKey } from "../../../types/responseTypes";
 import { Request, Response } from "express";
+import { validationResult } from "express-validator";
 
 export const login = async (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
         req.logout(() => {});
     }
     try {
-        passport.authenticate(
-            "local",
-            (error: string | null | { code: string }, user: ApiUser) => {
-                try {
-                    if (!error && user) {
-                        req.login(user, async (e) => {
-                            if (e) {
-                                logoutAndDestroySession(req, res);
-                                sendErrorRes(res, "unauthorised");
-                            } else {
-                                sendRes<ClientUser>(res, {
-                                    data: {
-                                        id: user.id,
-                                        email: user.email,
-                                    },
-                                });
-                            }
-                        });
-                    } else {
-                        logoutAndDestroySession(req, res);
-                        if (typeof error === "string") {
-                            sendErrorRes(res, error as ErrorResponseKey);
+        const result = validationResult(req);
+        if (result.isEmpty()) {
+            passport.authenticate(
+                "local",
+                (error: string | null | { code: string }, user: ApiUser) => {
+                    try {
+                        if (!error && user) {
+                            req.login(user, async (e) => {
+                                if (e) {
+                                    logoutAndDestroySession(req, res);
+                                    sendErrorRes(res, "unauthorised");
+                                } else {
+                                    sendRes<ClientUser>(res, {
+                                        data: {
+                                            id: user.id,
+                                            email: user.email,
+                                        },
+                                    });
+                                }
+                            });
                         } else {
-                            if (error?.code === "ECONNREFUSED") {
-                                sendErrorRes(res);
+                            logoutAndDestroySession(req, res);
+                            if (typeof error === "string") {
+                                sendErrorRes(res, error as ErrorResponseKey);
                             } else {
-                                sendErrorRes(res, "unauthorised");
+                                if (error?.code === "ECONNREFUSED") {
+                                    sendErrorRes(res);
+                                } else {
+                                    sendErrorRes(res, "unauthorised");
+                                }
                             }
                         }
+                    } catch (_e) {
+                        logoutAndDestroySession(req, res);
+                        sendErrorRes(res);
                     }
-                } catch (_e) {
-                    logoutAndDestroySession(req, res);
-                    sendErrorRes(res);
                 }
-            }
-        )(req, res);
+            )(req, res);
+        } else {
+            sendErrorRes(res, "invalidUsernameOrPassword");
+        }
     } catch (_e) {
         logoutAndDestroySession(req, res);
         sendErrorRes(res);

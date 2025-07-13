@@ -11,9 +11,11 @@ import validateToken from "../../middleware/validateToken";
 import { logout } from "../../controllers/logoutController";
 import {
     forgotValidationSchema,
+    loginValidationSchema,
     registerValidationSchema,
 } from "../../utils/validationSchemas";
 import { validateRequest } from "../../middleware/validateRequest";
+import { checkSchema } from "express-validator";
 
 const router = Router();
 
@@ -24,7 +26,7 @@ router.post(
     postRegister
 );
 router.get("/login", authenticateRequest, checkLoginStatus);
-router.post("/login", login);
+router.post("/login", checkSchema(loginValidationSchema), login);
 router.get("/logout", logout);
 router.get("/verify", validateToken, getVerify);
 router.post(

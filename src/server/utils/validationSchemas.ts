@@ -94,6 +94,11 @@ export const rowIdValidationSchema = (
         },
     };
 };
+
+export const loginValidationSchema: Schema = {
+    email: { exists: true, notEmpty: true },
+    password: { exists: true, notEmpty: true },
+};
 export const registerValidationSchema: Schema = {
     email: {
         isEmail: true,

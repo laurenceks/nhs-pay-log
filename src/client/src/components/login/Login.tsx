@@ -1,14 +1,22 @@
 import { Button, Form } from "react-bootstrap";
-import { ChangeEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { postLoginFetch } from "../../queries/loginQueries";
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import ResponseFeedback from "../common/ResponseFeedback";
+import { useForm } from "react-hook-form";
+import FormFeedback from "../common/FormFeedback";
 
 const Login = () => {
     const navigate = useNavigate();
     const context = useRouteContext({ strict: false });
-    const [formState, setFormState] = useState({ email: "", password: "" });
+    const {
+        register,
+        formState: { isValid, errors },
+        handleSubmit,
+    } = useForm({
+        mode: "onChange",
+        defaultValues: { email: "", password: "" },
+    });
     const { mutate, error, isPending } = useMutation({
         mutationKey: ["login"],
         mutationFn: postLoginFetch,
@@ -23,50 +31,40 @@ const Login = () => {
             }
         },
     });
-    const changeHandler = (e: ChangeEvent<HTMLInputElement>) =>
-        setFormState((prevState) => ({
-            ...prevState,
-            [e.target.dataset.field as string]: e.target.value,
-        }));
 
     return (
         <div className="position-relative">
             <Form
                 className="d-flex flex-column gap-3"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    mutate(formState);
-                }}
+                onSubmit={handleSubmit((data) => {
+                    mutate(data);
+                })}
+                noValidate={true}
             >
                 <h3 className="mb-0">Please log in</h3>
                 <Form.Group controlId="editEmail">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
+                        {...register("email", { required: "Email required" })}
                         type="email"
                         placeholder=""
-                        value={formState.email}
-                        data-field={"email"}
-                        onChange={changeHandler}
                         autoComplete={"email"}
+                        isInvalid={!!errors.email}
                     />
                 </Form.Group>
                 <Form.Group controlId="editPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
+                        {...register("password", {
+                            required: "Password required",
+                        })}
                         type="password"
                         placeholder=""
-                        value={formState.password}
-                        data-field={"password"}
-                        onChange={changeHandler}
                         autoComplete={"current-password"}
+                        isInvalid={!!errors.password}
                     />
                 </Form.Group>
-                <Button
-                    type="submit"
-                    disabled={
-                        isPending || !formState.email || !formState.password
-                    }
-                >
+                <Button type="submit" disabled={!isValid}>
                     Log in
                 </Button>
                 <Button
@@ -78,6 +76,10 @@ const Login = () => {
                     Sign up
                 </Button>
                 <Link to={"/forgot"}>Forgot password</Link>
+                <FormFeedback
+                    show={Object.keys(errors).length > 0}
+                    errors={errors}
+                />
                 <ResponseFeedback isPending={isPending} error={error} />
                 {error &&
                     "errorCode" in error &&

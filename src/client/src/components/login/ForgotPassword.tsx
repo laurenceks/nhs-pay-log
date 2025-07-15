@@ -19,7 +19,7 @@ const ForgotPassword = () => {
         },
         resolver: zodResolver(
             z.object({
-                email: z.string().email("Enter a valid email address"),
+                email: z.email("Enter a valid email address"),
             })
         ),
     });

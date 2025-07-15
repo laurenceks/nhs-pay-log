@@ -8,25 +8,33 @@ import {
 } from "../../controllers/logController";
 import { validateRequest } from "../../middleware/validateRequest";
 import {
+    logShiftIdValidationSchema,
     logShiftValidationSchema,
-    newLogShiftValidationSchema,
-    rowIdValidationSchema,
-} from "../../utils/validationSchemas";
+} from "../../../shared/validationSchemas/logShiftValidationSchema";
 
 const router = Router();
 
 router.get("/", getLog);
-router.post("/", validateRequest(newLogShiftValidationSchema), postLogShift);
+router.post(
+    "/",
+    validateRequest(logShiftValidationSchema, "body"),
+    postLogShift
+);
 
-router.get("/:shiftId", getLogShift);
+router.get(
+    "/:shiftId",
+    validateRequest(logShiftIdValidationSchema, "params"),
+    getLogShift
+);
 router.patch(
     "/:shiftId",
-    validateRequest(logShiftValidationSchema),
+    validateRequest(logShiftIdValidationSchema, "params"),
+    validateRequest(logShiftValidationSchema, "body"),
     patchLogShift
 );
 router.delete(
     "/:shiftId",
-    validateRequest(rowIdValidationSchema("shiftId")),
+    validateRequest(logShiftIdValidationSchema, "params"),
     deleteLogShift
 );
 

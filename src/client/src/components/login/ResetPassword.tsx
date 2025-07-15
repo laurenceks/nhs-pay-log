@@ -6,8 +6,8 @@ import { Link, useSearch } from "@tanstack/react-router";
 import Loading from "../common/Loading";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotSchema } from "../../../../shared/validationSchemas/commonValidationSchemas";
 import FormFeedback from "../common/FormFeedback";
+import { forgotValidationSchema } from "../../../../shared/validationSchemas/forgotValidationSchema";
 
 const ResetPassword = () => {
     const {
@@ -21,7 +21,7 @@ const ResetPassword = () => {
             newPassword1: "",
             newPassword2: "",
         },
-        resolver: zodResolver(forgotSchema),
+        resolver: zodResolver(forgotValidationSchema),
     });
 
     const { selector, token } = useSearch({

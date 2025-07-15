@@ -7,7 +7,7 @@ import ResponseFeedback from "../common/ResponseFeedback";
 import { useForm } from "react-hook-form";
 import FormFeedback from "../common/FormFeedback";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../../../../shared/validationSchemas/commonValidationSchemas";
+import { registerValidationSchema } from "../../../../shared/validationSchemas/registerValidationSchema";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -29,7 +29,7 @@ const Register = () => {
             contract_name: "My contract",
             weekly_hours: 37.5,
         },
-        resolver: zodResolver(registerSchema),
+        resolver: zodResolver(registerValidationSchema),
     });
 
     const { mutate, data, error, isPending } = useMutation({

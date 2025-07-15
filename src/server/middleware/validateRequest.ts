@@ -1,43 +1,31 @@
-import {
-    checkSchema,
-    Location,
-    Schema,
-    validationResult,
-} from "express-validator";
-import { sendErrorRes } from "../utils/sendRes";
 import { NextFunction, Request, Response } from "express";
+import { sendErrorRes } from "../utils/sendRes";
+import { ZodType } from "zod";
 
 export const validateRequest = (
-    schema: Schema,
-    defaultLocations?: Location[]
+    schema: ZodType,
+    key: "body" | "cookies" | "headers" | "params" | "query" = "body"
 ) => {
-    const schemaMiddlewares = checkSchema(schema, defaultLocations);
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            for (const middleware of schemaMiddlewares) {
-                await new Promise<void>((resolve, reject) => {
-                    middleware(req, res, (err) => {
-                        if (err) reject(err);
-                        else resolve();
-                    });
-                });
-            }
+            const validationResult = schema.safeParse(req[key]);
 
-            const result = validationResult(req);
-
-            if (result.isEmpty()) {
+            if (validationResult.success) {
                 next();
             } else {
                 sendErrorRes(res, "validationError", {
                     title: "Invalid value",
-                    message: result
-                        .array()
-                        .map((x) => x.msg)
+                    message: validationResult.error.issues
+                        .map((i) => i.message)
                         .join("\n"),
                 });
             }
-        } catch (err) {
-            next(err);
+        } catch (e) {
+            console.log(e);
+            sendErrorRes(res, "validationError", {
+                title: "Invalid value",
+                message: `Unable to validate request ${key}`,
+            });
         }
     };
 };

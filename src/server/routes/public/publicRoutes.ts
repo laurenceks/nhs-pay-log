@@ -9,13 +9,10 @@ import { getVerify, postVerify } from "../../controllers/verifyController";
 import { patchForgot, postForgot } from "../../controllers/forgotController";
 import validateToken from "../../middleware/validateToken";
 import { logout } from "../../controllers/logoutController";
-import {
-    forgotValidationSchema,
-    loginValidationSchema,
-    registerValidationSchema,
-} from "../../utils/validationSchemas";
 import { validateRequest } from "../../middleware/validateRequest";
-import { checkSchema } from "express-validator";
+import { forgotValidationSchema } from "../../../shared/validationSchemas/forgotValidationSchema";
+import { registerValidationSchema } from "../../../shared/validationSchemas/registerValidationSchema";
+import { loginValidationSchema } from "../../../shared/validationSchemas/loginValidationSchema";
 
 const router = Router();
 
@@ -26,17 +23,17 @@ router.post(
     postRegister
 );
 router.get("/login", authenticateRequest, checkLoginStatus);
-router.post("/login", checkSchema(loginValidationSchema), login);
+router.post("/login", validateRequest(loginValidationSchema), login);
 router.get("/logout", logout);
 router.get("/verify", validateToken, getVerify);
 router.post(
     "/verify",
-    validateRequest({ email: registerValidationSchema.email }),
+    validateRequest(forgotValidationSchema.pick({ email: true })),
     postVerify
 );
 router.post(
     "/forgot",
-    validateRequest({ email: registerValidationSchema.email }),
+    validateRequest(forgotValidationSchema.pick({ email: true })),
     postForgot
 );
 router.patch(

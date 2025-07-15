@@ -32,7 +32,7 @@ export const readAffectedLogByUserIdAndShiftId = async (
 
 export const createLogShift = async (userId: string, shift: ClientShift) => {
     return await executeWriteByPlaceholders(
-        "INSERT INTO `log` (`user_id`, `employment_id`, `contract_id`, `date`, `start`, `planned_end`, `actual_end`, `from`, `planned_to`,`actual_to`, `type`, `overrun_type`, `pay_id_override`, `extras_ids_string`, `pay_date`, `pay_month`, `flowers_pay_month`, `pay_financial_year`, `toil`, `flat`, `lower_rate`, `time_and_half`, `higher_rate`, `double`) VALUES (:userId, :employment_id, :contract_id, :date, :start, :planned_end, :actual_end, :from, :planned_to,:actual_to, :type, :overrun_type, :pay_id_override, :extras, :pay_date, :pay_month, :flowers_pay_month, :pay_financial_year, :toil, :flat, :lower_rate, :time_and_half, :higher_rate, :double)",
+        "INSERT INTO `log` (`user_id`, `employment_id`, `contract_id`, `date`, `start`, `planned_end`, `actual_end`, `from`, `planned_to`,`actual_to`, `type`, `overrun_type`, `pay_id_override`, `extras_ids_string`, `pay_date`, `pay_month`, `flowers_pay_month`, `pay_financial_year`, `toil`, `flat`, `lower_rate`, `time_and_half`, `higher_rate`, `double`) VALUES (:userId, :employment_id, :contract_id, :date, :start, :planned_end, :actual_end, :from, :planned_to,:actual_to, :type, :overrun_type, :pay_id_override, :extras, :pay_date, :pay_month, DATE_FORMAT(DATE_ADD(:pay_date, INTERVAL 1 MONTH ), '%y-%m'), :pay_financial_year, :toil, :flat, :lower_rate, :time_and_half, :higher_rate, :double)",
         {
             actual_end: shift.actual_end,
             actual_to: shift.actual_to,
@@ -66,7 +66,7 @@ export const updateLogShiftByUserIdAndShiftId = async (
     shift: ClientShift
 ) => {
     return await executeWriteByPlaceholders(
-        "UPDATE `log` SET `employment_id` = :employment_id,`contract_id` = :contract_id, `date` = :date, `start` = :start, `planned_end` = :planned_end, `actual_end` = :actual_end, `from` = :from, `planned_to` = :planned_to,`actual_to` = :actual_to, `type` = :type, `overrun_type` = :overrun_type, `pay_id_override` = :pay_id_override, `pay_date` = :pay_date, `pay_month` = :pay_month, `flowers_pay_month` = :flowers_pay_month, `pay_financial_year` = :pay_financial_year, `extras_ids_string` = :extras, `toil` = :toil, `flat` = :flat, `lower_rate` = :lower_rate, `time_and_half` = :time_and_half, `higher_rate` = :higher_rate, `double` = :double WHERE `user_id` = :userId AND `id` = :id",
+        "UPDATE `log` SET `employment_id` = :employment_id,`contract_id` = :contract_id, `date` = :date, `start` = :start, `planned_end` = :planned_end, `actual_end` = :actual_end, `from` = :from, `planned_to` = :planned_to,`actual_to` = :actual_to, `type` = :type, `overrun_type` = :overrun_type, `pay_id_override` = :pay_id_override, `pay_date` = :pay_date, `pay_month` = :pay_month, `flowers_pay_month` = DATE_FORMAT(DATE_ADD(:pay_date, INTERVAL 1 MONTH ), '%y-%m'), `pay_financial_year` = :pay_financial_year, `extras_ids_string` = :extras, `toil` = :toil, `flat` = :flat, `lower_rate` = :lower_rate, `time_and_half` = :time_and_half, `higher_rate` = :higher_rate, `double` = :double WHERE `user_id` = :userId AND `id` = :id",
         {
             actual_end: shift.actual_end,
             actual_to: shift.actual_to,

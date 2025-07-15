@@ -50,7 +50,9 @@ export const postRegister = async (req: Request, res: Response) => {
     } catch (e) {
         console.log(e);
         if ((e as { code: string }).code === "ER_DUP_ENTRY") {
-            sendErrorRes(res, "userAlreadyRegistered");
+            sendErrorRes(res, "userAlreadyRegistered", {
+                email: req.body.email,
+            });
         } else {
             sendErrorRes(res);
         }

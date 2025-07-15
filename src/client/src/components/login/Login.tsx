@@ -5,6 +5,8 @@ import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import ResponseFeedback from "../common/ResponseFeedback";
 import { useForm } from "react-hook-form";
 import FormFeedback from "../common/FormFeedback";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginValidationSchema } from "../../../../shared/validationSchemas/loginValidationSchema";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -16,6 +18,7 @@ const Login = () => {
     } = useForm({
         mode: "onChange",
         defaultValues: { email: "", password: "" },
+        resolver: zodResolver(loginValidationSchema),
     });
     const { mutate, error, isPending } = useMutation({
         mutationKey: ["login"],

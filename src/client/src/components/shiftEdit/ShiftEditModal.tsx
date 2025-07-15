@@ -25,6 +25,7 @@ import { filterOptionsByDate } from "../../../../shared/utils/lookup";
 import { PayBand } from "../../../../../types/lookupTypes";
 import { toast } from "react-hot-toast";
 import { ApiResponse } from "../../../../../types/responseTypes";
+import { logShiftValidationSchema } from "../../../../shared/validationSchemas/logShiftValidationSchema";
 
 const ShiftEditModal = () => {
     const navigate = useNavigate();
@@ -479,7 +480,15 @@ const ShiftEditModal = () => {
                     Cancel
                 </Button>
                 <Button
-                    disabled={postPending || patchPending || deletePending}
+                    disabled={
+                        postPending ||
+                        patchPending ||
+                        deletePending ||
+                        !logShiftValidationSchema.safeParse({
+                            ...editState,
+                            ...ushState,
+                        }).success
+                    }
                     onClick={saveEdit}
                     variant="success"
                 >

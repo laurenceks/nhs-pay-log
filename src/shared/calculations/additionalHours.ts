@@ -197,8 +197,9 @@ export const calculateAdditionalHours = (
                     );
                 }
             } else if (type === "Bank") {
-                additionalHoursBreakdown.flat =
-                    paidAdditionalHours * 1.12004801920768;
+                additionalHoursBreakdown.flat = Math.floor(
+                    paidAdditionalHours * 1.12004801920768
+                );
             }
 
             if (type === "TOIL" || overrun_type === "TOIL") {

@@ -85,6 +85,7 @@ interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
     gross_pay: string;
     flowers_hours: string;
     flowers_pay: string;
+    pension_perc: string;
 }
 
 export interface ApiShift
@@ -102,7 +103,9 @@ export interface ApiPay
             | "actual_end"
             | "id"
         >,
-        PayStringToNumberKeys {}
+        PayStringToNumberKeys {
+    student_loan: 1 | 2 | 4 | 5 | 6 | null; //6=postgrad
+}
 
 export type ParsedApiShift = Omit<ApiShift, keyof ShiftStringToNumberKeys> & {
     [K in keyof ShiftStringToNumberKeys]: number;
@@ -139,6 +142,8 @@ export type Contract = {
     to: string | null;
     weekly_hours: number;
     hca_perc: number;
+    pension_perc: number;
+    student_loan: number | null;
     employment_id: Employment["id"];
     employment_name: Employment["name"];
     pay_group_id: number;

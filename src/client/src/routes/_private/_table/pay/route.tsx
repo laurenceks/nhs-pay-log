@@ -29,6 +29,7 @@ export const Route = createFileRoute("/_private/_table/pay")({
                     taxable_pay: Number(x.taxable_pay),
                     flowers_hours: Number(x.flowers_hours),
                     flowers_pay: Number(x.flowers_pay),
+                    pension_perc: Number(x.pension_perc),
                 };
             }) || [];
 

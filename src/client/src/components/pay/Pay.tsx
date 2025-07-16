@@ -6,6 +6,7 @@ import {
     calculateEmployeeNationalInsurance,
     calculateIncomeTax,
     calculatePersonalAllowance,
+    calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
 import { TaxYear } from "@saving-tool/hmrc-income-tax/lib/types";
 
@@ -18,6 +19,7 @@ const Pay = () => {
                 <thead>
                     <tr className="sticky-top">
                         <th scope="col">Pay Date</th>
+                        <th scope="col">Employment</th>
                         <th scope="col">Basic</th>
                         <th scope="col">HCA</th>
                         <th scope="col">Extras</th>
@@ -27,6 +29,7 @@ const Pay = () => {
                         <th scope="col">Taxable</th>
                         <th scope="col">NI</th>
                         <th scope="col">PAYE</th>
+                        <th scope="col">Loan</th>
                         <th scope="col">Pension</th>
                         <th scope="col" className="fw-bolder">
                             Net
@@ -54,11 +57,25 @@ const Pay = () => {
                             taxableAnnualIncome,
                         });
 
+                        let studentLoan = 0;
+
+                        if (x.student_loan) {
+                            studentLoan = calculateStudentLoanRepayments({
+                                taxYear,
+                                taxableAnnualIncome,
+                                studentLoanPlanNo:
+                                    x.student_loan === 6
+                                        ? "postgrad"
+                                        : x.student_loan,
+                            });
+                        }
+
                         return (
                             <tr key={x.pay_date + x.employment_name}>
                                 <th scope="row">
                                     {formatDate(x.pay_date, "pay")}
                                 </th>
+                                <th>{x.employment_name}</th>
                                 <td>
                                     <CalculationNumberFlow
                                         value={x.basic_pay}
@@ -83,7 +100,7 @@ const Pay = () => {
                                         currency
                                     />
                                 </td>
-                                <td>
+                                <td className="text-success">
                                     <CalculationNumberFlow
                                         value={x.gross_pay}
                                         currency
@@ -101,31 +118,40 @@ const Pay = () => {
                                         currency
                                     />
                                 </td>
-                                <td>
+                                <td className="text-danger">
                                     <CalculationNumberFlow
                                         value={ni / 12}
                                         currency
                                     />
                                 </td>
-                                <td>
+                                <td className="text-danger">
                                     <CalculationNumberFlow
                                         value={paye / 12}
                                         currency
                                     />
                                 </td>
-                                <td>
+                                <td className="text-danger">
                                     <CalculationNumberFlow
-                                        value={x.pensionable_pay * 0.083}
+                                        value={studentLoan / 12}
                                         currency
                                     />
                                 </td>
-                                <td className="fw-bolder">
+                                <td className="text-danger">
+                                    <CalculationNumberFlow
+                                        value={
+                                            x.pensionable_pay * x.pension_perc
+                                        }
+                                        currency
+                                    />
+                                </td>
+                                <td className="text-success">
                                     <CalculationNumberFlow
                                         value={
                                             x.gross_pay -
                                             paye / 12 -
                                             ni / 12 -
-                                            x.pensionable_pay * 0.083
+                                            studentLoan / 12 -
+                                            x.pensionable_pay * x.pension_perc
                                         }
                                         currency
                                     />

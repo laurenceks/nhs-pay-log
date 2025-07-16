@@ -86,10 +86,15 @@ const ShiftEditModal = () => {
         );
 
     useEffect(() => {
+        //this is done here and not in reducer to catch stale data passed from server
         if (!contractValidOnDate) {
-            toast.error(
-                "The selected contract is not valid on this date and has been replaced with the best option available"
-            );
+            if (newContract?.employment_id !== editState.employment_id) {
+                toast.error(
+                    "The selected employment is not valid on this date and has been replaced with the best option available"
+                );
+            } else {
+                toast.success("Contract updated");
+            }
             setEditState({
                 action: "contract",
                 payload: newContract,
@@ -258,7 +263,9 @@ const ShiftEditModal = () => {
                                 >
                                     <>
                                         {!editState?.contract_id && (
-                                            <option>Pick a contract</option>
+                                            <option>
+                                                Select an employment
+                                            </option>
                                         )}
                                     </>
                                     {contractSelectOptions.map((x) => (
@@ -266,7 +273,7 @@ const ShiftEditModal = () => {
                                             key={`contract-${x.id}`}
                                             value={x.id}
                                         >
-                                            {`${x.employment_name} - ${x.name}`}
+                                            {`${x.employment_name}`}
                                         </option>
                                     ))}
                                 </Form.Select>

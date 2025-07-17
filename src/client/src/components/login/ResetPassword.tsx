@@ -81,8 +81,14 @@ const ResetPassword = () => {
                     error={error}
                     isPending={isPending}
                 ></ResponseFeedback>
-                {!!error && <Link to={"/forgot"}>Resend reset link</Link>}
-                {data?.success && <Link to={"/login"}>Login</Link>}
+                {!!error && (
+                    <Link to={"/forgot"} className="small">
+                        Resend reset link
+                    </Link>
+                )}
+                <Link to={"/login"} className="small">
+                    Back to login
+                </Link>
             </Form>
         </div>
     );

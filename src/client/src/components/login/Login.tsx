@@ -78,7 +78,9 @@ const Login = () => {
                 >
                     Sign up
                 </Button>
-                <Link to={"/forgot"}>Forgot password</Link>
+                <Link to={"/forgot"} className="small">
+                    Forgot password
+                </Link>
                 <FormFeedback
                     show={Object.keys(errors).length > 0}
                     errors={errors}
@@ -87,7 +89,9 @@ const Login = () => {
                 {error &&
                     "errorCode" in error &&
                     error.errorCode === "userNotVerified" && (
-                        <Link to={"/verify/resend"}>Resend verification</Link>
+                        <Link to={"/verify/resend"} className="small">
+                            Resend verification
+                        </Link>
                     )}
             </Form>
         </div>

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormFeedback from "../common/FormFeedback";
 import { z } from "zod";
+import { Link } from "@tanstack/react-router";
 
 const ForgotPassword = () => {
     const {
@@ -57,6 +58,9 @@ const ForgotPassword = () => {
                     error={error}
                     isPending={isPending}
                 ></ResponseFeedback>
+                <Link to={"/login"} className="small">
+                    Back to login
+                </Link>
             </Form>
         </div>
     );

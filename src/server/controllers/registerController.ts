@@ -37,7 +37,6 @@ export const postRegister = async (req: Request, res: Response) => {
             req.body.employment_from,
             newEmployment.id,
             req.body.pay_group_id,
-            req.body.contract_name,
             req.body.weekly_hours
         );
         await sendVerificationEmail(userId, req.body.email);

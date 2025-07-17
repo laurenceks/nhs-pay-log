@@ -52,7 +52,6 @@ export const Route = createFileRoute("/_private/_table/log/$shiftId")({
                 employment_id: onlyContract?.employment_id || 0,
                 employment_name: onlyContract?.employment_name || "",
                 contract_id: onlyContract?.id || 0,
-                contract_name: onlyContract?.name || "",
                 extras_ids_string: "",
                 selectedExtras: [],
                 flat: 0,

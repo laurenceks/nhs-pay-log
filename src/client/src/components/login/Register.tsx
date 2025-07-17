@@ -26,7 +26,6 @@ const Register = () => {
             pay_group_id: "",
             employment_from: "",
             employment_name: "My job",
-            contract_name: "My contract",
             weekly_hours: 37.5,
         },
         resolver: zodResolver(registerValidationSchema),
@@ -84,10 +83,6 @@ const Register = () => {
                         type="text"
                         autoComplete={"organization"}
                     />
-                </Form.Group>
-                <Form.Group controlId="editContractName">
-                    <Form.Label>Contract name</Form.Label>
-                    <Form.Control {...register("contract_name")} type="text" />
                 </Form.Group>
                 <Form.Group controlId="editEmploymentFrom">
                     <Form.Label>Employment start</Form.Label>

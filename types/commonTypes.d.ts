@@ -25,7 +25,6 @@ export interface ShiftEdit {
     actual_end: string;
     actual_to: string;
     contract_id: Contract["id"];
-    contract_name: Contract["name"];
     date: string;
     employment_id: Employment["id"];
     employment_name: Employment["name"];

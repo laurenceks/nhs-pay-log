@@ -94,6 +94,7 @@ const logShiftReducer = (
                     pay_financial_year: financialYear(payDate),
                     flowers_pay_month: flowersPayMonth(payDate),
                 };
+
                 if (payload && prevState.start) {
                     const newFrom = makeFromTimestamp(payload, prevState.start);
                     if (prevState.planned_end) {
@@ -223,8 +224,8 @@ const logShiftReducer = (
             return {
                 ...prevState,
                 contract_id: payload?.id || 0,
-                contract_name: payload?.name || "",
                 employment_id: payload?.employment_id || 0,
+                weekly_hours: payload?.weekly_hours || 37.5,
             };
         }
         case "type": {
@@ -312,8 +313,6 @@ const logShiftReducer = (
                         prevState.actual_end || prevState.planned_end
                     ),
                     contract_id: newContract?.id || prevState.contract_id || 0,
-                    contract_name:
-                        newContract?.name || prevState.contract_name || "",
                     employment_id:
                         newContract?.employment_id ||
                         prevState.employment_id ||

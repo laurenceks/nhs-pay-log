@@ -1,7 +1,7 @@
 import { Button, Form } from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 import { postRegisterFetch } from "../../queries/loginQueries";
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { Link, useLoaderData, useNavigate } from "@tanstack/react-router";
 import { formatDate } from "../../../../shared/utils/formatDates";
 import ResponseFeedback from "../common/ResponseFeedback";
 import { useForm } from "react-hook-form";
@@ -14,7 +14,6 @@ const Register = () => {
     const payBands = useLoaderData({ from: "/_public/_login/register" });
     const {
         register,
-        getValues,
         formState: { isValid, errors },
         handleSubmit,
     } = useForm({
@@ -27,6 +26,8 @@ const Register = () => {
             employment_from: "",
             employment_name: "My job",
             weekly_hours: 37.5,
+            pension_perc: 0,
+            student_loan: "",
         },
         resolver: zodResolver(registerValidationSchema),
     });
@@ -98,11 +99,6 @@ const Register = () => {
                         {...register("pay_group_id")}
                         disabled={payBands.length <= 1}
                     >
-                        <>
-                            {!getValues("pay_group_id") && (
-                                <option>Select your pay band</option>
-                            )}
-                        </>
                         {payBands.map((x) => (
                             <option key={x.pay_group_id} value={x.pay_group_id}>
                                 {x.label}
@@ -121,6 +117,28 @@ const Register = () => {
                         placeholder="37.5"
                     />
                 </Form.Group>
+                <Form.Group controlId="editPesnsionPerc">
+                    <Form.Label>Pension %</Form.Label>
+                    <Form.Control
+                        {...register("pension_perc")}
+                        type="number"
+                        max={100}
+                        min={0}
+                        step={0.01}
+                        placeholder="0.00"
+                    />
+                </Form.Group>
+                <Form.Group controlId="editStudentLoan">
+                    <Form.Label>Student loan type</Form.Label>
+                    <Form.Select {...register("student_loan")}>
+                        <option value={""}>None</option>
+                        <option value={"1"}>1</option>
+                        <option value={"2"}>2</option>
+                        <option value={"4"}>4</option>
+                        <option value={"5"}>5</option>
+                        <option value={"6"}>Postgrad</option>
+                    </Form.Select>
+                </Form.Group>
                 <Button type="submit" disabled={isPending || !isValid}>
                     Register
                 </Button>
@@ -133,6 +151,9 @@ const Register = () => {
                     error={error}
                     isPending={isPending}
                 ></ResponseFeedback>
+                <Link to={"/login"} className="small">
+                    Back to login
+                </Link>
             </Form>
         </div>
     );

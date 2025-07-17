@@ -41,6 +41,8 @@ export const postRegisterFetch = async (body: {
     employment_from: string;
     pay_group_id: string;
     weekly_hours: number;
+    pension_perc: number;
+    student_loan: "" | 1 | 2 | 4 | 5 | 6;
 }) => {
     return await publicFetchJson("/api/v1/public/register", "POST", body);
 };

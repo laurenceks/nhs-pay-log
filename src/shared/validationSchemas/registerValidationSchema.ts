@@ -8,6 +8,8 @@ const payBandMessage = "A pay band must be selected";
 const employmentNameMessage = "An employment name must be entered";
 const employmentFromMessage = "An employment must be from today or earlier";
 const weeklyHoursMessage = "Weekly hours must be a number between 0 and 37.5";
+const pensionPercMessage = "Pension rate must be a number between 0 and 100";
+const studentLoanMessage = "Student loan type invalid";
 export const registerValidationSchema = z
     .object({
         email: z.email("Enter a valid email address"),
@@ -45,6 +47,24 @@ export const registerValidationSchema = z
             .number(weeklyHoursMessage)
             .min(0, weeklyHoursMessage)
             .max(37.5, weeklyHoursMessage),
+        pension_perc: z.coerce
+            .number(pensionPercMessage)
+            .min(0, pensionPercMessage)
+            .max(100, pensionPercMessage),
+        student_loan: z.union([
+            z.literal("", studentLoanMessage),
+            z.coerce
+                .number()
+                .pipe(
+                    z.union([
+                        z.literal(1, studentLoanMessage),
+                        z.literal(2, studentLoanMessage),
+                        z.literal(4, studentLoanMessage),
+                        z.literal(5, studentLoanMessage),
+                        z.literal(6, studentLoanMessage),
+                    ])
+                ),
+        ]),
     })
     .refine((data) => data.password1 === data.password2, {
         path: ["password2"],

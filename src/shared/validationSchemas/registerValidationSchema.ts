@@ -10,6 +10,7 @@ const employmentFromMessage = "An employment must be from today or earlier";
 const weeklyHoursMessage = "Weekly hours must be a number between 0 and 37.5";
 const pensionPercMessage = "Pension rate must be a number between 0 and 100";
 const studentLoanMessage = "Student loan type invalid";
+const hcaMessage = "HCA type invalid";
 export const registerValidationSchema = z
     .object({
         email: z.email("Enter a valid email address"),
@@ -54,7 +55,7 @@ export const registerValidationSchema = z
         student_loan: z.union([
             z.literal("", studentLoanMessage),
             z.coerce
-                .number()
+                .number(studentLoanMessage)
                 .pipe(
                     z.union([
                         z.literal(1, studentLoanMessage),
@@ -62,6 +63,19 @@ export const registerValidationSchema = z
                         z.literal(4, studentLoanMessage),
                         z.literal(5, studentLoanMessage),
                         z.literal(6, studentLoanMessage),
+                    ])
+                ),
+        ]),
+        hca_group_id: z.union([
+            z.literal("", hcaMessage),
+            z.coerce
+                .number(hcaMessage)
+                .int(hcaMessage)
+                .pipe(
+                    z.union([
+                        z.literal(1, hcaMessage),
+                        z.literal(2, hcaMessage),
+                        z.literal(3, hcaMessage),
                     ])
                 ),
         ]),

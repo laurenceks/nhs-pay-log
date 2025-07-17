@@ -28,6 +28,7 @@ const Register = () => {
             weekly_hours: 37.5,
             pension_perc: 0,
             student_loan: "",
+            hca_group_id: "",
         },
         resolver: zodResolver(registerValidationSchema),
     });
@@ -104,6 +105,15 @@ const Register = () => {
                                 {x.label}
                             </option>
                         ))}
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="editHca">
+                    <Form.Label>High Cost Area (HCA) type</Form.Label>
+                    <Form.Select {...register("hca_group_id")}>
+                        <option value={""}>None</option>
+                        <option value={"3"}>Fringe</option>
+                        <option value={"2"}>Outer London</option>
+                        <option value={"1"}>Inner London</option>
                     </Form.Select>
                 </Form.Group>
                 <Form.Group controlId="editEmploymentWeeklyHours">

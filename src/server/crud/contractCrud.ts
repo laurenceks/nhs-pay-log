@@ -9,17 +9,19 @@ export const createContract = async (
     from: string,
     employmentId: string,
     payGroupId: string,
+    hcaGroupId: number | null,
     weeklyHours: number,
     pensionPerc: number,
     studentLoan: ApiPay["student_loan"]
 ) => {
     return await executeWriteByPlaceholders(
-        "INSERT INTO `contracts` (`user_id`, `employment_id`, `from`, `pay_group_id`, `weekly_hours`, `pension_perc`, `student_loan`) VALUES (:userId, :employmentId, :from, :payGroupId, :weeklyHours, :pensionPerc, :studentLoan)",
+        "INSERT INTO `contracts` (`user_id`, `employment_id`, `from`, `pay_group_id`, `hca_group_id`, `weekly_hours`, `pension_perc`, `student_loan`) VALUES (:userId, :employmentId, :from, :payGroupId, :hcaGroupId, :weeklyHours, :pensionPerc, :studentLoan)",
         {
             userId,
             from,
             employmentId,
             payGroupId,
+            hcaGroupId,
             weeklyHours,
             pensionPerc,
             studentLoan,
@@ -29,7 +31,7 @@ export const createContract = async (
 
 export const readContractsByUserId = async (userId: string) => {
     return await executeReadByPlaceholders(
-        "SELECT `c`.`id`, `c`.`employment_id`, `employments`.`name` AS `employment_name`, `c`.`from`, `c`.`to`, `weekly_hours`, `pay_group_id`, `pension_perc`, `student_loan` FROM `contracts` AS `c` LEFT JOIN `employments` ON `c`.`employment_id` = `employments`.`id` WHERE `c`.`user_id` = :userId AND `employments`.`user_id` = :userId ORDER BY `c`.`from`, `c`.`to`, `employment_name`",
+        "SELECT `c`.`id`, `c`.`employment_id`, `employments`.`name` AS `employment_name`, `c`.`from`, `c`.`to`, `weekly_hours`, `pay_group_id`, `pension_perc`, `student_loan`, `hca_group_id` FROM `contracts` AS `c` LEFT JOIN `employments` ON `c`.`employment_id` = `employments`.`id` WHERE `c`.`user_id` = :userId AND `employments`.`user_id` = :userId ORDER BY `c`.`from`, `c`.`to`, `employment_name`",
         { userId }
     );
 };

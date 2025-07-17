@@ -37,6 +37,7 @@ export const postRegister = async (req: Request, res: Response) => {
             req.body.employment_from,
             newEmployment.id,
             req.body.pay_group_id,
+            req.body.hca_group_id || null,
             req.body.weekly_hours,
             req.body.pension_perc / 100,
             req.body.student_loan || null

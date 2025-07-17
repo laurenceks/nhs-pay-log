@@ -1,4 +1,4 @@
-import { LookupTable } from "./lookupTypes";
+import { EmploymentsTable, LookupTable } from "./lookupTypes";
 
 export type Overruns = "OT" | "TOIL";
 
@@ -127,16 +127,10 @@ export interface ApiUser extends ClientUser {
     verified: boolean;
 }
 
-export type Employment = {
-    id: number;
-    name: string;
-    from: string | null;
-    to: string | null;
-};
+export type Employment = EmploymentsTable[0];
 
 export type Contract = {
     id: number;
-    name: string;
     from: string | null;
     to: string | null;
     weekly_hours: number;
@@ -145,7 +139,8 @@ export type Contract = {
     student_loan: number | null;
     employment_id: Employment["id"];
     employment_name: Employment["name"];
-    pay_group_id: number;
+    pay_group_id: Employment["pay_group_id"];
+    hca_group_id: 1 | 2 | 3 | null;
 };
 
 export type VerificationToken = {

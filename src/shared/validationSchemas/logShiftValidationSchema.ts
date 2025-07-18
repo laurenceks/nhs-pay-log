@@ -58,7 +58,6 @@ export const logShiftValidationSchema = z
             .regex(/band_\d[a-d]?_\d/, "Invalid pay override ID")
             .nullable(),
         pay_month: shiftPayMonthValidationSchema("Pay month"),
-        flowers_pay_month: shiftPayMonthValidationSchema("Flowers pay month"),
     })
     .refine(
         (obj) => new Date(obj.actual_to) >= new Date(obj.planned_to),

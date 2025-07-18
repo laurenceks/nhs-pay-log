@@ -11,9 +11,10 @@ import {
     financialYear,
     flowersPayMonth,
 } from "../../../../../../shared/calculations/payDates";
+import { memo } from "react";
 
 export const Route = createFileRoute("/_private/_table/log/$shiftId")({
-    component: ShiftEditModal,
+    component: memo(ShiftEditModal),
     loader: async ({ params, context }): Promise<ClientShift> => {
         if (params.shiftId !== "new") {
             return (

@@ -1,7 +1,6 @@
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { Button, Table } from "react-bootstrap";
 import { formatDate } from "../../../../shared/utils/formatDates";
-import CalculationNumberFlow from "../common/CalculationNumberFlow";
 import {
     calculateEmployeeNationalInsurance,
     calculateIncomeTax,
@@ -9,6 +8,7 @@ import {
     calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
 import { TaxYear } from "@saving-tool/hmrc-income-tax/lib/types";
+import { convertToGbp } from "../../../../shared/utils/conversions";
 
 const Pay = () => {
     const navigate = useNavigate();
@@ -76,85 +76,37 @@ const Pay = () => {
                                     {formatDate(x.pay_date, "pay")}
                                 </th>
                                 <th>{x.employment_name}</th>
-                                <td>
-                                    <CalculationNumberFlow
-                                        value={x.basic_pay}
-                                        currency
-                                    />
+                                <td>{convertToGbp(x.basic_pay)}</td>
+                                <td>{convertToGbp(x.hca_pay)}</td>
+                                <td>{convertToGbp(x.extras_pay)}</td>
+                                <td>{convertToGbp(x.shift_pay)}</td>
+                                <td className="text-success">
+                                    {convertToGbp(x.gross_pay)}
                                 </td>
-                                <td>
-                                    <CalculationNumberFlow
-                                        value={x.hca_pay}
-                                        currency
-                                    />
+                                <td>{convertToGbp(x.pensionable_pay)}</td>
+                                <td>{convertToGbp(x.taxable_pay)}</td>
+                                <td className="text-danger">
+                                    {convertToGbp(ni / 12)}
                                 </td>
-                                <td>
-                                    <CalculationNumberFlow
-                                        value={x.extras_pay}
-                                        currency
-                                    />
+                                <td className="text-danger">
+                                    {convertToGbp(paye / 12)}
                                 </td>
-                                <td>
-                                    <CalculationNumberFlow
-                                        value={x.shift_pay}
-                                        currency
-                                    />
+                                <td className="text-danger">
+                                    {convertToGbp(studentLoan / 12)}
+                                </td>
+                                <td className="text-danger">
+                                    {convertToGbp(
+                                        x.pensionable_pay * x.pension_perc
+                                    )}
                                 </td>
                                 <td className="text-success">
-                                    <CalculationNumberFlow
-                                        value={x.gross_pay}
-                                        currency
-                                    />
-                                </td>
-                                <td>
-                                    <CalculationNumberFlow
-                                        value={x.pensionable_pay}
-                                        currency
-                                    />
-                                </td>
-                                <td>
-                                    <CalculationNumberFlow
-                                        value={x.taxable_pay}
-                                        currency
-                                    />
-                                </td>
-                                <td className="text-danger">
-                                    <CalculationNumberFlow
-                                        value={ni / 12}
-                                        currency
-                                    />
-                                </td>
-                                <td className="text-danger">
-                                    <CalculationNumberFlow
-                                        value={paye / 12}
-                                        currency
-                                    />
-                                </td>
-                                <td className="text-danger">
-                                    <CalculationNumberFlow
-                                        value={studentLoan / 12}
-                                        currency
-                                    />
-                                </td>
-                                <td className="text-danger">
-                                    <CalculationNumberFlow
-                                        value={
-                                            x.pensionable_pay * x.pension_perc
-                                        }
-                                        currency
-                                    />
-                                </td>
-                                <td className="text-success">
-                                    <CalculationNumberFlow
-                                        value={
-                                            x.gross_pay -
+                                    {convertToGbp(
+                                        x.gross_pay -
                                             paye / 12 -
                                             ni / 12 -
                                             studentLoan / 12 -
                                             x.pensionable_pay * x.pension_perc
-                                        }
-                                        currency
-                                    />
+                                    )}
                                 </td>
                             </tr>
                         );

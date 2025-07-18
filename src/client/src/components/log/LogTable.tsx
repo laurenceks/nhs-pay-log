@@ -1,20 +1,11 @@
 import { Table } from "react-bootstrap";
 import { ParsedApiShift } from "../../../../../types/commonTypes";
-import { formatDate } from "../../../../shared/utils/formatDates";
 import { useNavigate } from "@tanstack/react-router";
-import { useCallback } from "react";
-import CalculationNumberFlow from "../common/CalculationNumberFlow";
+import LogTableRow from "./LogTableRow";
 
 const LogTable = ({ log }: { log: ParsedApiShift[] }) => {
     const navigate = useNavigate();
-    const openShiftModal = useCallback(
-        (id: number) =>
-            navigate({
-                to: "/log/$shiftId",
-                params: { shiftId: id.toString() },
-            }),
-        []
-    );
+
     return (
         <div>
             <Table striped={true} hover={true} responsive={true}>
@@ -41,57 +32,18 @@ const LogTable = ({ log }: { log: ParsedApiShift[] }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {log
-                        .sort((a, b) => (a.from > b.from ? 1 : -1))
-                        .map((x) => {
-                            return (
-                                <tr
-                                    key={x.id}
-                                    style={{ cursor: "pointer" }}
-                                    onClick={() => openShiftModal(x.id)}
-                                >
-                                    <td>{formatDate(x.from, "dd/mm/yy")}</td>
-                                    <td>{x.start}</td>
-                                    <td>{x.planned_end}</td>
-                                    <td>{x.actual_end}</td>
-                                    <td>{x.employment_name}</td>
-                                    <td>{x.type}</td>
-                                    <td>{x.overrun_type}</td>
-                                    <td>
-                                        <CalculationNumberFlow value={x.toil} />
-                                    </td>
-                                    <td>
-                                        <CalculationNumberFlow
-                                            value={x.lower_rate}
-                                        />
-                                    </td>
-                                    <td>
-                                        <CalculationNumberFlow
-                                            value={x.higher_rate}
-                                        />
-                                    </td>
-                                    <td>
-                                        <CalculationNumberFlow value={x.flat} />
-                                    </td>
-                                    <td>
-                                        <CalculationNumberFlow
-                                            value={x.time_and_half}
-                                        />
-                                    </td>
-                                    <td>
-                                        <CalculationNumberFlow
-                                            value={x.double}
-                                        />
-                                    </td>
-                                    <td>
-                                        <CalculationNumberFlow
-                                            value={x.extra_pay}
-                                            currency={true}
-                                        />
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                    {log.map((x) => (
+                        <LogTableRow
+                            key={x.id}
+                            logShift={x}
+                            onClick={() =>
+                                navigate({
+                                    to: "/log/$shiftId",
+                                    params: { shiftId: x.id.toString() },
+                                })
+                            }
+                        />
+                    ))}
                 </tbody>
             </Table>
         </div>

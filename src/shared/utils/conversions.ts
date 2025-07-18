@@ -22,3 +22,9 @@ export const convertToDate = (val: Date | string) =>
     typeof val === "string" ? new Date(val) : val;
 export const convertToNumber = (val: Date | string | number) =>
     typeof val === "number" ? val : convertToDate(val).getTime();
+
+export const convertToGbp = (val: number) =>
+    new Intl.NumberFormat("en-GB", {
+        currency: "GBP",
+        style: "currency",
+    }).format(val);

@@ -17,11 +17,12 @@ export type PayBandTable = LookupTable<{
     higher_rate_multiplier: number;
 }>;
 
-export type EmploymentsTable = LookupTable<{
+export type EmploymentsTable = {
     id: number;
     name: string;
     weekly_hours: number;
     group_id: string;
-}>;
+}[];
 
+export type Employment = EmploymentsTable[0];
 export type PayBand = PayBandTable[0];

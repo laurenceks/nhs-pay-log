@@ -207,19 +207,12 @@ export const timeStampsDoNotOverlap = (
     return true;
 };
 
-export const addDaysToTimestamp = (
-    date: string | Date = "",
-    days = 0,
-    returnType = "iso"
-) => {
-    const newDate = new Date(
-        new Date(date).getTime() + days * 24 * 60 * 60 * 1000
-    );
-    if (returnType === "iso") {
-        newDate.toISOString();
-    }
-    if (returnType === "sortingDate") {
-        return newDate.toISOString().split("T")[0];
-    }
-    return newDate;
+export const addDaysToTimestamp = (date: string | Date = "", days = 0) => {
+    return new Date(new Date(date).getTime() + days * 24 * 60 * 60 * 1000);
+};
+
+export const getPreviousMonday = (d: string | Date) => {
+    const dt = typeof d === "string" ? new Date(d) : d;
+    dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7));
+    return dt;
 };

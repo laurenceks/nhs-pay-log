@@ -8,6 +8,7 @@ export const Route = createFileRoute("/_private/_margin/")({
             </p>
             <Link to={"/log"}>Log</Link>
             <Link to={"/pay"}>Pay</Link>
+            <Link to={"/settings"}>Settings</Link>
             <Link to={"/logout"}>Logout</Link>
         </div>
     ),

@@ -2,6 +2,7 @@ import { MutationOptions, queryOptions } from "@tanstack/react-query";
 import { fetchJson } from "./queryUtils";
 import { ApiShift, ShiftEdit } from "../../../../types/commonTypes";
 import { queryClient } from "../App";
+import { invalidatePayQuery } from "./payQueries";
 
 export const getLogFetch = async () => {
     return await fetchJson<ApiShift[]>("/api/v1/private/log");
@@ -50,6 +51,7 @@ export const postLogShiftMutationOptions = (
         mutationFn: () => postLogShiftFetch(shift),
         onSuccess: async () => {
             await invalidateLogQuery();
+            await invalidatePayQuery();
         },
     };
 };
@@ -61,6 +63,7 @@ export const patchLogShiftMutationOptions = (
     onSuccess: async () => {
         await invalidateLogQuery();
         await invalidateLogShiftQuery(shift.id);
+        await invalidatePayQuery();
     },
 });
 export const deleteLogShiftMutationOptions = (
@@ -70,6 +73,7 @@ export const deleteLogShiftMutationOptions = (
     mutationFn: () => deleteLogShiftFetch(shiftId),
     onSuccess: async () => {
         await invalidateLogQuery();
+        await invalidatePayQuery();
         queryClient.removeQueries({ queryKey: ["log", shiftId] });
     },
 });

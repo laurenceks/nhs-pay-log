@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_private/_table/log")({
                     ...x,
                     extra_hours: Number(x.extra_hours),
                     extras_pay: Number(x.extras_pay),
-                    extra_pay: Number(x.extras_pay),
+                    extra_pay: Number(x.extra_pay),
                     rate: Number(x.rate),
                     shift_pay: Number(x.shift_pay),
                     total_ush: Number(x.shift_pay),

@@ -150,7 +150,7 @@ const Register = () => {
                     </Form.Select>
                 </Form.Group>
                 <Button type="submit" disabled={isPending || !isValid}>
-                    Register
+                    Create account
                 </Button>
                 <FormFeedback
                     show={Object.keys(errors).length > 0}

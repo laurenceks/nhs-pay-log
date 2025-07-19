@@ -33,6 +33,7 @@ const SettingsEmployment = ({ employment }: { employment: Employment }) => {
                         <th scope="col">HCA type</th>
                         <th scope="col">Weekly hours</th>
                         <th scope="col">Pension %</th>
+                        <th scope="col">Personal allowance</th>
                         <th scope="col">Student loan</th>
                     </tr>
                 </thead>
@@ -62,6 +63,7 @@ const SettingsEmployment = ({ employment }: { employment: Employment }) => {
                 onClick={() => {
                     if (editId !== null) {
                         console.log("Saving");
+                        setEditId(null);
                     } else {
                         setEditId(0);
                         setEmploymentContracts({

@@ -100,7 +100,18 @@ const SettingsContractRowEdit = ({
                     min={0}
                     step={0.01}
                     placeholder="0.00"
-                    value={contract.pension_perc}
+                    value={contract.pension_perc * 100}
+                />
+            </td>
+            <td>
+                <Form.Control
+                    size="sm"
+                    type="number"
+                    max={999999}
+                    min={0}
+                    step={1}
+                    placeholder="0"
+                    value={contract.personal_allowance}
                 />
             </td>
             <td>

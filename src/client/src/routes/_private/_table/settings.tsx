@@ -11,7 +11,12 @@ export const Route = createFileRoute("/_private/_table/settings")({
             await context.queryClient.ensureQueryData(
                 stripQueryOptionsForEnsureQuery(getContractsQueryOptions)
             )
-        ).data.map((x) => ({ ...x, weekly_hours: Number(x.weekly_hours) }));
+        ).data.map((x) => ({
+            ...x,
+            weekly_hours: Number(x.weekly_hours),
+            pension_perc: Number(x.pension_perc),
+            personal_allowance: Number(x.personal_allowance),
+        }));
         const employments = (
             await context.queryClient.ensureQueryData(
                 stripQueryOptionsForEnsureQuery(getEmploymentsQueryOptions)

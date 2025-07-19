@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import FormFeedback from "../common/FormFeedback";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerValidationSchema } from "../../../../shared/validationSchemas/registerValidationSchema";
+import { calculatePersonalAllowance } from "@saving-tool/hmrc-income-tax";
+import { toast } from "react-hot-toast";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -27,6 +29,9 @@ const Register = () => {
             employment_name: "My job",
             weekly_hours: 37.5,
             pension_perc: 0,
+            personal_allowance: calculatePersonalAllowance({
+                taxableAnnualIncome: 0,
+            }),
             student_loan: "",
             hca_group_id: "",
         },
@@ -41,6 +46,10 @@ const Register = () => {
                 await navigate({
                     to: "/",
                 });
+                toast.success(
+                    "Your account has been created, please verify your email address to login",
+                    { id: "register", duration: 10000 }
+                );
             }
         },
     });
@@ -136,6 +145,17 @@ const Register = () => {
                         min={0}
                         step={0.01}
                         placeholder="0.00"
+                    />
+                </Form.Group>
+                <Form.Group controlId="editPersonalAllowance">
+                    <Form.Label>Personal allowance</Form.Label>
+                    <Form.Control
+                        {...register("personal_allowance")}
+                        type="number"
+                        min={0}
+                        max={999999}
+                        step={1}
+                        placeholder="0"
                     />
                 </Form.Group>
                 <Form.Group controlId="editStudentLoan">

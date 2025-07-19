@@ -4,6 +4,7 @@ import {
     formatDate,
 } from "../../../shared/utils/formatDates";
 import { Employment, PayBandTable } from "../../../../types/lookupTypes";
+import { calculatePersonalAllowance } from "@saving-tool/hmrc-income-tax";
 
 export type EmploymentReducerOptions =
     | {
@@ -23,6 +24,7 @@ export type EmploymentReducerOptions =
               | "hca"
               | "weeklyHours"
               | "pensionPerc"
+              | "personalAllowance"
               | "studentLoan";
           payload: {
               currentContractId: Contract["id"];
@@ -71,6 +73,9 @@ const employmentReducer = (
                         employment_name: payload.employment.name,
                         pay_group_id: payload.filteredPayBands[0].group_id,
                         pension_perc: 0,
+                        personal_allowance: calculatePersonalAllowance({
+                            taxableAnnualIncome: 0,
+                        }),
                         weekly_hours: 37.5,
                         student_loan: null,
                         hca_perc: 0,

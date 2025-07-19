@@ -42,6 +42,7 @@ export const postRegisterFetch = async (body: {
     pay_group_id: string;
     weekly_hours: number;
     pension_perc: number;
+    personal_allowance: number;
     student_loan: "" | 1 | 2 | 4 | 5 | 6;
     hca_group_id: "" | 1 | 2 | 3;
 }) => {

@@ -2,6 +2,7 @@ import { useLoaderData } from "@tanstack/react-router";
 import { formatDate } from "../../../../shared/utils/formatDates";
 import { filterOptionsByDate } from "../../../../shared/utils/lookup";
 import { Contract } from "../../../../../types/commonTypes";
+import { convertToGbp } from "../../../../shared/utils/conversions";
 
 const hcaMap = {
     1: "Inner London",
@@ -64,6 +65,7 @@ const SettingsContractRow = ({
             </td>
             <td>{contract.weekly_hours}</td>
             <td>{contract.pension_perc * 100}%</td>
+            <td>{convertToGbp(contract.personal_allowance)}</td>
             <td>
                 {contract.student_loan || (
                     <span className="text-muted">

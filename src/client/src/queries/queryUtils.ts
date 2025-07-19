@@ -4,6 +4,7 @@ import {
     QueryOptions,
 } from "@tanstack/react-query";
 import { ApiResponse } from "../../../../types/responseTypes";
+import { queryClient } from "../App";
 
 export const publicFetchJson = async <T = undefined>(
     url: string,
@@ -61,6 +62,7 @@ export const fetchLogout = async (): Promise<ApiResponse> => {
         referrerPolicy: "same-origin",
         cache: "no-store",
     });
+    await queryClient.invalidateQueries();
     const json: ApiResponse = await res.json();
     if (!res.ok) {
         throw { ...new Error(json.message), status: res.status, ...json };

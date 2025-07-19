@@ -41,10 +41,16 @@ const Pay = () => {
                         const taxYear =
                             `20${x.pay_financial_year.replace("-", "/")}` as TaxYear;
                         const taxableAnnualIncome = x.taxable_pay * 12;
-                        const personalAllowance = calculatePersonalAllowance({
-                            taxYear,
-                            taxableAnnualIncome,
-                        });
+                        const personalAllowance = Math.max(
+                            Math.min(
+                                calculatePersonalAllowance({
+                                    taxYear,
+                                    taxableAnnualIncome,
+                                }),
+                                x.personal_allowance
+                            ),
+                            0
+                        );
 
                         const { total: paye } = calculateIncomeTax({
                             taxYear,

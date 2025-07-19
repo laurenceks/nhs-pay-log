@@ -85,6 +85,7 @@ interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
     flowers_hours: string;
     flowers_pay: string;
     pension_perc: string;
+    personal_allowance: string;
 }
 
 export interface ApiShift
@@ -134,6 +135,7 @@ export type Contract = {
     weekly_hours: number;
     hca_perc: number;
     pension_perc: number;
+    personal_allowance: number;
     student_loan: ApiPay["student_loan"];
     employment_id: Employment["id"];
     employment_name: Employment["name"];

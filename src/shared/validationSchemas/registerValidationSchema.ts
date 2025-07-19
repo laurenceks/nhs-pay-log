@@ -9,6 +9,8 @@ const employmentNameMessage = "An employment name must be entered";
 const employmentFromMessage = "An employment must be from today or earlier";
 const weeklyHoursMessage = "Weekly hours must be a number between 0 and 37.5";
 const pensionPercMessage = "Pension rate must be a number between 0 and 100";
+const personalAllowanceMessage =
+    "Personal allowance must be an integer greater than 0 and less than 999,999";
 const studentLoanMessage = "Student loan type invalid";
 const hcaMessage = "HCA type invalid";
 export const registerValidationSchema = z
@@ -52,6 +54,11 @@ export const registerValidationSchema = z
             .number(pensionPercMessage)
             .min(0, pensionPercMessage)
             .max(100, pensionPercMessage),
+        personal_allowance: z.coerce
+            .number(personalAllowanceMessage)
+            .int(personalAllowanceMessage)
+            .min(0, personalAllowanceMessage)
+            .max(999999, personalAllowanceMessage),
         student_loan: z.union([
             z.literal("", studentLoanMessage),
             z.coerce

@@ -30,6 +30,7 @@ export const Route = createFileRoute("/_private/_table/pay")({
                     flowers_hours: Number(x.flowers_hours),
                     flowers_pay: Number(x.flowers_pay),
                     pension_perc: Number(x.pension_perc),
+                    personal_allowance: Number(x.personal_allowance),
                 };
             }) || [];
 

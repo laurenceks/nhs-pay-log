@@ -164,14 +164,14 @@ const employmentReducer = (
                         ? formatDate(
                               addDaysToTimestamp(
                                   previousContract.from as string,
-                                  1
+                                  2
                               ),
                               "yyyy-mm-dd"
                           )
                         : null;
                     if (minFrom && newFrom <= minFrom) {
                         toast.error(
-                            "From cannot be before the day after the previous contract's from",
+                            "From cannot be on or before the day after the previous contract's from",
                             {
                                 id: `${payload.employmentId}-from-fromBeforePreviousFrom`,
                             }
@@ -281,15 +281,15 @@ const employmentReducer = (
                         toast("From cannot be set on the first contract");
                     }
                     let newTo = payload.newDate;
-                    const maxTo = nextContract
+                    const maxTo = nextContract?.to
                         ? formatDate(
-                              addDaysToTimestamp(nextContract.to as string, -1),
+                              addDaysToTimestamp(nextContract.to as string, -2),
                               "yyyy-mm-dd"
                           )
                         : null;
                     if (maxTo && newTo >= maxTo) {
                         toast.error(
-                            "To cannot be after the day before next contract's to",
+                            "To cannot be on or after the day before next contract's to",
                             {
                                 id: `${payload.employmentId}-from-fromAfterNextTo`,
                             }

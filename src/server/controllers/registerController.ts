@@ -25,16 +25,11 @@ export const postRegister = async (req: Request, res: Response) => {
     try {
         const userId = randomUUID();
         await createUser(userId, req.body.email, hash, salt);
-        await createEmployment(
-            userId,
-            req.body.employment_from,
-            req.body.employment_name
-        );
+        await createEmployment(userId, req.body.employment_name);
         const [newEmployment] = await readEmploymentsByUserId(userId);
 
         await createContract(
             userId,
-            req.body.employment_from,
             newEmployment.id,
             req.body.pay_group_id,
             req.body.hca_group_id || null,

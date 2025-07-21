@@ -38,7 +38,6 @@ export const postRegisterFetch = async (body: {
     password1: string;
     password2: string;
     employment_name: string;
-    employment_from: string;
     pay_group_id: string;
     weekly_hours: number;
     pension_perc: number;

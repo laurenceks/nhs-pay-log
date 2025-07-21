@@ -2,7 +2,6 @@ import { Button, Form } from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 import { postRegisterFetch } from "../../queries/loginQueries";
 import { Link, useLoaderData, useNavigate } from "@tanstack/react-router";
-import { formatDate } from "../../../../shared/utils/formatDates";
 import ResponseFeedback from "../common/ResponseFeedback";
 import { useForm } from "react-hook-form";
 import FormFeedback from "../common/FormFeedback";
@@ -25,7 +24,6 @@ const Register = () => {
             password1: "",
             password2: "",
             pay_group_id: "",
-            employment_from: "",
             employment_name: "My job",
             weekly_hours: 37.5,
             pension_perc: 0,
@@ -93,14 +91,6 @@ const Register = () => {
                         {...register("employment_name")}
                         type="text"
                         autoComplete={"organization"}
-                    />
-                </Form.Group>
-                <Form.Group controlId="editEmploymentFrom">
-                    <Form.Label>Employment start</Form.Label>
-                    <Form.Control
-                        {...register("employment_from")}
-                        type="date"
-                        max={formatDate(new Date(), "yyyy-mm-dd")}
                     />
                 </Form.Group>
                 <Form.Group controlId="editEmploymentPayBand">

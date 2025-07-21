@@ -1,12 +1,10 @@
 import { z } from "zod";
-import dayjs from "dayjs";
 
 const passwordMessage =
     "Password must be at least eight characters with at least one lowercase, uppercase, number and symbol";
 const passwordMatchMessage = "Passwords must match";
 const payBandMessage = "A pay band must be selected";
 const employmentNameMessage = "An employment name must be entered";
-const employmentFromMessage = "An employment must be from today or earlier";
 const weeklyHoursMessage = "Weekly hours must be a number between 0 and 37.5";
 const pensionPercMessage = "Pension rate must be a number between 0 and 100";
 const personalAllowanceMessage =
@@ -36,16 +34,6 @@ export const registerValidationSchema = z
         employment_name: z
             .string(employmentNameMessage)
             .min(1, employmentNameMessage),
-        employment_from: z
-            .string(employmentFromMessage)
-            .refine(
-                (val) =>
-                    dayjs(val, "YYYY-MM-DD", true).isValid() &&
-                    dayjs(val).isBefore(dayjs().add(1, "day")),
-                {
-                    message: employmentFromMessage,
-                }
-            ),
         weekly_hours: z.coerce
             .number(weeklyHoursMessage)
             .min(0, weeklyHoursMessage)

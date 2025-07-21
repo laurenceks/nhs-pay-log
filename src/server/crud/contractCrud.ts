@@ -6,7 +6,6 @@ import { ApiPay } from "../../../types/commonTypes";
 
 export const createContract = async (
     userId: string | number,
-    from: string,
     employmentId: string,
     payGroupId: string,
     hcaGroupId: number | null,
@@ -15,10 +14,9 @@ export const createContract = async (
     studentLoan: ApiPay["student_loan"]
 ) => {
     return await executeWriteByPlaceholders(
-        "INSERT INTO `contracts` (`user_id`, `employment_id`, `from`, `pay_group_id`, `hca_group_id`, `weekly_hours`, `pension_perc`, `student_loan`) VALUES (:userId, :employmentId, :from, :payGroupId, :hcaGroupId, :weeklyHours, :pensionPerc, :studentLoan)",
+        "INSERT INTO `contracts` (`user_id`, `employment_id`, `pay_group_id`, `hca_group_id`, `weekly_hours`, `pension_perc`, `student_loan`) VALUES (:userId, :employmentId, :payGroupId, :hcaGroupId, :weeklyHours, :pensionPerc, :studentLoan)",
         {
             userId,
-            from,
             employmentId,
             payGroupId,
             hcaGroupId,

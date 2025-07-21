@@ -2,13 +2,24 @@ import { useLoaderData } from "@tanstack/react-router";
 import { Button, Table } from "react-bootstrap";
 import SettingsContractRow from "./SettingsContractRow";
 import { Contract } from "../../../../../types/commonTypes";
-import { useReducer, useState } from "react";
-import { filterOptionsByDate } from "../../../../shared/utils/lookup";
+import { Dispatch, SetStateAction, useReducer } from "react";
 import { Employment } from "../../../../../types/lookupTypes";
 import employmentReducer from "../../reducers/employmentReducer";
 import SettingsContractRowEdit from "./SettingsContractRowEdit";
 
-const SettingsEmployment = ({ employment }: { employment: Employment }) => {
+const SettingsEmployment = ({
+    employment,
+    contractEditId,
+    setContractEditId,
+    employmentEditId,
+    setEmploymentEditId,
+}: {
+    employment: Employment;
+    contractEditId: Contract["id"] | null;
+    setContractEditId: Dispatch<SetStateAction<Contract["id"] | null>>;
+    employmentEditId: Employment["id"] | null;
+    setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
+}) => {
     const { contracts } = useLoaderData({
         from: "/_private/_table/settings",
     });
@@ -16,11 +27,6 @@ const SettingsEmployment = ({ employment }: { employment: Employment }) => {
         employmentReducer,
         contracts.filter((x: Contract) => x.employment_id === employment.id)
     );
-    const [editId, setEditId] = useState<number | null>(null);
-    const { payBands } = useLoaderData({
-        from: "/_private",
-    });
-    const filteredPayBands = filterOptionsByDate(payBands, new Date());
     return (
         <div className="py-3">
             <h3 className="px-3">{employment.name}</h3>
@@ -39,7 +45,7 @@ const SettingsEmployment = ({ employment }: { employment: Employment }) => {
                 </thead>
                 <tbody>
                     {employmentContracts.map((x, i) =>
-                        editId === x.id ? (
+                        contractEditId === x.id ? (
                             <SettingsContractRowEdit
                                 key={x.id}
                                 contract={x}
@@ -51,7 +57,10 @@ const SettingsEmployment = ({ employment }: { employment: Employment }) => {
                             <SettingsContractRow
                                 key={x.id}
                                 contract={x}
-                                onClick={() => setEditId(x.id)}
+                                onClick={() => {
+                                    setEmploymentEditId(employment.id);
+                                    setContractEditId(x.id);
+                                }}
                             />
                         )
                     )}
@@ -60,20 +69,30 @@ const SettingsEmployment = ({ employment }: { employment: Employment }) => {
             <Button
                 className="ms-3"
                 variant="success"
+                disabled={
+                    !!employmentEditId && employmentEditId !== employment.id
+                }
                 onClick={() => {
-                    if (editId !== null) {
+                    if (contractEditId !== null) {
                         console.log("Saving");
-                        setEditId(null);
+                        setContractEditId(null);
+                        setEmploymentEditId(null);
                     } else {
-                        setEditId(0);
+                        setContractEditId(0);
+                        setEmploymentEditId(employment.id);
                         setEmploymentContracts({
                             action: "addContract",
-                            payload: { employment, filteredPayBands },
+                            payload: {
+                                employmentId: employment.id,
+                                employmentName: employment.name,
+                            },
                         });
                     }
                 }}
             >
-                {editId === null ? "Add row" : "Save"}
+                {contractEditId === null || employmentEditId !== employment.id
+                    ? "Add contract"
+                    : "Save"}
             </Button>
         </div>
     );

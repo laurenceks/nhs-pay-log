@@ -143,6 +143,11 @@ export type Contract = {
     hca_group_id: 1 | 2 | 3 | null;
 };
 
+export type EmploymentReducerContractKeys = keyof Omit<
+    Contract,
+    "id" | "employment_id" | "employment_name" | "from" | "to" | "hca_perc"
+>;
+
 export type VerificationToken = {
     user_id: string;
     selector: string;

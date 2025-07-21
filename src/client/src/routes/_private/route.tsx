@@ -4,6 +4,7 @@ import { getExtrasQueryOptions } from "../../queries/extraQueries";
 import { ShiftExtra } from "../../../../../types/commonTypes";
 import { getPayBandsQueryOptions } from "../../queries/payBandQueries";
 import { PayBand } from "../../../../../types/lookupTypes";
+import Cookies from "js-cookie";
 
 export const Route = createFileRoute("/_private")({
     component: Outlet,
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/_private")({
     },
 
     beforeLoad: async ({ context }) => {
-        if (!(await context.auth?.isAuth())) {
+        if (!Cookies.get("sessionExpiry") || !(await context.auth?.isAuth())) {
             window.localStorage.setItem(
                 "redirect",
                 location.pathname + location.hash + location.search

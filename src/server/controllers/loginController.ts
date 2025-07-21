@@ -5,6 +5,7 @@ import { ApiUser, ClientUser } from "../../../types/commonTypes";
 import { ErrorResponseKey } from "../../../types/responseTypes";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
+import setSessionExpiryCookie from "../utils/setSessionExpiryCookie";
 
 export const login = async (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
@@ -23,6 +24,7 @@ export const login = async (req: Request, res: Response) => {
                                     logoutAndDestroySession(req, res);
                                     sendErrorRes(res, "unauthorised");
                                 } else {
+                                    setSessionExpiryCookie(req, res);
                                     sendRes<ClientUser>(res, {
                                         data: {
                                             id: user.id,

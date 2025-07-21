@@ -7,6 +7,8 @@ const logoutAndDestroySession = (
     send500OnError = false
 ) => {
     // logs out current user, destroys session and clears sid cookie
+    res.clearCookie("sid");
+    res.clearCookie("sessionExpiry");
     req.logout((_e) => {
         if (send500OnError) {
             sendRes(res, { code: 500 });
@@ -17,7 +19,6 @@ const logoutAndDestroySession = (
             console.log(e);
         });
     }
-    res.clearCookie("sid");
 };
 
 export default logoutAndDestroySession;

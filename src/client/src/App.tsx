@@ -7,6 +7,7 @@ import { getLoginFetch } from "./queries/loginQueries";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { toast, Toaster } from "react-hot-toast";
 import { fetchLogout } from "./queries/queryUtils";
+import Cookies from "js-cookie";
 
 export type Auth = {
     loginCheckedOnce: boolean;
@@ -40,6 +41,8 @@ const App = () => {
         isAuth: async () => false,
     });
     const logout = async () => {
+        queryClient.invalidateQueries();
+        Cookies.remove("sessionExpiry");
         setAuth((prevState) => ({
             ...prevState,
             loginCheckedOnce: true,

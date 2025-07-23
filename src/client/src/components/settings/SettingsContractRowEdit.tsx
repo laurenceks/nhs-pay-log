@@ -9,6 +9,8 @@ import { ActionDispatch, ChangeEvent } from "react";
 import { EmploymentReducerOptions } from "../../reducers/employmentReducer";
 import { roundTo } from "round-to";
 import allowFirstFromAndLastTo from "../../reducers/allowFirstFromAndLastTo";
+import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
+import IconWrap from "../common/IconWrap";
 
 const SettingsContractRowEdit = ({
     contract,
@@ -47,11 +49,7 @@ const SettingsContractRowEdit = ({
     );
 
     return (
-        <tr
-            style={{
-                cursor: "pointer",
-            }}
-        >
+        <tr>
             <td>
                 <Form.Control
                     type="date"
@@ -172,10 +170,40 @@ const SettingsContractRowEdit = ({
                     <option value={"6"}>Postgrad</option>
                 </Form.Select>
             </td>
-            <td>
-                {!first && <Button>Move up</Button>}
-                {!last && <Button>Move down</Button>}
-                {!(first && last) && <Button>Delete</Button>}
+            <td className="d-flex column-gap-1">
+                {!first && (
+                    <Button
+                        variant="warning"
+                        size="sm"
+                        className="d-flex align-items-center justify-content-center"
+                    >
+                        <IconWrap variant="white" width={"1.5rem"} as="span">
+                            <IoChevronUp />
+                        </IconWrap>
+                    </Button>
+                )}
+                {!last && (
+                    <Button
+                        variant="warning"
+                        size="sm"
+                        className="d-flex align-items-center justify-content-center"
+                    >
+                        <IconWrap variant="white" width={"1.5rem"} as="span">
+                            <IoChevronDown />
+                        </IconWrap>
+                    </Button>
+                )}
+                {!(first && last) && (
+                    <Button
+                        variant="danger"
+                        size="sm"
+                        className="d-flex align-items-center justify-content-center"
+                    >
+                        <IconWrap variant="white" width={"1.5rem"} as="span">
+                            <IoClose />
+                        </IconWrap>
+                    </Button>
+                )}
             </td>
         </tr>
     );

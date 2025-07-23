@@ -27,12 +27,7 @@ const SettingsContractRow = ({
     );
 
     return (
-        <tr
-            style={{
-                cursor: "pointer",
-            }}
-            onClick={onClick}
-        >
+        <tr onClick={onClick}>
             <td>
                 {contract.from ? (
                     formatDate(contract.from, "dd/mm/yy")

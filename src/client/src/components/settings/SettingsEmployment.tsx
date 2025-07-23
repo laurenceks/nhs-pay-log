@@ -2,45 +2,49 @@ import { useLoaderData } from "@tanstack/react-router";
 import { Button, Table } from "react-bootstrap";
 import SettingsContractRow from "./SettingsContractRow";
 import { Contract } from "../../../../../types/commonTypes";
-import { Dispatch, SetStateAction, useReducer } from "react";
+import { Dispatch, SetStateAction, useReducer, useState } from "react";
 import { Employment } from "../../../../../types/lookupTypes";
 import employmentReducer from "../../reducers/employmentReducer";
 import SettingsContractRowEdit from "./SettingsContractRowEdit";
 import { z } from "zod";
 import { clientEmploymentValidationSchema } from "../../../../shared/validationSchemas/employmentValidationSchema";
+import { toast } from "react-hot-toast";
 
 const SettingsEmployment = ({
     employment,
-    contractEditId,
-    setContractEditId,
     employmentEditId,
     setEmploymentEditId,
 }: {
     employment: Employment;
-    contractEditId: Contract["id"] | null;
-    setContractEditId: Dispatch<SetStateAction<Contract["id"] | null>>;
     employmentEditId: Employment["id"] | null;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
 }) => {
     const { contracts } = useLoaderData({
         from: "/_private/_table/settings",
     });
+    const [contractEditId, setContractEditId] = useState<Contract["id"] | null>(
+        null
+    );
     const [employmentContracts, setEmploymentContracts] = useReducer(
         employmentReducer,
         contracts.filter((x: Contract) => x.employment_id === employment.id)
     );
-    const validationResult =
-        contractEditId === null
-            ? true
-            : z.safeParse(clientEmploymentValidationSchema, {
-                  ...employment,
-                  contracts: employmentContracts,
-              }).success;
+    const isEditing = employmentEditId === employment.id;
+    const validationResult = z.safeParse(clientEmploymentValidationSchema, {
+        ...employment,
+        contracts: employmentContracts,
+    });
 
+    if (validationResult.error?.issues.length) {
+        toast.error(
+            validationResult.error?.issues.map((x) => x.message).join("\n"),
+            { id: `employment-${employment.id}-validationError` }
+        );
+    }
     return (
         <div className="py-3">
             <h3 className="px-3">{employment.name}</h3>
-            <Table striped={true} hover={true} responsive={true}>
+            <Table striped={true} hover={isEditing} responsive={true}>
                 <thead>
                     <tr>
                         <th scope="col">From</th>
@@ -58,7 +62,7 @@ const SettingsEmployment = ({
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style={isEditing ? { cursor: "pointer" } : {}}>
                     {employmentContracts.map((x, i) =>
                         contractEditId === x.id ? (
                             <SettingsContractRowEdit
@@ -74,44 +78,56 @@ const SettingsEmployment = ({
                                 contract={x}
                                 isEditing={contractEditId !== null}
                                 onClick={() => {
-                                    setEmploymentEditId(employment.id);
-                                    setContractEditId(x.id);
+                                    if (isEditing) {
+                                        setContractEditId(x.id);
+                                    }
                                 }}
                             />
                         )
                     )}
                 </tbody>
             </Table>
-            <Button
-                className="ms-3"
-                variant="success"
-                disabled={
-                    (!!employmentEditId &&
-                        employmentEditId !== employment.id) ||
-                    (!!employmentEditId && !validationResult)
-                }
-                onClick={() => {
-                    if (contractEditId !== null) {
-                        console.log("Saving");
-                        setContractEditId(null);
-                        setEmploymentEditId(null);
-                    } else {
-                        setContractEditId(0);
-                        setEmploymentEditId(employment.id);
-                        setEmploymentContracts({
-                            action: "addContract",
-                            payload: {
-                                employmentId: employment.id,
-                                employmentName: employment.name,
-                            },
-                        });
-                    }
-                }}
-            >
-                {contractEditId === null || employmentEditId !== employment.id
-                    ? "Add contract"
-                    : "Save"}
-            </Button>
+            <div className="ms-3 d-flex column-gap-2">
+                {isEditing ? (
+                    <>
+                        <Button
+                            variant="success"
+                            disabled={isEditing && !validationResult.success}
+                            onClick={() => {
+                                console.log("Saving " + employment.name);
+                                setContractEditId(null);
+                                setEmploymentEditId(null);
+                            }}
+                        >
+                            Save
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                setContractEditId(0);
+                                setEmploymentContracts({
+                                    action: "addContract",
+                                    payload: {
+                                        employmentId: employment.id,
+                                        employmentName: employment.name,
+                                    },
+                                });
+                            }}
+                        >
+                            Add row
+                        </Button>
+                    </>
+                ) : (
+                    <Button
+                        variant="warning"
+                        disabled={employmentEditId !== null}
+                        onClick={() => {
+                            setEmploymentEditId(employment.id);
+                        }}
+                    >
+                        Edit
+                    </Button>
+                )}
+            </div>
         </div>
     );
 };

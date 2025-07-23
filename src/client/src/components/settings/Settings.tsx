@@ -2,7 +2,6 @@ import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { Button } from "react-bootstrap";
 import SettingsEmployment from "./SettingsEmployment";
 import { useState } from "react";
-import { Contract } from "../../../../../types/commonTypes";
 import { Employment } from "../../../../../types/lookupTypes";
 
 const Settings = () => {
@@ -13,9 +12,6 @@ const Settings = () => {
     const [employmentEditId, setEmploymentEditId] = useState<
         Employment["id"] | null
     >(null);
-    const [contractEditId, setContractEditId] = useState<Contract["id"] | null>(
-        null
-    );
     return (
         <div>
             <div className="pt-3 px-3">
@@ -26,8 +22,6 @@ const Settings = () => {
                 <SettingsEmployment
                     key={x.id}
                     employment={x}
-                    contractEditId={contractEditId}
-                    setContractEditId={setContractEditId}
                     employmentEditId={employmentEditId}
                     setEmploymentEditId={setEmploymentEditId}
                 />

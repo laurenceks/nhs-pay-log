@@ -30,7 +30,7 @@ const commonEmploymentValidationSchema = (isClient: boolean) =>
                             student_loan:
                                 registerValidationSchema.shape.student_loan.nullable(),
                             hca_group_id:
-                                registerValidationSchema.shape.student_loan.nullable(),
+                                registerValidationSchema.shape.hca_group_id.nullable(),
                             from: shiftDateValidationSchema("from").nullable(),
                             to: shiftDateValidationSchema("from").nullable(),
                             employment_id:
@@ -39,6 +39,8 @@ const commonEmploymentValidationSchema = (isClient: boolean) =>
                         .refine((val) => {
                             if (val.from && val.to) {
                                 return new Date(val.from) < new Date(val.to);
+                            } else {
+                                return true;
                             }
                         }, "From cannot be after to")
                 )
@@ -56,8 +58,9 @@ const commonEmploymentValidationSchema = (isClient: boolean) =>
                 //server check for allow first last
                 //ALSO check for affect log shifts
             }
-            let firstFromValid = false;
-            let lastToValid = false;
+
+            let firstFromValid: boolean;
+            let lastToValid: boolean;
             if (allowFirstFrom && !!val.contracts[0].from) {
                 firstFromValid = dayjs(
                     val.contracts[0].from,
@@ -68,14 +71,15 @@ const commonEmploymentValidationSchema = (isClient: boolean) =>
                     val.contracts[0].from === null ||
                     val.contracts[0].from === "";
             }
-            if (allowLastTo && !!val.contracts[0].to) {
+            if (allowLastTo && !!val.contracts[val.contracts.length - 1].to) {
                 lastToValid = dayjs(
-                    val.contracts[0].to,
+                    val.contracts[val.contracts.length - 1].to,
                     "YYYY-MM-DD"
                 ).isValid();
             } else {
                 lastToValid =
-                    val.contracts[0].to === null || val.contracts[0].to === "";
+                    val.contracts[val.contracts.length - 1].to === null ||
+                    val.contracts[val.contracts.length - 1].to === "";
             }
             return firstFromValid && lastToValid;
         }, "Each employment must have one contract with no from and no to");

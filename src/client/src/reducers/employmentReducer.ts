@@ -106,7 +106,7 @@ const employmentReducer = (
         }
         case "from": {
             const { allowFirstFrom, allowLastTo } = allowFirstFromAndLastTo(
-                payload.currentContractId
+                payload.employmentId
             );
             const currentIndex = prevState.findIndex(
                 (x) => x.id === payload.currentContractId
@@ -230,7 +230,7 @@ const employmentReducer = (
         }
         case "to": {
             const { allowFirstFrom, allowLastTo } = allowFirstFromAndLastTo(
-                payload.currentContractId
+                payload.employmentId
             );
             const currentIndex = prevState.findIndex(
                 (x) => x.id === payload.currentContractId

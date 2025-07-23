@@ -2,14 +2,16 @@ import { Contract } from "../../../../types/commonTypes";
 import { queryClient } from "../App";
 import { ApiResponse } from "../../../../types/responseTypes";
 
-const allowFirstFromAndLastTo = (currentContractId: Contract["id"]) => {
+const allowFirstFromAndLastTo = (
+    currentEmploymentId: Contract["employment_id"]
+) => {
     let allowFirstFrom = false;
     let allowLastTo = false;
 
     for (const contract of (
         queryClient.getQueryData(["contracts"]) as ApiResponse<Contract[]>
     )?.data ?? []) {
-        if (contract.employment_id === currentContractId) continue;
+        if (contract.employment_id === currentEmploymentId) continue;
 
         if (contract.from === null) {
             allowFirstFrom = true;

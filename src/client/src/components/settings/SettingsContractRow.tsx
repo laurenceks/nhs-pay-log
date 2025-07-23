@@ -12,9 +12,11 @@ const hcaMap = {
 const SettingsContractRow = ({
     contract,
     onClick,
+    isEditing = false,
 }: {
     contract: Contract;
     onClick: () => void;
+    isEditing: boolean;
 }) => {
     const { payBands } = useLoaderData({
         from: "/_private",
@@ -73,6 +75,7 @@ const SettingsContractRow = ({
                     </span>
                 )}
             </td>
+            {isEditing && <td />}
         </tr>
     );
 };

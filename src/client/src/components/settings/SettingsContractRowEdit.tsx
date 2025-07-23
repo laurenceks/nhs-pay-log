@@ -4,7 +4,7 @@ import {
     Contract,
     EmploymentReducerContractKeys,
 } from "../../../../../types/commonTypes";
-import { Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { ActionDispatch, ChangeEvent } from "react";
 import { EmploymentReducerOptions } from "../../reducers/employmentReducer";
 import { roundTo } from "round-to";
@@ -171,6 +171,11 @@ const SettingsContractRowEdit = ({
                     <option value={"5"}>5</option>
                     <option value={"6"}>Postgrad</option>
                 </Form.Select>
+            </td>
+            <td>
+                {!first && <Button>Move up</Button>}
+                {!last && <Button>Move down</Button>}
+                {!(first && last) && <Button>Delete</Button>}
             </td>
         </tr>
     );

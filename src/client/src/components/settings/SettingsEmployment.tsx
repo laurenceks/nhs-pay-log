@@ -6,6 +6,8 @@ import { Dispatch, SetStateAction, useReducer } from "react";
 import { Employment } from "../../../../../types/lookupTypes";
 import employmentReducer from "../../reducers/employmentReducer";
 import SettingsContractRowEdit from "./SettingsContractRowEdit";
+import { z } from "zod";
+import { clientEmploymentValidationSchema } from "../../../../shared/validationSchemas/employmentValidationSchema";
 
 const SettingsEmployment = ({
     employment,
@@ -27,6 +29,14 @@ const SettingsEmployment = ({
         employmentReducer,
         contracts.filter((x: Contract) => x.employment_id === employment.id)
     );
+    const validationResult =
+        contractEditId === null
+            ? true
+            : z.safeParse(clientEmploymentValidationSchema, {
+                  ...employment,
+                  contracts: employmentContracts,
+              }).success;
+
     return (
         <div className="py-3">
             <h3 className="px-3">{employment.name}</h3>
@@ -40,7 +50,12 @@ const SettingsEmployment = ({
                         <th scope="col">Weekly hours</th>
                         <th scope="col">Pension %</th>
                         <th scope="col">Personal allowance</th>
-                        <th scope="col">Student loan</th>
+                        <th
+                            scope="col"
+                            colSpan={contractEditId !== null ? 2 : 1}
+                        >
+                            Student loan
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,6 +72,7 @@ const SettingsEmployment = ({
                             <SettingsContractRow
                                 key={x.id}
                                 contract={x}
+                                isEditing={contractEditId !== null}
                                 onClick={() => {
                                     setEmploymentEditId(employment.id);
                                     setContractEditId(x.id);
@@ -70,7 +86,9 @@ const SettingsEmployment = ({
                 className="ms-3"
                 variant="success"
                 disabled={
-                    !!employmentEditId && employmentEditId !== employment.id
+                    (!!employmentEditId &&
+                        employmentEditId !== employment.id) ||
+                    (!!employmentEditId && !validationResult)
                 }
                 onClick={() => {
                     if (contractEditId !== null) {

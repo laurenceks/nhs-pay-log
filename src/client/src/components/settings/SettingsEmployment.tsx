@@ -9,6 +9,8 @@ import SettingsContractRowEdit from "./SettingsContractRowEdit";
 import { z } from "zod";
 import { clientEmploymentValidationSchema } from "../../../../shared/validationSchemas/employmentValidationSchema";
 import { toast } from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { patchEmploymentMutationOptions } from "../../queries/employmentQueries";
 
 const SettingsEmployment = ({
     employment,
@@ -33,6 +35,12 @@ const SettingsEmployment = ({
     const validationResult = z.safeParse(clientEmploymentValidationSchema, {
         ...employment,
         contracts: employmentContracts,
+    });
+    const { mutateAsync, isPending } = useMutation({
+        ...patchEmploymentMutationOptions({
+            ...employment,
+            contracts: employmentContracts,
+        }),
     });
 
     if (validationResult.error?.issues.length) {
@@ -93,11 +101,17 @@ const SettingsEmployment = ({
                     <>
                         <Button
                             variant="success"
-                            disabled={isEditing && !validationResult.success}
-                            onClick={() => {
-                                console.log("Saving " + employment.name);
+                            disabled={
+                                (isEditing && !validationResult.success) ||
+                                isPending
+                            }
+                            onClick={async () => {
+                                await mutateAsync();
                                 setContractEditId(null);
                                 setEmploymentEditId(null);
+                                toast.success(`${employment.name} updated`, {
+                                    id: `employment-${employment.id}-updated`,
+                                });
                             }}
                         >
                             Save

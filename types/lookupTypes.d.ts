@@ -20,8 +20,6 @@ export type PayBandTable = LookupTable<{
 export type EmploymentsTable = {
     id: number;
     name: string;
-    weekly_hours: number;
-    group_id: string;
 }[];
 
 export type Employment = EmploymentsTable[0];

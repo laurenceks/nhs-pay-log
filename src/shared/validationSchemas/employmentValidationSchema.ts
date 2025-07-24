@@ -6,10 +6,11 @@ import {
 import { registerValidationSchema } from "./registerValidationSchema";
 import allowFirstFromAndLastTo from "../../client/src/reducers/allowFirstFromAndLastTo";
 import dayjs from "dayjs";
+import { Contract } from "../../../types/commonTypes";
 
 const employmentNameMessage = "An employment name must be entered";
 
-const commonEmploymentValidationSchema = (isClient: boolean) =>
+const commonEmploymentValidationSchema = (contracts?: Contract[]) =>
     z
         .object({
             id: rowIdValidationSchema("Employment ID"),
@@ -47,17 +48,10 @@ const commonEmploymentValidationSchema = (isClient: boolean) =>
                 .min(1, "An employment must have at least one contract"),
         })
         .refine((val) => {
-            let allowFirstFrom = false;
-            let allowLastTo = false;
-
-            if (isClient) {
-                ({ allowFirstFrom, allowLastTo } = allowFirstFromAndLastTo(
-                    val.id
-                ));
-            } else {
-                //server check for allow first last
-                //ALSO check for affect log shifts
-            }
+            const { allowFirstFrom, allowLastTo } = allowFirstFromAndLastTo(
+                val.id,
+                contracts
+            );
 
             let firstFromValid: boolean;
             let lastToValid: boolean;
@@ -85,6 +79,6 @@ const commonEmploymentValidationSchema = (isClient: boolean) =>
         }, "Each employment must have one contract with no from and no to");
 
 export const clientEmploymentValidationSchema =
-    commonEmploymentValidationSchema(true);
-export const apiEmploymentValidationSchema =
-    commonEmploymentValidationSchema(false);
+    commonEmploymentValidationSchema();
+export const apiEmploymentValidationSchema = (contracts: Contract[]) =>
+    commonEmploymentValidationSchema(contracts);

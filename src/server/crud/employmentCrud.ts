@@ -16,3 +16,22 @@ export const readEmploymentsByUserId = async (userId: string | number) => {
         [userId]
     );
 };
+export const readEmploymentByUserIdAndEmploymentId = async (
+    userId: string | number,
+    employmentId: string | number
+) => {
+    return await executeReadByArray(
+        "SELECT * FROM `employments` WHERE `user_id` = ? AND `id` = ?;",
+        [userId, employmentId]
+    );
+};
+export const updateEmploymentByUserIdAndEmploymentId = async (
+    userId: string | number,
+    employmentId: string | number,
+    name: string
+) => {
+    return await executeReadByArray(
+        "UPDATE `employments` SET `name` = ? WHERE `user_id` = ? AND `id` = ?;",
+        [name, userId, employmentId]
+    );
+};

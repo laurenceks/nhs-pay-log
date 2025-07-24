@@ -5,7 +5,7 @@ import { readPayBandsForRegistering } from "../crud/payBandCrud";
 import {
     createEmployment,
     readEmploymentsByUserId,
-} from "../crud/employmentsCrud";
+} from "../crud/employmentCrud";
 import { createContract } from "../crud/contractCrud";
 import { createHashSaltPair } from "../utils/crypto";
 import { randomUUID } from "node:crypto";
@@ -20,7 +20,6 @@ export const getRegisterOptions = async (_req: Request, res: Response) => {
     }
 };
 export const postRegister = async (req: Request, res: Response) => {
-    //TODO validate passwords match
     const { hash, salt } = createHashSaltPair(req.body.password1);
     try {
         const userId = randomUUID();

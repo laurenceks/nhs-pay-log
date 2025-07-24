@@ -1,4 +1,4 @@
-import { LookupTable } from "./lookupTypes";
+import { Employment, LookupTable } from "./lookupTypes";
 
 export type Overruns = "OT" | "TOIL";
 
@@ -141,6 +141,12 @@ export type Contract = {
     employment_name: Employment["name"];
     pay_group_id: Employment["pay_group_id"];
     hca_group_id: 1 | 2 | 3 | null;
+};
+
+export type EmploymentEdit = {
+    name: Employment["name"];
+    id: Employment["id"];
+    contracts: Contract[];
 };
 
 export type EmploymentReducerContractKeys = keyof Omit<

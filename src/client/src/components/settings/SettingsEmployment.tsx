@@ -69,6 +69,7 @@ const SettingsEmployment = ({
                                 key={x.id}
                                 contract={x}
                                 setEmploymentContracts={setEmploymentContracts}
+                                setContractEditId={setContractEditId}
                                 first={i === 0}
                                 last={i === employmentContracts.length - 1}
                             />
@@ -114,6 +115,22 @@ const SettingsEmployment = ({
                             }}
                         >
                             Add row
+                        </Button>
+                        <Button
+                            variant="outline-primary"
+                            onClick={() => {
+                                setContractEditId(null);
+                                setEmploymentEditId(null);
+                                setEmploymentContracts({
+                                    action: "reset",
+                                    payload: contracts.filter(
+                                        (x: Contract) =>
+                                            x.employment_id === employment.id
+                                    ),
+                                });
+                            }}
+                        >
+                            Cancel
                         </Button>
                     </>
                 ) : (

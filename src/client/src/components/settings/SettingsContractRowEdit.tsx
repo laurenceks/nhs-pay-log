@@ -4,22 +4,24 @@ import {
     Contract,
     EmploymentReducerContractKeys,
 } from "../../../../../types/commonTypes";
-import { Button, Form } from "react-bootstrap";
-import { ActionDispatch, ChangeEvent } from "react";
+import { Form } from "react-bootstrap";
+import { ActionDispatch, ChangeEvent, Dispatch, SetStateAction } from "react";
 import { EmploymentReducerOptions } from "../../reducers/employmentReducer";
 import { roundTo } from "round-to";
 import allowFirstFromAndLastTo from "../../reducers/allowFirstFromAndLastTo";
 import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
-import IconWrap from "../common/IconWrap";
+import SettingsContractRowEditButton from "./SettingsContractRowEditButton";
 
 const SettingsContractRowEdit = ({
     contract,
     setEmploymentContracts,
+    setContractEditId,
     first,
     last,
 }: {
     contract: Contract;
     setEmploymentContracts: ActionDispatch<[EmploymentReducerOptions]>;
+    setContractEditId: Dispatch<SetStateAction<Contract["id"] | null>>;
     first: boolean;
     last: boolean;
 }) => {
@@ -170,40 +172,67 @@ const SettingsContractRowEdit = ({
                     <option value={"6"}>Postgrad</option>
                 </Form.Select>
             </td>
-            <td className="d-flex column-gap-1">
-                {!first && (
-                    <Button
-                        variant="warning"
-                        size="sm"
-                        className="d-flex align-items-center justify-content-center"
-                    >
-                        <IconWrap variant="white" width={"1.5rem"} as="span">
+            <td style={{ verticalAlign: "middle" }}>
+                <div className="d-flex column-gap-1 align-items-center">
+                    {!first && (
+                        <SettingsContractRowEditButton
+                            variant="warning"
+                            onClick={() =>
+                                setEmploymentContracts({
+                                    action: "moveContract",
+                                    payload: {
+                                        currentContractId: contract.id,
+                                        employmentId: contract.employment_id,
+                                        employmentName:
+                                            contract.employment_name,
+                                        direction: -1,
+                                    },
+                                })
+                            }
+                        >
                             <IoChevronUp />
-                        </IconWrap>
-                    </Button>
-                )}
-                {!last && (
-                    <Button
-                        variant="warning"
-                        size="sm"
-                        className="d-flex align-items-center justify-content-center"
-                    >
-                        <IconWrap variant="white" width={"1.5rem"} as="span">
+                        </SettingsContractRowEditButton>
+                    )}
+                    {!last && (
+                        <SettingsContractRowEditButton
+                            variant="warning"
+                            onClick={() =>
+                                setEmploymentContracts({
+                                    action: "moveContract",
+                                    payload: {
+                                        currentContractId: contract.id,
+                                        employmentId: contract.employment_id,
+                                        employmentName:
+                                            contract.employment_name,
+                                        direction: 1,
+                                    },
+                                })
+                            }
+                        >
                             <IoChevronDown />
-                        </IconWrap>
-                    </Button>
-                )}
-                {!(first && last) && (
-                    <Button
-                        variant="danger"
-                        size="sm"
-                        className="d-flex align-items-center justify-content-center"
-                    >
-                        <IconWrap variant="white" width={"1.5rem"} as="span">
+                        </SettingsContractRowEditButton>
+                    )}
+                    {!(first && last) && (
+                        <SettingsContractRowEditButton
+                            variant="danger"
+                            onClick={() => {
+                                setEmploymentContracts({
+                                    action: "deleteContract",
+                                    payload: {
+                                        currentContractId: contract.id,
+                                        employmentId: contract.employment_id,
+                                        employmentName:
+                                            contract.employment_name,
+                                        direction: first ? 1 : -1,
+                                    },
+                                });
+                                setContractEditId(null);
+                            }}
+                        >
                             <IoClose />
-                        </IconWrap>
-                    </Button>
-                )}
+                        </SettingsContractRowEditButton>
+                    )}
+                </div>
             </td>
         </tr>
     );

@@ -35,15 +35,13 @@ export const Route = createFileRoute("/_private")({
     },
 
     beforeLoad: async ({ context }) => {
-        if (!Cookies.get("sessionExpiry") || !(await context.auth?.isAuth())) {
+        if (!(await context.auth?.isAuth())) {
             window.localStorage.setItem(
                 "redirect",
                 location.pathname + location.hash + location.search
             );
-            context.auth?.logout();
-            throw redirect({
-                to: "/login",
-            });
+            context.auth?.logoutUser(!Cookies.get("sessionExpiry"));
+            throw redirect({ to: "/login" });
         }
     },
 });

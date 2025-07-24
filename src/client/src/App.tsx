@@ -1,4 +1,4 @@
-import { createRouter, redirect, RouterProvider } from "@tanstack/react-router";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { useState } from "react";
@@ -13,7 +13,7 @@ export type Auth = {
     loginCheckedOnce: boolean;
     user: null | ClientUser;
     login: (user: ClientUser) => void;
-    logout: () => void;
+    logoutUser: (sessionExpired?: boolean) => void;
     isAuth: () => Promise<boolean>;
     setRedirect: (url: string) => void;
 };
@@ -36,11 +36,11 @@ const App = () => {
         loginCheckedOnce: false,
         user: null,
         login: (_user) => {},
-        logout: () => {},
+        logoutUser: (_sessionExpired) => {},
         setRedirect: (_url) => {},
         isAuth: async () => false,
     });
-    const logout = async () => {
+    const logoutUser = async (sessionExpired: boolean = false) => {
         queryClient.invalidateQueries();
         Cookies.remove("sessionExpiry");
         setAuth((prevState) => ({
@@ -49,8 +49,11 @@ const App = () => {
             user: null,
         }));
         await fetchLogout();
-        redirect({ to: "/login" });
-        toast.success("You have been logged out", { id: "logout" });
+        if (sessionExpired) {
+            toast.error("Your session has expired", { id: "logout" });
+        } else {
+            toast.success("You have been logged out", { id: "logout" });
+        }
     };
 
     return (
@@ -79,9 +82,13 @@ const App = () => {
                                         loginCheckedOnce: true,
                                         user,
                                     })),
-                                logout,
+                                logoutUser,
                                 isAuth: async () => {
-                                    if (auth.user && auth.loginCheckedOnce) {
+                                    if (
+                                        Cookies.get("sessionExpiry") &&
+                                        auth.user &&
+                                        auth.loginCheckedOnce
+                                    ) {
                                         return true;
                                     }
                                     if (!auth.loginCheckedOnce) {
@@ -99,11 +106,9 @@ const App = () => {
                                                 return true;
                                             }
                                         } catch (_e) {
-                                            await logout();
                                             return false;
                                         }
                                     }
-                                    await logout();
                                     return false;
                                 },
                                 setRedirect: (url: string) =>

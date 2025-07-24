@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_public/_login/logout")({
         return <></>;
     },
     beforeLoad: ({ context }) => {
-        context.auth?.logout();
+        context.auth?.logoutUser(false);
         throw redirect({ to: "/login" });
     },
 });

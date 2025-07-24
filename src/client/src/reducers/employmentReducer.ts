@@ -1,7 +1,6 @@
 import {
     Contract,
     EmploymentReducerContractKeys,
-    Overruns,
 } from "../../../../types/commonTypes";
 import {
     addDaysToTimestamp,
@@ -35,7 +34,7 @@ const defaultContract = (
     student_loan: null,
     hca_perc: 0,
     hca_group_id: null,
-    id: 0,
+    id: Date.now(),
 });
 
 export type EmploymentReducerOptions =
@@ -44,6 +43,15 @@ export type EmploymentReducerOptions =
           payload: {
               employmentId: Contract["employment_id"];
               employmentName: Contract["employment_name"];
+          };
+      }
+    | {
+          action: "deleteContract" | "moveContract";
+          payload: {
+              currentContractId: Contract["id"];
+              employmentId: Contract["employment_id"];
+              employmentName: Contract["employment_name"];
+              direction: -1 | 1; //-1 move back or replace with previous, 1 move forward or replace with next
           };
       }
     | {
@@ -67,8 +75,8 @@ export type EmploymentReducerOptions =
           };
       }
     | {
-          action: "overrunType";
-          payload: Overruns;
+          action: "reset";
+          payload: Contract[];
       };
 
 const employmentReducer = (
@@ -79,20 +87,32 @@ const employmentReducer = (
         case "addContract": {
             const previousContract = prevState[prevState.length - 1];
             if (previousContract) {
+                let newTo = previousContract.to
+                    ? new Date(previousContract.to)
+                    : addDaysToTimestamp(new Date(), -1);
+                if (previousContract.from) {
+                    const prevFrom = new Date(previousContract.from);
+                    if (prevFrom >= newTo) {
+                        newTo = addDaysToTimestamp(
+                            previousContract.to || prevFrom,
+                            1
+                        );
+                    }
+                }
                 return [
                     ...prevState.slice(0, -1),
                     {
                         ...previousContract,
-                        to: formatDate(
-                            addDaysToTimestamp(new Date(), -1),
-                            "yyyy-mm-dd"
-                        ),
+                        to: formatDate(newTo, "yyyy-mm-dd"),
                     },
                     {
                         ...previousContract,
-                        from: formatDate(new Date(), "yyyy-mm-dd"),
+                        from: formatDate(
+                            addDaysToTimestamp(newTo, 1),
+                            "yyyy-mm-dd"
+                        ),
                         to: null,
-                        id: 0,
+                        id: Date.now() + Math.floor(Math.random() * 1000000000),
                     },
                 ];
             } else {
@@ -102,6 +122,158 @@ const employmentReducer = (
                         payload.employmentName
                     ),
                 ];
+            }
+        }
+        case "deleteContract": {
+            if (prevState.length === 0) {
+                //should not be possible but in case there are no contracts add the default
+                toast.error("Employments must have at least one contract", {
+                    id: `${payload.employmentId}-delete-minOneContract`,
+                });
+                return [
+                    defaultContract(
+                        payload.employmentId,
+                        payload.employmentName
+                    ),
+                ];
+            } else if (prevState.length === 1) {
+                //should not be possible - only one contract
+                toast.error("An employment must have at least one contract", {
+                    id: `${payload.employmentId}-delete-onlyOne`,
+                });
+                return prevState;
+            } else {
+                const currentIndex = prevState.findIndex(
+                    (x) => x.id === payload.currentContractId
+                );
+                const currentContract = prevState[currentIndex];
+                if (payload.direction === -1) {
+                    //replace with previous
+                    if (currentIndex === 0) {
+                        //should also not be possible - first contract being deleted and replaced with previous
+                        toast.error("No previous contract to replace with", {
+                            id: `${payload.employmentId}-delete-noPrevious`,
+                        });
+                        return prevState;
+                    } else {
+                        const previousContract = prevState[currentIndex - 1];
+                        return [
+                            ...prevState.slice(
+                                0,
+                                Math.max(currentIndex - 1, 0)
+                            ),
+                            {
+                                ...previousContract,
+                                to: currentContract.to,
+                            },
+                            ...prevState.slice(currentIndex + 1),
+                        ];
+                    }
+                } else {
+                    //replace with next
+                    if (currentIndex === prevState.length - 1) {
+                        //should not be possible - last contract being replaced with next
+                        toast.error("No next contract to replace with", {
+                            id: `${payload.employmentId}-delete-noNext`,
+                        });
+                        return prevState;
+                    } else {
+                        const nextContract = prevState[currentIndex + 1];
+                        return [
+                            ...prevState.slice(0, Math.max(currentIndex, 0)),
+                            {
+                                ...nextContract,
+                                from: currentContract.from,
+                            },
+                            ...prevState.slice(currentIndex + 2),
+                        ];
+                    }
+                }
+            }
+        }
+        case "moveContract": {
+            if (prevState.length === 0) {
+                //should not be possible - employment has no contracts
+                //should not be possible but in case there are no contracts add the default
+                toast.error("Employments must have at least one contract", {
+                    id: `${payload.employmentId}-move-minOneContract`,
+                });
+                return [
+                    defaultContract(
+                        payload.employmentId,
+                        payload.employmentName
+                    ),
+                ];
+            } else if (prevState.length === 1) {
+                //should not be possible - only one contract to move
+                toast.error("A sole contract cannot be moved", {
+                    id: `${payload.employmentId}-move-onlyOne`,
+                });
+                return prevState;
+            } else {
+                const currentIndex = prevState.findIndex(
+                    (x) => x.id === payload.currentContractId
+                );
+                const currentContract = prevState[currentIndex];
+                if (payload.direction === -1) {
+                    //move backwards
+                    if (currentIndex === 0) {
+                        //should not be possible - moving first contract backwards
+                        toast.error(
+                            "The first contract can't be moved backwards",
+                            {
+                                id: `${payload.employmentId}-move-firstBackwards`,
+                            }
+                        );
+                        return prevState;
+                    } else {
+                        const previousContract = prevState[currentIndex - 1];
+                        return [
+                            ...prevState.slice(
+                                0,
+                                Math.max(currentIndex - 1, 0)
+                            ),
+                            {
+                                ...currentContract,
+                                from: previousContract.from,
+                                to: previousContract.to,
+                            },
+                            {
+                                ...previousContract,
+                                from: currentContract.from,
+                                to: currentContract.to,
+                            },
+                            ...prevState.slice(currentIndex + 1),
+                        ];
+                    }
+                } else {
+                    if (currentIndex === prevState.length - 1) {
+                        //should not be possible - moving last contract forwards
+                        toast.error(
+                            "The last contract can't be moved forwards",
+                            {
+                                id: `${payload.employmentId}-move-lastForwards`,
+                            }
+                        );
+                        return prevState;
+                    } else {
+                        const nextContract = prevState[currentIndex + 1];
+                        return [
+                            ...prevState.slice(0, Math.max(currentIndex, 0)),
+                            {
+                                ...nextContract,
+                                from: currentContract.from,
+                                to: currentContract.to,
+                            },
+                            {
+                                ...currentContract,
+                                from: nextContract.from,
+                                to: nextContract.to,
+                            },
+                            ...prevState.slice(currentIndex + 2),
+                        ];
+                    }
+                }
             }
         }
         case "from": {
@@ -369,6 +541,9 @@ const employmentReducer = (
                 },
                 ...prevState.slice(currentIndex + 1),
             ];
+        }
+        case "reset": {
+            return payload;
         }
         case undefined:
         case null:

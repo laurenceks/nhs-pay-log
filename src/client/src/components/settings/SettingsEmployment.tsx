@@ -1,5 +1,5 @@
 import { useLoaderData } from "@tanstack/react-router";
-import { Button, Table } from "react-bootstrap";
+import { Button, Form, Table } from "react-bootstrap";
 import SettingsContractRow from "./SettingsContractRow";
 import { Contract } from "../../../../../types/commonTypes";
 import { Dispatch, SetStateAction, useReducer, useState } from "react";
@@ -21,9 +21,11 @@ const SettingsEmployment = ({
     employmentEditId: Employment["id"] | null;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
 }) => {
+    //TODO split into static and edit components to handle post save updates and avoid excessive states
     const { contracts } = useLoaderData({
         from: "/_private/_table/settings",
     });
+    const [name, setName] = useState(employment.name);
     const [contractEditId, setContractEditId] = useState<Contract["id"] | null>(
         null
     );
@@ -34,11 +36,13 @@ const SettingsEmployment = ({
     const isEditing = employmentEditId === employment.id;
     const validationResult = z.safeParse(clientEmploymentValidationSchema, {
         ...employment,
+        name,
         contracts: employmentContracts,
     });
     const { mutateAsync, isPending } = useMutation({
         ...patchEmploymentMutationOptions({
             ...employment,
+            name,
             contracts: employmentContracts,
         }),
     });
@@ -51,7 +55,20 @@ const SettingsEmployment = ({
     }
     return (
         <div className="py-3">
-            <h3 className="px-3">{employment.name}</h3>
+            {isEditing ? (
+                <Form.Group className="px-3">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                        value={name}
+                        onChange={(e) => setName(e.currentTarget.value)}
+                        type="text"
+                        isInvalid={!name}
+                        size="lg"
+                    />
+                </Form.Group>
+            ) : (
+                <h3 className="px-3">{employment.name}</h3>
+            )}
             <Table striped={true} hover={isEditing} responsive={true}>
                 <thead>
                     <tr>
@@ -109,7 +126,7 @@ const SettingsEmployment = ({
                                 await mutateAsync();
                                 setContractEditId(null);
                                 setEmploymentEditId(null);
-                                toast.success(`${employment.name} updated`, {
+                                toast.success(`${name} updated`, {
                                     id: `employment-${employment.id}-updated`,
                                 });
                             }}

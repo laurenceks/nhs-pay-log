@@ -86,7 +86,6 @@ const ShiftEditModal = () => {
         );
 
     useEffect(() => {
-        //TODO move to reducer?
         if (!contractValidOnDate) {
             if (newContract?.employment_id !== editState.employment_id) {
                 toast.error(

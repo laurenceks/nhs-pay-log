@@ -62,7 +62,7 @@ export const readContractsByUserIdAndNotEmploymentId = async (
 
 export const readLatestContractPayGroupIdByUserId = async (userId: string) => {
     return await executeReadByArray<Contract>(
-        "SELECT `contracts`.`pay_group_id`\nFROM `contracts`\nWHERE `contracts`.`user_id` = ?\nORDER BY `contracts`.`updated_at` DESC\nLIMIT 1",
+        "SELECT `contracts`.`pay_group_id`\nFROM `contracts`\nWHERE `contracts`.`user_id` = ?\nORDER BY `contracts`.`to` iS NULL DESC, `contracts`.`to` DESC\nLIMIT 1",
         [userId]
     );
 };

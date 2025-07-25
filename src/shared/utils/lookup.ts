@@ -9,7 +9,8 @@ const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
     return (
         (x.to && x.from && x.to >= dSorting && x.from <= dSorting) ||
         (!x.from && x.to && x.to >= dSorting) ||
-        (!x.to && x.from && x.from <= dSorting)
+        (!x.to && x.from && x.from <= dSorting) ||
+        (!x.to && !x.from && dSorting)
     );
 };
 const withinDateRangeAndMatchingKey = <T>(

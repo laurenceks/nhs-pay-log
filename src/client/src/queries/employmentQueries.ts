@@ -3,6 +3,7 @@ import { fetchJson } from "./queryUtils";
 import { Employment } from "../../../../types/lookupTypes";
 import { EmploymentEdit } from "../../../../types/commonTypes";
 import { queryClient } from "../App";
+import { toast } from "react-hot-toast";
 
 export const getEmploymentsFetch = async () => {
     return await fetchJson<Employment[]>("/api/v1/private/employment");
@@ -50,6 +51,7 @@ export const postEmploymentMutationOptions = (): MutationOptions => ({
         //fetch contracts first to avoid errors in client (employments with no contract)
         await queryClient.refetchQueries({ queryKey: ["contracts"] });
         await queryClient.refetchQueries({ queryKey: ["employments"] });
+        toast.success("Employment added");
     },
 });
 export const deleteEmploymentMutationOptions = (

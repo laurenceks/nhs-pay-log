@@ -1,8 +1,8 @@
 import { useLoaderData } from "@tanstack/react-router";
-import { formatDate } from "../../../../shared/utils/formatDates";
-import { filterOptionsByDate } from "../../../../shared/utils/lookup";
-import { Contract } from "../../../../../types/commonTypes";
-import { convertToGbp } from "../../../../shared/utils/conversions";
+import { Contract } from "../../../../../../../types/commonTypes";
+import { filterOptionsByDate } from "../../../../../../shared/utils/lookup";
+import { formatDate } from "../../../../../../shared/utils/formatDates";
+import { convertToGbp } from "../../../../../../shared/utils/conversions";
 
 const hcaMap = {
     1: "Inner London",
@@ -15,7 +15,7 @@ const SettingsContractRow = ({
     isEditing = false,
 }: {
     contract: Contract;
-    onClick: () => void;
+    onClick?: () => void;
     isEditing: boolean;
 }) => {
     const { payBands } = useLoaderData({

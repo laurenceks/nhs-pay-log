@@ -1,6 +1,6 @@
 import { Button } from "react-bootstrap";
 import { CSSProperties, ReactElement } from "react";
-import IconWrap from "../common/IconWrap";
+import IconWrap from "../../../common/IconWrap";
 import { Variant } from "react-bootstrap/types";
 
 const SettingsContractRowEditButton = ({

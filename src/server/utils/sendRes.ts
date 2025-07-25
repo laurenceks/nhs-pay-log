@@ -128,7 +128,12 @@ const sendErrorRes = (
     const errorType: SendResOptions<null> =
         type && types[type]
             ? { ...types[type], errorCode: type }
-            : { code: 500, isError: true };
+            : {
+                  code: 500,
+                  isError: true,
+                  title: feedbackArgs?.title,
+                  message: feedbackArgs?.message,
+              };
     sendRes(res, errorType);
 };
 

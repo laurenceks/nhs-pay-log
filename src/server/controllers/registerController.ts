@@ -34,7 +34,8 @@ export const postRegister = async (req: Request, res: Response) => {
             req.body.hca_group_id || null,
             req.body.weekly_hours,
             req.body.pension_perc / 100,
-            req.body.student_loan || null
+            req.body.student_loan || null,
+            req.body.personal_allowance || null
         );
         await sendVerificationEmail(userId, req.body.email);
 

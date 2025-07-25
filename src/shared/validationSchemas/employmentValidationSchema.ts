@@ -76,7 +76,7 @@ const commonEmploymentValidationSchema = (contracts?: Contract[]) =>
                     val.contracts[val.contracts.length - 1].to === "";
             }
             return firstFromValid && lastToValid;
-        }, "Each employment must have one contract with no from and no to");
+        }, "At least one employment must have one contract with no from and no to");
 
 export const clientEmploymentValidationSchema =
     commonEmploymentValidationSchema();

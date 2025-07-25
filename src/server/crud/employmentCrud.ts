@@ -1,4 +1,8 @@
-import { executeReadByArray, executeWriteByPlaceholders } from "../utils/db";
+import {
+    executeReadByArray,
+    executeWriteByArray,
+    executeWriteByPlaceholders,
+} from "../utils/db";
 
 export const createEmployment = async (
     userId: string | number,
@@ -30,8 +34,17 @@ export const updateEmploymentByUserIdAndEmploymentId = async (
     employmentId: string | number,
     name: string
 ) => {
-    return await executeReadByArray(
+    return await executeWriteByArray(
         "UPDATE `employments` SET `name` = ? WHERE `user_id` = ? AND `id` = ?;",
         [name, userId, employmentId]
+    );
+};
+export const deleteEmploymentByUserIdAndEmploymentId = async (
+    userId: string | number,
+    employmentId: string | number
+) => {
+    return await executeWriteByArray(
+        "DELETE FROM `employments` WHERE `user_id` = ? AND `id` = ?;",
+        [userId, employmentId]
     );
 };

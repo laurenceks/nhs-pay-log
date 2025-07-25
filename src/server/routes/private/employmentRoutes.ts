@@ -1,7 +1,9 @@
 import { Router } from "express";
 import {
+    deleteEmployment,
     getEmployments,
     patchEmployment,
+    postEmployment,
 } from "../../controllers/employmentController";
 import { validateRequest } from "../../middleware/validateRequest";
 import { apiEmploymentValidationSchema } from "../../../shared/validationSchemas/employmentValidationSchema";
@@ -12,6 +14,7 @@ import { z } from "zod";
 const router = Router();
 
 router.get("/", getEmployments);
+router.post("/", postEmployment);
 router.patch(
     "/:employmentId",
     validateRequest(
@@ -29,6 +32,14 @@ router.patch(
         )(req, res, next);
     },
     patchEmployment
+);
+router.delete(
+    "/:employmentId",
+    validateRequest(
+        z.object({ employmentId: rowIdValidationSchema("Employment ID") }),
+        "params"
+    ),
+    deleteEmployment
 );
 
 export default router;

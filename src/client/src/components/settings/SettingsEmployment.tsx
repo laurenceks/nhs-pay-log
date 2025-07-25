@@ -1,4 +1,3 @@
-import { useLoaderData } from "@tanstack/react-router";
 import { Button, Form, Table } from "react-bootstrap";
 import SettingsContractRow from "./SettingsContractRow";
 import { Contract } from "../../../../../types/commonTypes";
@@ -10,42 +9,53 @@ import { z } from "zod";
 import { clientEmploymentValidationSchema } from "../../../../shared/validationSchemas/employmentValidationSchema";
 import { toast } from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
-import { patchEmploymentMutationOptions } from "../../queries/employmentQueries";
+import {
+    deleteEmploymentMutationOptions,
+    patchEmploymentMutationOptions,
+} from "../../queries/employmentQueries";
+import { ApiResponse } from "../../../../../types/responseTypes";
 
 const SettingsEmployment = ({
     employment,
+    contracts,
     employmentEditId,
     setEmploymentEditId,
+    isOnlyEmployment,
 }: {
     employment: Employment;
+    contracts: Contract[];
     employmentEditId: Employment["id"] | null;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
+    isOnlyEmployment: boolean;
 }) => {
     //TODO split into static and edit components to handle post save updates and avoid excessive states
-    const { contracts } = useLoaderData({
-        from: "/_private/_table/settings",
-    });
     const [name, setName] = useState(employment.name);
     const [contractEditId, setContractEditId] = useState<Contract["id"] | null>(
         null
     );
     const [employmentContracts, setEmploymentContracts] = useReducer(
         employmentReducer,
-        contracts.filter((x: Contract) => x.employment_id === employment.id)
+        contracts
     );
     const isEditing = employmentEditId === employment.id;
+
     const validationResult = z.safeParse(clientEmploymentValidationSchema, {
         ...employment,
         name,
-        contracts: employmentContracts,
+        contracts: employmentContracts || [],
     });
-    const { mutateAsync, isPending } = useMutation({
+    const { mutateAsync: patchMutate, isPending: patchPending } = useMutation({
         ...patchEmploymentMutationOptions({
             ...employment,
             name,
             contracts: employmentContracts,
         }),
     });
+    const { mutateAsync: deleteMutate, isPending: deletePending } = useMutation(
+        {
+            ...deleteEmploymentMutationOptions(employment.id),
+        }
+    );
 
     if (validationResult.error?.issues.length) {
         toast.error(
@@ -120,20 +130,32 @@ const SettingsEmployment = ({
                             variant="success"
                             disabled={
                                 (isEditing && !validationResult.success) ||
-                                isPending
+                                patchPending ||
+                                deletePending
                             }
                             onClick={async () => {
-                                await mutateAsync();
-                                setContractEditId(null);
-                                setEmploymentEditId(null);
-                                toast.success(`${name} updated`, {
-                                    id: `employment-${employment.id}-updated`,
-                                });
+                                try {
+                                    await patchMutate();
+                                    setContractEditId(null);
+                                    setEmploymentEditId(null);
+                                    toast.success(`${name} updated`, {
+                                        id: `employment-${employment.id}-updated`,
+                                    });
+                                } catch (e) {
+                                    toast.error(
+                                        (e as ApiResponse).message ||
+                                            "There was a problem saving the employment, please try again",
+                                        {
+                                            id: `employment-${employment.id}-delete-error`,
+                                        }
+                                    );
+                                }
                             }}
                         >
                             Save
                         </Button>
                         <Button
+                            disabled={deletePending || patchPending}
                             onClick={() => {
                                 setContractEditId(0);
                                 setEmploymentContracts({
@@ -149,6 +171,7 @@ const SettingsEmployment = ({
                         </Button>
                         <Button
                             variant="outline-primary"
+                            disabled={deletePending || patchPending}
                             onClick={() => {
                                 setContractEditId(null);
                                 setEmploymentEditId(null);
@@ -167,12 +190,37 @@ const SettingsEmployment = ({
                 ) : (
                     <Button
                         variant="warning"
-                        disabled={employmentEditId !== null}
+                        disabled={
+                            employmentEditId !== null ||
+                            deletePending ||
+                            patchPending
+                        }
                         onClick={() => {
                             setEmploymentEditId(employment.id);
                         }}
                     >
                         Edit
+                    </Button>
+                )}
+                {!isOnlyEmployment && (
+                    <Button
+                        variant="danger"
+                        disabled={deletePending}
+                        onClick={async () => {
+                            try {
+                                await deleteMutate();
+                                toast.success(`${employment.name} deleted`);
+                            } catch (e) {
+                                toast.error(
+                                    (e as ApiResponse).errorCode ===
+                                        "validationError"
+                                        ? (e as ApiResponse).message
+                                        : `Unable to delete ${employment.name}`
+                                );
+                            }
+                        }}
+                    >
+                        Delete
                     </Button>
                 )}
             </div>

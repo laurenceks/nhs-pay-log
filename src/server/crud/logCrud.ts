@@ -30,6 +30,27 @@ export const readAffectedLogByUserIdAndShiftId = async (
     );
 };
 
+export const readOrphanedLogByUserIdAndEmploymentId = async (
+    userId: string,
+    employmentId: string | number
+) => {
+    return await executeReadByPlaceholders<ClientShift>(
+        "SELECT `log`.`id`\nFROM `log`\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId",
+        { userId, employmentId }
+    );
+};
+export const readOrphanedLogByUserIdAndEmploymentIdAndNewFromOrTo = async (
+    userId: string,
+    employmentId: string | number,
+    from: string | null,
+    to: string | null
+) => {
+    return await executeReadByPlaceholders<ClientShift>(
+        "SELECT `log`.`id`\nFROM `log`\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND ((:from IS NOT NULL AND `log`.`date` < :from)\n    OR (:to IS NOT NULL AND `log`.`date` > :to))",
+        { userId, employmentId, from, to }
+    );
+};
+
 export const createLogShift = async (userId: string, shift: ClientShift) => {
     return await executeWriteByPlaceholders(
         "INSERT INTO `log` (`user_id`,\n                   `employment_id`,\n                   `date`,\n                   `start`,\n                   `planned_end`,\n                   `actual_end`,\n                   `from`,\n                   `planned_to`,\n                   `actual_to`,\n                   `type`,\n                   `overrun_type`,\n                   `pay_id_override`,\n                   `extras_ids_string`,\n                   `pay_date`,\n                   `pay_month`,\n                   `flowers_pay_month`,\n                   `pay_financial_year`,\n                   `toil`,\n                   `flat`,\n                   `lower_rate`,\n                   `time_and_half`,\n                   `higher_rate`,\n                   `double`)\nVALUES (:userId,\n        :employment_id,\n        :date,\n        :start,\n        :planned_end,\n        :actual_end,\n        :from,\n        :planned_to,\n        :actual_to,\n        :type,\n        :overrun_type,\n        :pay_id_override,\n        :extras,\n        :pay_date,\n        :pay_month,\n        DATE_FORMAT(DATE_ADD(:pay_date, INTERVAL 1 MONTH), \'%y-%m\'),\n        :pay_financial_year,\n        :toil,\n        :flat,\n        :lower_rate,\n        :time_and_half,\n        :higher_rate,\n        :double)",
@@ -93,6 +114,18 @@ export const updateLogShiftByUserIdAndShiftId = async (
             toil: shift.toil,
             type: shift.type,
             userId,
+        }
+    );
+};
+export const updateOrphanedLogShiftByUserIdAndFormerEmploymentID = async (
+    userId: string,
+    oldEmploymentId: string | number
+) => {
+    return await executeWriteByPlaceholders(
+        "UPDATE `log`\nSET `employment_id` = (SELECT `contracts`.`employment_id`\n                       FROM `contracts`\n                       WHERE `contracts`.`employment_id` != :oldEmploymentId\n                         AND `contracts`.`user_id` = :userId\n                         AND ((`contracts`.`from` IS NULL AND `log`.`date` <= `contracts`.`to`) OR\n                              (`contracts`.`to` IS NULL AND `log`.`date` >= `contracts`.`from`) OR\n                              (`contracts`.`from` <= `log`.`date` AND `contracts`.`to` >= `log`.`date`) OR\n                              (`contracts`.`from` IS NULL AND `contracts`.`to` IS NULL))\n                       ORDER BY `contracts`.`employment_id`, `contracts`.`from`\n                       LIMIT 1)\nWHERE `user_id` = :userId AND `employment_id` = :oldEmploymentId",
+        {
+            userId,
+            oldEmploymentId,
         }
     );
 };

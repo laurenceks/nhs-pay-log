@@ -140,8 +140,6 @@ export const deleteEmployment = async (req: Request, res: Response) => {
                 contracts
             );
 
-            console.log(Number(req.params.employmentId), contracts);
-
             if (allowFirstFrom && allowLastTo) {
                 await updateOrphanedLogShiftByUserIdAndFormerEmploymentID(
                     req.authenticatedUser.id,

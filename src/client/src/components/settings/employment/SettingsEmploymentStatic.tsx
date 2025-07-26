@@ -3,7 +3,7 @@ import SettingsContractRow from "./contractRow/SettingsContractRow";
 import { Contract } from "../../../../../../types/commonTypes";
 import { Dispatch, SetStateAction } from "react";
 import { Employment } from "../../../../../../types/lookupTypes";
-import { UseMutateFunction } from "@tanstack/react-query";
+import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import SettingsEmploymentThead from "./common/SettingsEmploymentThead";
 import SettingsEmploymentDeleteButton from "./common/SettingsEmploymentDeleteButton";
 
@@ -20,7 +20,7 @@ const SettingsEmploymentStatic = ({
     employmentContracts: Contract[];
     contractEditId: Contract["id"] | null;
     isOnlyEmployment: boolean;
-    deleteMutate: UseMutateFunction;
+    deleteMutate: UseMutateAsyncFunction;
     deletePending: boolean;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
 }) => {

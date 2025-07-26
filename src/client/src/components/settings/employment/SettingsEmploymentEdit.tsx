@@ -7,7 +7,7 @@ import SettingsContractRowEdit from "./contractRow/SettingsContractRowEdit";
 import { z } from "zod";
 import { clientEmploymentValidationSchema } from "../../../../../shared/validationSchemas/employmentValidationSchema";
 import { toast } from "react-hot-toast";
-import { UseMutateFunction, useMutation } from "@tanstack/react-query";
+import { UseMutateAsyncFunction, useMutation } from "@tanstack/react-query";
 import { patchEmploymentMutationOptions } from "../../../queries/employmentQueries";
 import { ApiResponse } from "../../../../../../types/responseTypes";
 import SettingsEmploymentThead from "./common/SettingsEmploymentThead";
@@ -30,7 +30,7 @@ const SettingsEmploymentEdit = ({
     employmentContracts: Contract[];
     filteredContracts: Contract[];
     setEmploymentContracts: ActionDispatch<[EmploymentReducerOptions]>;
-    deleteMutate: UseMutateFunction;
+    deleteMutate: UseMutateAsyncFunction;
     deletePending: boolean;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
     contractEditId: Contract["id"] | null;

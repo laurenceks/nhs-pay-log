@@ -47,7 +47,13 @@ export const shiftDurationIntValidationSchema = (
     return z.coerce.number(msg).int(msg).min(0, msg).max(8.64e7, msg);
 };
 
-export const rowIdValidationSchema = (fieldName: string = "ID") => {
+export const rowIdValidationSchema = (
+    fieldName: string = "ID",
+    allowZero = true
+) => {
     const msg = `${fieldName} must be a valid ID`;
-    return z.coerce.number(msg).int(msg).min(0, msg);
+    return z.coerce
+        .number(msg)
+        .int(msg)
+        .min(allowZero ? 0 : 1, msg);
 };

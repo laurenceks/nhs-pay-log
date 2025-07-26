@@ -25,8 +25,8 @@ export const logShiftValidationSchema = z
         start: shiftTimeValidationSchema("Start"),
         actual_end: shiftTimeValidationSchema("Actual end"),
         planned_end: shiftTimeValidationSchema("Planned end"),
-        contract_id: rowIdValidationSchema("Contract ID"),
-        employment_id: rowIdValidationSchema("Employment ID"),
+        contract_id: rowIdValidationSchema("Contract ID", false),
+        employment_id: rowIdValidationSchema("Employment ID", false),
         extras_ids_string: z
             .string("Extras IDs must be a comma-separated list of numbers")
             .regex(/^(\d+(,\d+)*)?$/, {

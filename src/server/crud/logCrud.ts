@@ -30,7 +30,7 @@ export const readAffectedLogByUserIdAndShiftId = async (
     );
 };
 
-export const readOrphanedLogByUserIdAndEmploymentId = async (
+export const readLogIdsByUserIdAndEmploymentId = async (
     userId: string,
     employmentId: string | number
 ) => {
@@ -48,6 +48,15 @@ export const readOrphanedLogByUserIdAndEmploymentIdAndNewFromOrTo = async (
     return await executeReadByPlaceholders<ClientShift>(
         "SELECT `log`.`id`\nFROM `log`\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND ((:from IS NOT NULL AND `log`.`date` < :from)\n    OR (:to IS NOT NULL AND `log`.`date` > :to))",
         { userId, employmentId, from, to }
+    );
+};
+export const readLogWithNoAlternativeEmploymentByUserId = async (
+    userId: string,
+    employmentId: string | number
+) => {
+    return await executeReadByPlaceholders<ClientShift>(
+        "SELECT `log`.`id`, `log`.`date`, `contracts`.`employment_id`\nFROM `log`\n         LEFT JOIN `contracts` ON `log`.`employment_id` != `contracts`.`employment_id` AND\n                                  `log`.`user_id` = `contracts`.`user_id` AND\n                                  ((`contracts`.`from` IS NOT NULL AND `contracts`.`to` IS NOT NULL AND\n                                    `log`.`date` BETWEEN `contracts`.`from` AND `contracts`.`to`) OR\n                                   (`contracts`.`from` IS NULL AND `contracts`.`to` IS NOT NULL AND\n                                    `log`.`date` <= `contracts`.`to`) OR\n                                   (`contracts`.`to` IS NULL AND `contracts`.`from` IS NOT NULL AND\n                                    `log`.`date` >= `contracts`.`from`) OR\n                                   (`contracts`.`from` IS NULL AND `contracts`.`to` IS NULL))\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `contracts`.`employment_id` IS NULL",
+        { userId, employmentId }
     );
 };
 
@@ -122,7 +131,7 @@ export const updateOrphanedLogShiftByUserIdAndFormerEmploymentID = async (
     oldEmploymentId: string | number
 ) => {
     return await executeWriteByPlaceholders(
-        "UPDATE `log`\nSET `employment_id` = (SELECT `contracts`.`employment_id`\n                       FROM `contracts`\n                       WHERE `contracts`.`employment_id` != :oldEmploymentId\n                         AND `contracts`.`user_id` = :userId\n                         AND ((`contracts`.`from` IS NULL AND `log`.`date` <= `contracts`.`to`) OR\n                              (`contracts`.`to` IS NULL AND `log`.`date` >= `contracts`.`from`) OR\n                              (`contracts`.`from` <= `log`.`date` AND `contracts`.`to` >= `log`.`date`) OR\n                              (`contracts`.`from` IS NULL AND `contracts`.`to` IS NULL))\n                       ORDER BY `contracts`.`employment_id`, `contracts`.`from`\n                       LIMIT 1)\nWHERE `user_id` = :userId AND `employment_id` = :oldEmploymentId",
+        "UPDATE `log`\nSET `employment_id` = (SELECT `contracts`.`employment_id`\n                       FROM `contracts`\n                       WHERE `contracts`.`employment_id` != :oldEmploymentId\n                         AND `contracts`.`user_id` = :userId\n                         AND (\n                           (`contracts`.`from` IS NOT NULL AND `contracts`.`to` IS NOT NULL AND\n                            `log`.`date` BETWEEN `contracts`.`from` AND `contracts`.`to`) OR\n                           (`contracts`.`from` IS NULL AND `contracts`.`to` IS NOT NULL AND\n                            `log`.`date` <= `contracts`.`to`) OR\n                           (`contracts`.`to` IS NULL AND `contracts`.`from` IS NOT NULL AND\n                            `log`.`date` >= `contracts`.`from`) OR\n                           (`contracts`.`from` IS NULL AND `contracts`.`to` IS NULL))\n                       ORDER BY `contracts`.`employment_id`, `contracts`.`from`\n                       LIMIT 1)\nWHERE `log`.`user_id` = :userId AND `log`.`employment_id` = :oldEmploymentId",
         {
             userId,
             oldEmploymentId,

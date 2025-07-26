@@ -89,7 +89,8 @@ const ShiftEditModal = () => {
         if (!contractValidOnDate) {
             if (newContract?.employment_id !== editState.employment_id) {
                 toast.error(
-                    "The selected employment is not valid on this date and has been replaced with the best option available"
+                    "The selected employment is not valid on this date and has been replaced with the best option available",
+                    { id: `logShift-${shift.id}-contractChanged` }
                 );
             }
             setEditState({

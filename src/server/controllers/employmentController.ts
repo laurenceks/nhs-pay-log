@@ -14,11 +14,13 @@ import {
 } from "../crud/contractCrud";
 import { Contract } from "../../../types/commonTypes";
 import {
-    readOrphanedLogByUserIdAndEmploymentId,
+    readLogIdsByUserIdAndEmploymentId,
+    readLogWithNoAlternativeEmploymentByUserId,
     readOrphanedLogByUserIdAndEmploymentIdAndNewFromOrTo,
     updateOrphanedLogShiftByUserIdAndFormerEmploymentID,
 } from "../crud/logCrud";
 import allowFirstFromAndLastTo from "../../client/src/reducers/allowFirstFromAndLastTo";
+import { formatDate } from "../../shared/utils/formatDates";
 
 export const getEmployments = async (req: Request, res: Response) => {
     try {
@@ -121,16 +123,13 @@ export const patchEmployment = async (req: Request, res: Response) => {
 };
 export const deleteEmployment = async (req: Request, res: Response) => {
     try {
-        //TODO first check if there are other employments with no start or end to make safe the deletion
-        //TODO THEN update each shift with a new employment ID
-        //TODO THEN delete all contracts with employment ID
-        //TODO THEN delete delete employment
         const employments = await readEmploymentsByUserId(
             req.authenticatedUser.id
         );
         const contracts = await readContractsByUserId(req.authenticatedUser.id);
         if (employments.length <= 1) {
             sendErrorRes(res, null, {
+                errorCode: "employmentDeleteError",
                 title: "Unable to delete",
                 message: `You must have at least one employment`,
             });
@@ -141,33 +140,49 @@ export const deleteEmployment = async (req: Request, res: Response) => {
             );
 
             if (allowFirstFrom && allowLastTo) {
-                await updateOrphanedLogShiftByUserIdAndFormerEmploymentID(
-                    req.authenticatedUser.id,
-                    req.params.employmentId
-                );
-                const orphanedShifts =
-                    await readOrphanedLogByUserIdAndEmploymentId(
+                const shiftsThatWillBeOrphaned =
+                    await readLogWithNoAlternativeEmploymentByUserId(
                         req.authenticatedUser.id,
                         req.params.employmentId
                     );
-                if (orphanedShifts.length) {
+
+                if (shiftsThatWillBeOrphaned.length) {
                     sendErrorRes(res, null, {
+                        errorCode: "employmentDeleteError",
                         title: "Unable to delete",
-                        message: `${orphanedShifts.length} shifts from this employment could not be transferred to other employments`,
+                        message: `${shiftsThatWillBeOrphaned.length} shift${shiftsThatWillBeOrphaned.length === 1 ? "" : "s"} from this employment can't be transferred to other employments - change them manually to delete the shift:\n${shiftsThatWillBeOrphaned.map((x) => formatDate(x.date, "dd/mm/yy")).join("\n")}`,
                     });
                 } else {
-                    await deleteContractsByEmploymentAndUserId(
+                    await updateOrphanedLogShiftByUserIdAndFormerEmploymentID(
                         req.authenticatedUser.id,
                         req.params.employmentId
                     );
-                    await deleteEmploymentByUserIdAndEmploymentId(
-                        req.authenticatedUser.id,
-                        req.params.employmentId
-                    );
-                    sendRes(res, {
-                        title: "Employment deleted",
-                        message: `Employment deleted`,
-                    });
+                    const remainingShifts =
+                        await readLogIdsByUserIdAndEmploymentId(
+                            req.authenticatedUser.id,
+                            req.params.employmentId
+                        );
+                    if (remainingShifts.length) {
+                        //should not be possible - there are shifts left after the change
+                        sendErrorRes(res, null, {
+                            errorCode: "employmentDeleteError",
+                            title: "Unable to delete",
+                            message: `${remainingShifts.length} shift${remainingShifts.length === 1 ? "" : "s"} from this employment could not be transferred to other employments`,
+                        });
+                    } else {
+                        await deleteContractsByEmploymentAndUserId(
+                            req.authenticatedUser.id,
+                            req.params.employmentId
+                        );
+                        await deleteEmploymentByUserIdAndEmploymentId(
+                            req.authenticatedUser.id,
+                            req.params.employmentId
+                        );
+                        sendRes(res, {
+                            title: "Employment deleted",
+                            message: `Employment deleted`,
+                        });
+                    }
                 }
             } else {
                 //there isn't another employment with a null from/to

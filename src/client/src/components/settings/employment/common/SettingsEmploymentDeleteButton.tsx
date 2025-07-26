@@ -24,7 +24,9 @@ const SettingsEmploymentDeleteButton = ({
                     toast.success(`${employmentName} deleted`);
                 } catch (e) {
                     toast.error(
-                        (e as ApiResponse).errorCode === "validationError"
+                        (e as ApiResponse).errorCode === "validationError" ||
+                            (e as ApiResponse).errorCode ===
+                                "employmentDeleteError"
                             ? (e as ApiResponse).message
                             : `Unable to delete ${employmentName}`
                     );

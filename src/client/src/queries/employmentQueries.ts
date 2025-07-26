@@ -62,5 +62,6 @@ export const deleteEmploymentMutationOptions = (
     onSuccess: async () => {
         await queryClient.refetchQueries({ queryKey: ["employments"] });
         await queryClient.refetchQueries({ queryKey: ["contracts"] });
+        await queryClient.invalidateQueries({ queryKey: ["log"] });
     },
 });

@@ -131,6 +131,7 @@ const sendErrorRes = (
             : {
                   code: 500,
                   isError: true,
+                  errorCode: feedbackArgs?.errorCode,
                   title: feedbackArgs?.title,
                   message: feedbackArgs?.message,
               };

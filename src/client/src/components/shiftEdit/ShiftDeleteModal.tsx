@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import Highlight from "./Highlight";
+import Highlight from "../common/Highlight";
 import DeleteModal from "../common/DeleteModal";
 import { toast } from "react-hot-toast";
 import { ApiResponse } from "../../../../../types/responseTypes";
@@ -41,8 +41,7 @@ const ShiftDeleteModal = ({
                 }
             }}
             disabled={deletePending}
-            size="lg"
-            fullscreen="lg-down"
+            fullscreen="sm-down"
             setShowModal={setShowDeleteModal}
         >
             <p>Are you sure you want to delete your your shift?</p>

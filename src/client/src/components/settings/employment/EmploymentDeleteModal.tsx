@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import DeleteModal from "../../common/DeleteModal";
-import Highlight from "../../shiftEdit/Highlight";
+import Highlight from "../../common/Highlight";
 
 const EmploymentDeleteModal = ({
     onClick,
@@ -19,7 +19,7 @@ const EmploymentDeleteModal = ({
             disabled={disabled}
             setShowModal={setShowModal}
             size="lg"
-            fullscreen="lg-down"
+            fullscreen="md-down"
         >
             <p>Are you sure you want to delete {employmentName}?</p>
             <p>

@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ShiftEditModal from "../../../../components/shiftEdit/ShiftEditModal";
 import { ClientShift, Contract } from "../../../../../../../types/commonTypes";
 import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
 import { getLogShiftQueryOptions } from "../../../../queries/logQueries";
@@ -12,9 +11,10 @@ import {
     flowersPayMonth,
 } from "../../../../../../shared/calculations/payDates";
 import { memo } from "react";
+import ShiftEdit from "../../../../components/shiftEdit/ShiftEdit";
 
 export const Route = createFileRoute("/_private/_table/log/$shiftId")({
-    component: memo(ShiftEditModal),
+    component: memo(ShiftEdit),
     loader: async ({ params, context }): Promise<ClientShift> => {
         if (params.shiftId !== "new") {
             return (

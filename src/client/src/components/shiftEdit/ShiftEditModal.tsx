@@ -1,5 +1,12 @@
 import { Button, Form, Modal } from "react-bootstrap";
-import { ChangeEvent, useEffect, useReducer, useState } from "react";
+import {
+    ChangeEvent,
+    Dispatch,
+    SetStateAction,
+    useEffect,
+    useReducer,
+    useState,
+} from "react";
 import { calculateUsh } from "../../../../shared/calculations/ush";
 import { calculateAdditionalHours } from "../../../../shared/calculations/additionalHours";
 import ShiftEditModalCalculation from "./ShiftEditModalCalculation";
@@ -15,7 +22,6 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { FiX } from "react-icons/fi";
 import { useMutation } from "@tanstack/react-query";
 import {
-    deleteLogShiftMutationOptions,
     patchLogShiftMutationOptions,
     postLogShiftMutationOptions,
 } from "../../queries/logQueries";
@@ -27,7 +33,15 @@ import { toast } from "react-hot-toast";
 import { ApiResponse } from "../../../../../types/responseTypes";
 import { logShiftValidationSchema } from "../../../../shared/validationSchemas/logShiftValidationSchema";
 
-const ShiftEditModal = () => {
+const ShiftEditModal = ({
+    toastMessage,
+    setToastMessage,
+    setShowDeleteModal,
+}: {
+    toastMessage: string;
+    setToastMessage: Dispatch<SetStateAction<string>>;
+    setShowDeleteModal: Dispatch<SetStateAction<boolean>>;
+}) => {
     const navigate = useNavigate();
     const { log, contracts } = useLoaderData({ from: "/_private/_table/log" });
     const { extras, payBands } = useLoaderData({ from: "/_private" });
@@ -36,9 +50,9 @@ const ShiftEditModal = () => {
     });
 
     const [show, setShow] = useState<boolean>(true);
-    const [toastMessage, setToastMessage] = useState<string>("");
+    const [deleteClicked, setDeleteClicked] = useState<boolean>(false);
 
-    const closeModal = async () => {
+    const closeModal = () => {
         setShow(false);
     };
 
@@ -71,11 +85,6 @@ const ShiftEditModal = () => {
     const { mutateAsync: mutatePatch, isPending: patchPending } = useMutation({
         ...patchLogShiftMutationOptions({ ...editState, ...ushState }),
     });
-    const { mutateAsync: mutateDelete, isPending: deletePending } = useMutation(
-        {
-            ...deleteLogShiftMutationOptions(shift.id),
-        }
-    );
 
     const [contractValidOnDate, newContract, contractSelectOptions] =
         updateShiftContract(
@@ -174,12 +183,16 @@ const ShiftEditModal = () => {
         <Modal
             show={show}
             onExited={() => {
-                if (toastMessage) {
-                    toast.success(toastMessage, {
-                        id: `shift-${shift.id}-success-message`,
-                    });
+                if (deleteClicked) {
+                    setShowDeleteModal(true);
+                } else {
+                    if (toastMessage) {
+                        toast.success(toastMessage, {
+                            id: `shift-${shift.id}-success-message`,
+                        });
+                    }
+                    navigate({ to: "/log" });
                 }
-                navigate({ to: "/log" });
             }}
             size="lg"
             fullscreen={"lg-down"}
@@ -442,9 +455,7 @@ const ShiftEditModal = () => {
                 {!!editState?.id && (
                     <>
                         <Button
-                            disabled={
-                                postPending || patchPending || deletePending
-                            }
+                            disabled={postPending || patchPending}
                             onClick={() => {
                                 setEditState({ action: "copy" });
                             }}
@@ -453,23 +464,10 @@ const ShiftEditModal = () => {
                             Copy
                         </Button>
                         <Button
-                            disabled={
-                                postPending || patchPending || deletePending
-                            }
-                            onClick={async () => {
-                                try {
-                                    setToastMessage("Shift deleted");
-                                    await mutateDelete();
-                                    await closeModal();
-                                } catch (e) {
-                                    toast.error(
-                                        (e as ApiResponse).message ||
-                                            "There was a problem deleting the shift, please try again",
-                                        {
-                                            id: `shift-${shift.id}-delete-error`,
-                                        }
-                                    );
-                                }
+                            disabled={postPending || patchPending}
+                            onClick={() => {
+                                setDeleteClicked(true);
+                                closeModal();
                             }}
                             variant="danger"
                         >
@@ -478,7 +476,7 @@ const ShiftEditModal = () => {
                     </>
                 )}
                 <Button
-                    disabled={postPending || patchPending || deletePending}
+                    disabled={postPending || patchPending}
                     onClick={closeModal}
                     variant="warning"
                 >
@@ -488,7 +486,6 @@ const ShiftEditModal = () => {
                     disabled={
                         postPending ||
                         patchPending ||
-                        deletePending ||
                         !logShiftValidationSchema.safeParse({
                             ...editState,
                             ...ushState,

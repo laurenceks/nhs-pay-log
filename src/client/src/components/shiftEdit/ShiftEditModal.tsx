@@ -11,7 +11,7 @@ import { calculateUsh } from "../../../../shared/calculations/ush";
 import { calculateAdditionalHours } from "../../../../shared/calculations/additionalHours";
 import ShiftEditModalCalculation from "./ShiftEditModalCalculation";
 import logShiftReducer from "../../reducers/logShiftReducer";
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { useLoaderData } from "@tanstack/react-router";
 import {
     CalculatedHours,
     ClientShift,
@@ -34,27 +34,19 @@ import { ApiResponse } from "../../../../../types/responseTypes";
 import { logShiftValidationSchema } from "../../../../shared/validationSchemas/logShiftValidationSchema";
 
 const ShiftEditModal = ({
-    toastMessage,
     setToastMessage,
     setShowDeleteModal,
+    setShow,
 }: {
-    toastMessage: string;
     setToastMessage: Dispatch<SetStateAction<string>>;
     setShowDeleteModal: Dispatch<SetStateAction<boolean>>;
+    setShow: Dispatch<SetStateAction<boolean>>;
 }) => {
-    const navigate = useNavigate();
     const { log, contracts } = useLoaderData({ from: "/_private/_table/log" });
     const { extras, payBands } = useLoaderData({ from: "/_private" });
     const shift = useLoaderData({
         from: "/_private/_table/log/$shiftId",
     });
-
-    const [show, setShow] = useState<boolean>(true);
-    const [deleteClicked, setDeleteClicked] = useState<boolean>(false);
-
-    const closeModal = () => {
-        setShow(false);
-    };
 
     const { updatedExtras, updatedExtrasGroupIds, filteredExtras } =
         updateShiftExtras(shift.extras_ids_string, extras, shift.date);
@@ -126,7 +118,7 @@ const ShiftEditModal = ({
         try {
             await (editState.id ? mutatePatch() : mutatePost());
             setToastMessage("Shift saved");
-            await closeModal();
+            setShow(false);
         } catch (e) {
             toast.error(
                 (e as ApiResponse).message ||
@@ -180,23 +172,7 @@ const ShiftEditModal = ({
     }, [editState]);
 
     return (
-        <Modal
-            show={show}
-            onExited={() => {
-                if (deleteClicked) {
-                    setShowDeleteModal(true);
-                } else {
-                    if (toastMessage) {
-                        toast.success(toastMessage, {
-                            id: `shift-${shift.id}-success-message`,
-                        });
-                    }
-                    navigate({ to: "/log" });
-                }
-            }}
-            size="lg"
-            fullscreen={"lg-down"}
-        >
+        <>
             <Modal.Header>
                 <Modal.Title>{editState.id ? "Edit" : "Add"} shift</Modal.Title>
             </Modal.Header>
@@ -466,8 +442,7 @@ const ShiftEditModal = ({
                         <Button
                             disabled={postPending || patchPending}
                             onClick={() => {
-                                setDeleteClicked(true);
-                                closeModal();
+                                setShowDeleteModal(true);
                             }}
                             variant="danger"
                         >
@@ -477,7 +452,7 @@ const ShiftEditModal = ({
                 )}
                 <Button
                     disabled={postPending || patchPending}
-                    onClick={closeModal}
+                    onClick={() => setShow(false)}
                     variant="warning"
                 >
                     Cancel
@@ -497,7 +472,7 @@ const ShiftEditModal = ({
                     Save changes
                 </Button>
             </Modal.Footer>
-        </Modal>
+        </>
     );
 };
 

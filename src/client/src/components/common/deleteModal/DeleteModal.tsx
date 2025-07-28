@@ -1,6 +1,8 @@
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { ModalProps } from "react-bootstrap/Modal";
+import DeleteModalHeader from "./DeleteModalHeader";
+import DeleteModalFooter from "./DeleteModalFooter";
 
 const DeleteModal = ({
     onClick,
@@ -30,29 +32,13 @@ const DeleteModal = ({
             fullscreen={fullscreen}
             onExited={() => setShowModal(false)}
         >
-            <Modal.Header className="bg-danger text-white">
-                <Modal.Title>Are you sure?</Modal.Title>
-            </Modal.Header>
+            <DeleteModalHeader />
             <Modal.Body>{children}</Modal.Body>
-            <Modal.Footer>
-                <Button
-                    disabled={disabled}
-                    onClick={closeModal}
-                    variant="success"
-                >
-                    Cancel
-                </Button>
-                <Button
-                    disabled={disabled}
-                    onClick={async () => {
-                        setShow(false);
-                        await onClick();
-                    }}
-                    variant="danger"
-                >
-                    Delete
-                </Button>
-            </Modal.Footer>
+            <DeleteModalFooter
+                onClick={onClick}
+                closeModal={closeModal}
+                disabled={disabled}
+            />
         </Modal>
     );
 };

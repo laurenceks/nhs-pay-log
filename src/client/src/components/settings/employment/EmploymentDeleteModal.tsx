@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import DeleteModal from "../../common/DeleteModal";
+import DeleteModal from "../../common/deleteModal/DeleteModal";
 import Highlight from "../../common/Highlight";
 
 const EmploymentDeleteModal = ({

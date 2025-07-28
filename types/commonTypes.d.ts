@@ -163,6 +163,11 @@ export type VerificationToken = {
     expires_at: string;
 };
 
+export type ColumnIconMap<T> = {
+    [key in keyof Partial<T>]: ColumnIconDataType;
+};
+export type ColumnIconDataType = "size" | "alpha" | "numeric";
+
 declare global {
     namespace Express {
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type

@@ -53,10 +53,36 @@ number-flow-react::part(symbol) {
         margin-left: auto;
         width: 50%;
         animation: dot-bounce 1s cubic-bezier(0.85, 0.09, 0.15, 0.91) infinite;
+
         > .loading-dot {
             border-radius: 50%;
             width: $dotSize;
             height: $dotSize;
+        }
+    }
+}
+
+.table-th-filter {
+    > .table-th-filter-input {
+        transform: translateY(-100%);
+        transition:
+            visibility ease-out 0.25s,
+            opacity ease-out 0.25s,
+            transform ease-out 0.25s;
+        visibility: hidden;
+        opacity: 0;
+        z-index: -1;
+        background: inherit;
+    }
+
+    &:hover > .table-th-filter-input,
+    > .table-th-filter-input:has(:focus) {
+        transform: translateY(0);
+        visibility: visible;
+        opacity: 1;
+        input.xs {
+            padding: 0.25rem;
+            font-size: 0.675rem;
         }
     }
 }

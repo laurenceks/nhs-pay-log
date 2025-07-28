@@ -1,35 +1,30 @@
 import { ParsedApiShift } from "../../../../../types/commonTypes";
-import { convertToGbp } from "../../../../shared/utils/conversions";
 import { memo } from "react";
+import { Row } from "@tanstack/react-table";
+import { useNavigate } from "@tanstack/react-router";
+import LogTableCell from "./LogTableCell";
 
 // eslint-disable-next-line react/display-name
-const LogTableRow = memo(
-    ({
-        logShift,
-        onClick,
-    }: {
-        logShift: ParsedApiShift;
-        onClick: () => void;
-    }) => {
-        return (
-            <tr style={{ cursor: "pointer" }} onClick={onClick}>
-                <td>{logShift.from}</td>
-                <td>{logShift.start}</td>
-                <td>{logShift.planned_end}</td>
-                <td>{logShift.actual_end}</td>
-                <td>{logShift.employment_name}</td>
-                <td>{logShift.type}</td>
-                <td>{logShift.overrun_type}</td>
-                <td>{logShift.toil}</td>
-                <td>{logShift.lower_rate}</td>
-                <td>{logShift.higher_rate}</td>
-                <td>{logShift.flat}</td>
-                <td>{logShift.time_and_half}</td>
-                <td>{logShift.double}</td>
-                <td>{convertToGbp(logShift.extra_pay)}</td>
-            </tr>
-        );
-    }
-);
+const LogTableRow = memo(({ row }: { row: Row<ParsedApiShift> }) => {
+    const navigate = useNavigate();
+    return (
+        <tr
+            key={row.id}
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+                navigate({
+                    to: "/log/$shiftId",
+                    params: {
+                        shiftId: row.original.id.toString(),
+                    },
+                })
+            }
+        >
+            {row.getVisibleCells().map((cell) => (
+                <LogTableCell key={cell.id} cell={cell} />
+            ))}
+        </tr>
+    );
+});
 
 export default LogTableRow;

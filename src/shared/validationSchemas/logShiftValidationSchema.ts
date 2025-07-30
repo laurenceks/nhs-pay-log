@@ -7,6 +7,7 @@ import {
     shiftPayMonthValidationSchema,
     shiftTimeValidationSchema,
 } from "./commonValidationSchemas";
+import { overrunTypeEnum, typeEnum } from "../enums";
 
 export const logShiftValidationSchema = z
     .object({
@@ -32,21 +33,8 @@ export const logShiftValidationSchema = z
             .regex(/^(\d+(,\d+)*)?$/, {
                 message: "Extras IDs must be a comma-separated list of numbers",
             }),
-        type: z.enum(
-            [
-                "Normal",
-                "OT",
-                "Bank",
-                "TOIL",
-                "AL",
-                "AL (relief)",
-                "Absent (TOIL)",
-                "Absent (TOIL relief)",
-                "Sick",
-            ],
-            "Invalid Type"
-        ),
-        overrun_type: z.enum(["OT", "TOIL"], "Invalid overrun type"),
+        type: z.enum(typeEnum, "Invalid Type"),
+        overrun_type: z.enum(overrunTypeEnum, "Invalid overrun type"),
         pay_financial_year: z
             .string("Pay financial year must be in the format YY-YY")
             .regex(

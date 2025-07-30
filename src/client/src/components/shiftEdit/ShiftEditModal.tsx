@@ -32,6 +32,8 @@ import { PayBand } from "../../../../../types/lookupTypes";
 import { toast } from "react-hot-toast";
 import { ApiResponse } from "../../../../../types/responseTypes";
 import { logShiftValidationSchema } from "../../../../shared/validationSchemas/logShiftValidationSchema";
+import { overrunTypeEnum, typeEnum } from "../../../../shared/enums";
+import ShiftEditModalEnumOptions from "./ShiftEditModalEnumOptions";
 
 const ShiftEditModal = ({
     setToastMessage,
@@ -277,21 +279,9 @@ const ShiftEditModal = ({
                                             <option>Pick a shift type</option>
                                         )}
                                     </>
-                                    <option value={"Normal"}>Normal</option>
-                                    <option value={"OT"}>OT</option>
-                                    <option value={"Bank"}>Bank</option>
-                                    <option value={"TOIL"}>TOIL</option>
-                                    <option value={"AL"}>AL</option>
-                                    <option value={"AL (relief)"}>
-                                        AL (relief)
-                                    </option>
-                                    <option value={"Absent (TOIL)"}>
-                                        Absent (TOIL)
-                                    </option>
-                                    <option value={"Absent (TOIL relief)"}>
-                                        Absent (TOIL relief)
-                                    </option>
-                                    <option value={"Sick"}>Sick</option>
+                                    <ShiftEditModalEnumOptions
+                                        list={typeEnum}
+                                    />
                                 </Form.Select>
                             </Form.Group>
                             <Form.Group controlId="editOverrunType">
@@ -308,8 +298,9 @@ const ShiftEditModal = ({
                                             </option>
                                         )}
                                     </>
-                                    <option value={"OT"}>OT</option>
-                                    <option value={"TOIL"}>TOIL</option>
+                                    <ShiftEditModalEnumOptions
+                                        list={overrunTypeEnum}
+                                    />
                                 </Form.Select>
                             </Form.Group>
                             {!!filteredPayBands.length && (

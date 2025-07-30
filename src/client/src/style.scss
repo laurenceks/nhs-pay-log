@@ -62,27 +62,9 @@ number-flow-react::part(symbol) {
     }
 }
 
-.table-th-filter {
-    > .table-th-filter-input {
-        transform: translateY(-100%);
-        transition:
-            visibility ease-out 0.25s,
-            opacity ease-out 0.25s,
-            transform ease-out 0.25s;
-        visibility: hidden;
-        opacity: 0;
-        z-index: -1;
-        background: inherit;
-    }
-
-    &:hover > .table-th-filter-input,
-    > .table-th-filter-input:has(:focus) {
-        transform: translateY(0);
-        visibility: visible;
-        opacity: 1;
-        input.xs {
-            padding: 0.25rem;
-            font-size: 0.675rem;
-        }
-    }
+input.xs {
+    padding: 0.25rem;
+    min-width: 100%;
+    max-width: min-content;
+    font-size: 0.675rem;
 }

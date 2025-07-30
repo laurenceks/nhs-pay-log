@@ -4,10 +4,10 @@ import { ReactElement } from "react";
 import {
     BsDot,
     BsSortAlphaDown,
-    BsSortAlphaUp,
+    BsSortAlphaDownAlt,
     BsSortDownAlt,
     BsSortNumericDown,
-    BsSortNumericUp,
+    BsSortNumericDownAlt,
     BsSortUpAlt,
 } from "react-icons/bs";
 import IconWrap from "../IconWrap";
@@ -23,8 +23,8 @@ const iconMap: {
         size: <BsSortDownAlt />,
     },
     desc: {
-        alpha: <BsSortAlphaUp />,
-        numeric: <BsSortNumericUp />,
+        alpha: <BsSortAlphaDownAlt />,
+        numeric: <BsSortNumericDownAlt />,
         size: <BsSortUpAlt />,
     },
 };

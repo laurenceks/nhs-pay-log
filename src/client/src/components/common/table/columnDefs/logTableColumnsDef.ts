@@ -1,6 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ColumnIconMap, ParsedApiShift } from "../../../../types/commonTypes";
-import { convertToGbp } from "../../../shared/utils/conversions";
+import {
+    ColumnIconMap,
+    ParsedApiShift,
+} from "../../../../../../../types/commonTypes";
+import { convertToGbp } from "../../../../../../shared/utils/conversions";
 
 export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
     {
@@ -8,22 +11,23 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
         accessorKey: "from",
         accessorFn: (row) => row.date,
         cell: (cell) => cell.row.original.from,
-        filterFn: "includesString",
+        filterFn: "inDateRange",
+        id: "from",
     },
     {
         header: "Start",
         accessorKey: "start",
-        filterFn: "includesString",
+        filterFn: "inTimeRange",
     },
     {
         header: "Planned end",
         accessorKey: "planned_end",
-        filterFn: "includesString",
+        filterFn: "inTimeRange",
     },
     {
         header: "Actual end",
         accessorKey: "actual_end",
-        filterFn: "includesString",
+        filterFn: "inTimeRange",
     },
     {
         header: "Employer",
@@ -33,17 +37,17 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
     {
         header: "Type",
         accessorKey: "type",
-        filterFn: "includesString",
+        filterFn: "arrIncludesSome",
     },
     {
         header: "Overrun type",
         accessorKey: "overrun_type",
-        filterFn: "arrIncludes",
+        filterFn: "arrIncludesSome",
     },
     {
         header: "TOIL",
         accessorKey: "toil",
-        filterFn: "arrIncludes",
+        filterFn: "inNumberRange",
     },
     {
         header: "USH lower",
@@ -80,7 +84,7 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
 ];
 
 export const logTableColumnIconTypes: ColumnIconMap<ParsedApiShift> = {
-    date: "numeric",
+    from: "numeric",
     start: "numeric",
     planned_end: "numeric",
     actual_end: "numeric",

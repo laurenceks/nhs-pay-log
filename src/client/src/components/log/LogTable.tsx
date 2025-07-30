@@ -1,105 +1,66 @@
-import { Form, Table } from "react-bootstrap";
 import { ParsedApiShift } from "../../../../../types/commonTypes";
 import {
     ColumnFiltersState,
-    flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getSortedRowModel,
+    Row,
     SortingState,
     useReactTable,
 } from "@tanstack/react-table";
 import {
     logTableColumnIconTypes as columnIdIconTypeMap,
     logTableColumnsDef,
-} from "../../columnDefs/logTableColumnsDef";
-import LogTableRow from "./LogTableRow";
+} from "../common/table/columnDefs/logTableColumnsDef";
 import { useMemo, useState } from "react";
-import TableSortingIcon from "../common/table/TableSortingIcon";
+import TanStackTable from "../common/table/TanStackTable";
+import { useNavigate } from "@tanstack/react-router";
+import { filterTimeOrDateRange } from "../common/table/filters/filterFns";
 
-const LogTable = ({ log }: { log: ParsedApiShift[] }) => {
+const LogTable = ({
+    log,
+    showFilters,
+}: {
+    log: ParsedApiShift[];
+    showFilters: boolean;
+}) => {
+    const navigate = useNavigate();
     const columns = useMemo(() => logTableColumnsDef, []);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const table = useReactTable({
         data: log,
-        columns: columns,
+        columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        state: { sorting, columnFilters },
+        state: {
+            sorting,
+            columnFilters,
+        },
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         maxMultiSortColCount: 3,
+        filterFns: {
+            inDateRange: filterTimeOrDateRange,
+            inTimeRange: filterTimeOrDateRange,
+        },
     });
 
     return (
-        <div>
-            <Table striped={true} hover={true} responsive={true}>
-                <thead>
-                    <tr>
-                        <th colSpan={7}>Shift</th>
-                        <th colSpan={7}>Earnings</th>
-                    </tr>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id} className="sticky-top">
-                            {headerGroup.headers.map((header) => (
-                                <th
-                                    key={header.id}
-                                    style={{
-                                        cursor: header.column.getCanSort()
-                                            ? "pointer"
-                                            : "default",
-                                    }}
-                                    className="position-relative table-th-filter"
-                                >
-                                    <div
-                                        onClick={
-                                            header.column.getCanSort()
-                                                ? header.column.getToggleSortingHandler()
-                                                : undefined
-                                        }
-                                        className="d-flex align-items-center"
-                                    >
-                                        <span>
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                        </span>
-                                        <TableSortingIcon
-                                            column={header.column}
-                                            dataType={
-                                                columnIdIconTypeMap[
-                                                    header.column
-                                                        .id as keyof typeof columnIdIconTypeMap
-                                                ]
-                                            }
-                                        />
-                                    </div>
-                                    <div className="position-absolute top-100 start-0 w-100 px-3 pt-1 pb-3 table-th-filter-input">
-                                        <Form.Control
-                                            className="xs"
-                                            type="text"
-                                            onBlur={(e) =>
-                                                header.column.setFilterValue(
-                                                    e.currentTarget.value
-                                                )
-                                            }
-                                        ></Form.Control>
-                                    </div>
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody>
-                    {table.getRowModel().rows.map((row) => (
-                        <LogTableRow key={row.id} row={row} />
-                    ))}
-                </tbody>
-            </Table>
-        </div>
+        <TanStackTable
+            table={table}
+            showFilters={showFilters}
+            iconTypes={columnIdIconTypeMap}
+            rowClick={(row: Row<ParsedApiShift>) =>
+                navigate({
+                    to: "/log/$shiftId",
+                    params: {
+                        shiftId: row.original.id.toString(),
+                    },
+                })
+            }
+        />
     );
 };
 

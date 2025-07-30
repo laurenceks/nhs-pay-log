@@ -1,4 +1,5 @@
 import { Employment, LookupTable } from "./lookupTypes";
+import { filterFns } from "@tanstack/table-core/src/filterFns";
 
 export type Overruns = "OT" | "TOIL";
 
@@ -163,10 +164,22 @@ export type VerificationToken = {
     expires_at: string;
 };
 
+export type ColumnIconDataType = "size" | "alpha" | "numeric";
+
 export type ColumnIconMap<T> = {
     [key in keyof Partial<T>]: ColumnIconDataType;
 };
-export type ColumnIconDataType = "size" | "alpha" | "numeric";
+
+type customColumnFilters =
+    | keyof typeof filterFns
+    | "inDateRange"
+    | "inTimeRange"
+    | "shiftType"
+    | "overrunType";
+
+export type ColumnFilterMap<T> = {
+    [key in keyof Partial<T>]: customColumnFilters;
+};
 
 declare global {
     namespace Express {
@@ -176,5 +189,12 @@ declare global {
             authenticatedUser: CustomUser;
             userId: string;
         }
+    }
+}
+
+declare module "@tanstack/react-table" {
+    interface FilterFns {
+        inDateRange: FilterFn<ParsedApiShift>;
+        inTimeRange: FilterFn<ParsedApiShift>;
     }
 }

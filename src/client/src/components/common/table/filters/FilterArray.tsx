@@ -2,7 +2,7 @@ import { Dropdown, DropdownButton } from "react-bootstrap";
 import IconWrap from "../../IconWrap";
 import { IoCheckbox, IoSquareOutline } from "react-icons/io5";
 import { Column } from "@tanstack/react-table";
-import columnFilterEnums from "../columnDefs/columnFilterEnums";
+import columnFilterLists from "../columnDefs/columnFilterLists";
 
 const FilterArray = <T,>({ column }: { column: Column<T> }) => {
     const selected = (column.getFilterValue() as string[]) || [];
@@ -25,7 +25,7 @@ const FilterArray = <T,>({ column }: { column: Column<T> }) => {
             variant="outline-secondary"
             autoClose={"outside"}
         >
-            {(columnFilterEnums[column.id] || []).map((x) => (
+            {(columnFilterLists[column.id] || []).map((x) => (
                 <Dropdown.Item
                     key={x}
                     onClick={() => onClick(x)}

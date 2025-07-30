@@ -32,8 +32,8 @@ import { PayBand } from "../../../../../types/lookupTypes";
 import { toast } from "react-hot-toast";
 import { ApiResponse } from "../../../../../types/responseTypes";
 import { logShiftValidationSchema } from "../../../../shared/validationSchemas/logShiftValidationSchema";
-import { overrunTypeEnum, typeEnum } from "../../../../shared/enums";
-import ShiftEditModalEnumOptions from "./ShiftEditModalEnumOptions";
+import { overrunTypeList, typeList } from "../../../../shared/lists";
+import ShiftEditModalListOptions from "./ShiftEditModalListOptions";
 
 const ShiftEditModal = ({
     setToastMessage,
@@ -279,8 +279,8 @@ const ShiftEditModal = ({
                                             <option>Pick a shift type</option>
                                         )}
                                     </>
-                                    <ShiftEditModalEnumOptions
-                                        list={typeEnum}
+                                    <ShiftEditModalListOptions
+                                        list={typeList}
                                     />
                                 </Form.Select>
                             </Form.Group>
@@ -298,8 +298,8 @@ const ShiftEditModal = ({
                                             </option>
                                         )}
                                     </>
-                                    <ShiftEditModalEnumOptions
-                                        list={overrunTypeEnum}
+                                    <ShiftEditModalListOptions
+                                        list={overrunTypeList}
                                     />
                                 </Form.Select>
                             </Form.Group>

@@ -1,6 +1,6 @@
-export const overrunTypeEnum = ["OT", "TOIL"];
+export const overrunTypeList = ["OT", "TOIL"];
 
-export const typeEnum = [
+export const typeList = [
     "Normal",
     "OT",
     "Bank",

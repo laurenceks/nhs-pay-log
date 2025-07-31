@@ -1,67 +1,49 @@
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
-import { Button, Table } from "react-bootstrap";
-import { formatDate } from "../../../../shared/utils/formatDates";
-import { convertToGbp } from "../../../../shared/utils/conversions";
+import { Button } from "react-bootstrap";
+import { useMemo, useState } from "react";
+import {
+    ColumnFiltersState,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+} from "@tanstack/react-table";
+import { filterTimeOrDateRange } from "../common/table/filters/filterFns";
+import { payTableColumnsDef } from "../common/table/columnDefs/payTableColumnDefs";
+import TanStackTable from "../common/table/TanStackTable";
+import IconWrap from "../common/IconWrap";
+import { IoFunnel } from "react-icons/io5";
 
 const Pay = () => {
     const navigate = useNavigate();
     const { pay } = useLoaderData({ from: "/_private/_table/pay" });
+    const columns = useMemo(() => payTableColumnsDef, []);
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [showFilters, setShowFilters] = useState(false);
+    const table = useReactTable({
+        data: pay,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        state: {
+            sorting,
+            columnFilters,
+        },
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        maxMultiSortColCount: 3,
+        filterFns: {
+            inDateRange: filterTimeOrDateRange,
+            inTimeRange: filterTimeOrDateRange,
+        },
+    });
+
     return (
         <div className="position-relative">
-            <Table striped={true} hover={true} responsive={true}>
-                <thead>
-                    <tr className="sticky-top">
-                        <th scope="col">Pay Date</th>
-                        <th scope="col">Employment</th>
-                        <th scope="col">Basic</th>
-                        <th scope="col">HCA</th>
-                        <th scope="col">Extras</th>
-                        <th scope="col">Shifts</th>
-                        <th scope="col">Gross</th>
-                        <th scope="col">Pensionable</th>
-                        <th scope="col">Taxable</th>
-                        <th scope="col">NI</th>
-                        <th scope="col">PAYE</th>
-                        <th scope="col">Loan</th>
-                        <th scope="col">Pension</th>
-                        <th scope="col" className="fw-bolder">
-                            Net
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {pay.map((x) => (
-                        <tr key={x.pay_date + x.employment_name}>
-                            <th scope="row">{formatDate(x.pay_date, "pay")}</th>
-                            <th>{x.employment_name}</th>
-                            <td>{convertToGbp(x.basic_pay)}</td>
-                            <td>{convertToGbp(x.hca_pay)}</td>
-                            <td>{convertToGbp(x.extras_pay)}</td>
-                            <td>{convertToGbp(x.shift_pay)}</td>
-                            <td className="text-success">
-                                {convertToGbp(x.gross_pay)}
-                            </td>
-                            <td>{convertToGbp(x.pensionable_pay)}</td>
-                            <td>{convertToGbp(x.taxable_pay)}</td>
-                            <td className="text-danger">
-                                {convertToGbp(x.deduction_ni)}
-                            </td>
-                            <td className="text-danger">
-                                {convertToGbp(x.deduction_paye)}
-                            </td>
-                            <td className="text-danger">
-                                {convertToGbp(x.deduction_student_loan)}
-                            </td>
-                            <td className="text-danger">
-                                {convertToGbp(x.deduction_pension)}
-                            </td>
-                            <td className="text-success">
-                                {convertToGbp(x.net_pay)}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+            <TanStackTable table={table} showFilters={showFilters} />
             <div className="position-fixed bottom-0 start-0 ms-4 mb-3 d-flex gap-3">
                 <Button
                     variant="secondary"
@@ -72,6 +54,15 @@ const Pay = () => {
                     }
                 >
                     Home
+                </Button>
+                <Button
+                    variant="dark"
+                    className="d-flex align-items-center justify-content-center px-2"
+                    onClick={() => setShowFilters(!showFilters)}
+                >
+                    <IconWrap variant="light" width={"1.5rem"} as="span">
+                        <IoFunnel />
+                    </IconWrap>
                 </Button>
             </div>
         </div>

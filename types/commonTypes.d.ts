@@ -1,5 +1,6 @@
 import { Employment, LookupTable } from "./lookupTypes";
 import { filterFns } from "@tanstack/table-core/src/filterFns";
+import { Variant } from "react-bootstrap/types";
 
 export type Overruns = "OT" | "TOIL";
 
@@ -203,5 +204,10 @@ declare module "@tanstack/react-table" {
     interface FilterFns {
         inDateRange: FilterFn<ParsedApiShift>;
         inTimeRange: FilterFn<ParsedApiShift>;
+    }
+
+    interface ColumnMeta<_TData extends RowData, _TValue> {
+        textVariant?: Variant;
+        iconType?: ColumnIconDataType;
     }
 }

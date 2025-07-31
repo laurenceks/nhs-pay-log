@@ -18,7 +18,14 @@ const TanStackTableTbodyTr = <T,>({
             }}
         >
             {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+                <td
+                    key={cell.id}
+                    className={
+                        cell.column.columnDef.meta?.textVariant
+                            ? `text-${cell.column.columnDef.meta?.textVariant}`
+                            : ""
+                    }
+                >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
             ))}

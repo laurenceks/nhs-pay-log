@@ -1,14 +1,7 @@
 import { flexRender, Header } from "@tanstack/react-table";
-import { ColumnIconMap } from "../../../../../../types/commonTypes";
 import TableSortingIcon from "./TableSortingIcon";
 
-const TanStackTableTh = <T,>({
-    header,
-    iconTypes,
-}: {
-    header: Header<T, unknown>;
-    iconTypes: ColumnIconMap<T>;
-}) => {
+const TanStackTableTh = <T,>({ header }: { header: Header<T, unknown> }) => {
     return (
         <th
             style={{
@@ -30,7 +23,7 @@ const TanStackTableTh = <T,>({
                 <TableSortingIcon
                     column={header.column}
                     dataType={
-                        iconTypes[header.column.id as keyof typeof iconTypes]
+                        header.column.columnDef.meta?.iconType || undefined
                     }
                 />
             </div>

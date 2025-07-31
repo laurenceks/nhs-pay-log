@@ -1,8 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import {
-    ColumnIconMap,
-    ParsedApiShift,
-} from "../../../../../../../types/commonTypes";
+import { ParsedApiShift } from "../../../../../../../types/commonTypes";
 import { convertToGbp } from "../../../../../../shared/utils/conversions";
 
 export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
@@ -13,21 +10,25 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
         cell: (cell) => cell.row.original.from,
         filterFn: "inDateRange",
         id: "from",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Start",
         accessorKey: "start",
         filterFn: "inTimeRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Planned end",
         accessorKey: "planned_end",
         filterFn: "inTimeRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Actual end",
         accessorKey: "actual_end",
         filterFn: "inTimeRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Employer",
@@ -48,31 +49,37 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
         header: "TOIL",
         accessorKey: "toil",
         filterFn: "inNumberRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "USH lower",
         accessorKey: "lower_rate",
         filterFn: "inNumberRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "USH higher",
         accessorKey: "higher_rate",
         filterFn: "inNumberRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Flat",
         accessorKey: "flat",
         filterFn: "inNumberRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Time and a half",
         accessorKey: "time_and_half",
         filterFn: "inNumberRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Double",
         accessorKey: "double",
         filterFn: "inNumberRange",
+        meta: { iconType: "numeric" },
     },
     {
         header: "Extra pay",
@@ -80,19 +87,6 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
         accessorFn: (row) => row.extra_pay,
         cell: (cell) => convertToGbp(cell.row.original.extra_pay),
         filterFn: "inNumberRange",
+        meta: { iconType: "numeric" },
     },
 ];
-
-export const logTableColumnIconTypes: ColumnIconMap<ParsedApiShift> = {
-    from: "numeric",
-    start: "numeric",
-    planned_end: "numeric",
-    actual_end: "numeric",
-    toil: "numeric",
-    lower_rate: "numeric",
-    higher_rate: "numeric",
-    flat: "numeric",
-    time_and_half: "numeric",
-    double: "numeric",
-    extra_pay: "numeric",
-};

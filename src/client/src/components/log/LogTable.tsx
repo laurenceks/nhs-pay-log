@@ -8,10 +8,7 @@ import {
     SortingState,
     useReactTable,
 } from "@tanstack/react-table";
-import {
-    logTableColumnIconTypes as columnIdIconTypeMap,
-    logTableColumnsDef,
-} from "../common/table/columnDefs/logTableColumnsDef";
+import { logTableColumnsDef } from "../common/table/columnDefs/logTableColumnsDef";
 import { useMemo, useState } from "react";
 import TanStackTable from "../common/table/TanStackTable";
 import { useNavigate } from "@tanstack/react-router";
@@ -51,7 +48,6 @@ const LogTable = ({
         <TanStackTable
             table={table}
             showFilters={showFilters}
-            iconTypes={columnIdIconTypeMap}
             rowClick={(row: Row<ParsedApiShift>) =>
                 navigate({
                     to: "/log/$shiftId",

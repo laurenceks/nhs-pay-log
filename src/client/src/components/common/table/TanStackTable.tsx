@@ -1,6 +1,5 @@
 import { Row, Table as TanTable } from "@tanstack/react-table";
 import { Table } from "react-bootstrap";
-import { ColumnIconMap } from "../../../../../../types/commonTypes";
 import Filter from "./filters/Filter";
 import TanStackTableTh from "./TanStackTableTh";
 import TanStackTableTbodyTr from "./TanStackTableTbodyTr";
@@ -8,12 +7,10 @@ import TanStackTableTbodyTr from "./TanStackTableTbodyTr";
 const TanStackTable = <T,>({
     table,
     showFilters,
-    iconTypes,
     rowClick,
 }: {
     table: TanTable<T>;
     showFilters: boolean;
-    iconTypes: ColumnIconMap<T>;
     rowClick?: (row: Row<T>) => void;
 }) => {
     return (
@@ -26,7 +23,6 @@ const TanStackTable = <T,>({
                                 <TanStackTableTh
                                     key={header.id}
                                     header={header}
-                                    iconTypes={iconTypes}
                                 />
                             ))}
                         </tr>

@@ -1,4 +1,4 @@
-import { Cell, ColumnDef } from "@tanstack/react-table";
+import { CellContext, ColumnDef } from "@tanstack/react-table";
 import {
     ColumnIconMap,
     ParsedApiPay,
@@ -6,7 +6,7 @@ import {
 import { formatDate } from "../../../../../../shared/utils/formatDates";
 import { convertToGbp } from "../../../../../../shared/utils/conversions";
 
-const renderAsGbp = (cell: Cell<ParsedApiPay, unknown>) =>
+const renderAsGbp = (cell: CellContext<ParsedApiPay, unknown>) =>
     convertToGbp(cell.getValue() as number);
 export const payTableColumnsDef: ColumnDef<ParsedApiPay>[] = [
     {

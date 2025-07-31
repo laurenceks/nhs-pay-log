@@ -20,7 +20,6 @@ const Filter = <T,>({ column }: { column: Column<T> }) => {
             <FilterRange
                 column={column}
                 type={typeMap[filterType as keyof typeof typeMap]}
-                onBlur={(val) => column.setFilterValue(val)}
             />
         );
     }

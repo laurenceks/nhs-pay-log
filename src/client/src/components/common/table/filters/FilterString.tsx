@@ -5,6 +5,7 @@ const FilterString = <T,>({ column }: { column: Column<T> }) => (
     <Form.Control
         className="xs"
         type="text"
+        defaultValue={column.getFilterValue() as string}
         onBlur={(e) => {
             column.setFilterValue(e.currentTarget.value);
         }}

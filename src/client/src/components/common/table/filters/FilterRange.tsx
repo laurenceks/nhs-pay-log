@@ -3,11 +3,9 @@ import { Column } from "@tanstack/react-table";
 
 type Val = [number | string | undefined, number | string | undefined];
 const FilterRange = <T,>({
-    onBlur,
     type,
     column,
 }: {
-    onBlur: (val: Val) => void;
     type?: "number" | "date" | "time";
     column: Column<T>;
 }) => {
@@ -20,31 +18,31 @@ const FilterRange = <T,>({
             <Form.Control
                 className="xs"
                 type={type}
+                defaultValue={currentVal[0]}
                 onBlur={(e) => {
                     const parsedVal =
                         type === "number"
                             ? Number(e.target.value)
                             : e.target.value;
-                    onBlur([
+                    column.setFilterValue([
                         e.target.value ? parsedVal : undefined,
                         currentVal[1],
                     ]);
-                    onBlur(currentVal);
                 }}
             ></Form.Control>
             <Form.Control
                 className="xs"
                 type={type}
+                defaultValue={currentVal[1]}
                 onBlur={(e) => {
                     const parsedVal =
                         type === "number"
                             ? Number(e.target.value)
                             : e.target.value;
-                    onBlur([
+                    column.setFilterValue([
                         currentVal[0],
                         e.target.value ? parsedVal : undefined,
                     ]);
-                    onBlur(currentVal);
                 }}
             ></Form.Control>
         </div>

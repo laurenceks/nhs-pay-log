@@ -1,13 +1,6 @@
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { Button, Table } from "react-bootstrap";
 import { formatDate } from "../../../../shared/utils/formatDates";
-import {
-    calculateEmployeeNationalInsurance,
-    calculateIncomeTax,
-    calculatePersonalAllowance,
-    calculateStudentLoanRepayments,
-} from "@saving-tool/hmrc-income-tax";
-import { TaxYear } from "@saving-tool/hmrc-income-tax/lib/types";
 import { convertToGbp } from "../../../../shared/utils/conversions";
 
 const Pay = () => {
@@ -37,86 +30,36 @@ const Pay = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {pay.map((x) => {
-                        const taxYear =
-                            `20${x.pay_financial_year.replace("-", "/")}` as TaxYear;
-                        const taxableAnnualIncome = x.taxable_pay * 12;
-                        const personalAllowance = Math.max(
-                            Math.min(
-                                calculatePersonalAllowance({
-                                    taxYear,
-                                    taxableAnnualIncome,
-                                }),
-                                x.personal_allowance
-                            ),
-                            0
-                        );
-
-                        const { total: paye } = calculateIncomeTax({
-                            taxYear,
-                            personalAllowance,
-                            taxableAnnualIncome,
-                        });
-
-                        const ni = calculateEmployeeNationalInsurance({
-                            taxYear,
-                            taxableAnnualIncome,
-                        });
-
-                        let studentLoan = 0;
-
-                        if (x.student_loan) {
-                            studentLoan = calculateStudentLoanRepayments({
-                                taxYear,
-                                taxableAnnualIncome,
-                                studentLoanPlanNo:
-                                    x.student_loan === 6
-                                        ? "postgrad"
-                                        : x.student_loan,
-                            });
-                        }
-
-                        return (
-                            <tr key={x.pay_date + x.employment_name}>
-                                <th scope="row">
-                                    {formatDate(x.pay_date, "pay")}
-                                </th>
-                                <th>{x.employment_name}</th>
-                                <td>{convertToGbp(x.basic_pay)}</td>
-                                <td>{convertToGbp(x.hca_pay)}</td>
-                                <td>{convertToGbp(x.extras_pay)}</td>
-                                <td>{convertToGbp(x.shift_pay)}</td>
-                                <td className="text-success">
-                                    {convertToGbp(x.gross_pay)}
-                                </td>
-                                <td>{convertToGbp(x.pensionable_pay)}</td>
-                                <td>{convertToGbp(x.taxable_pay)}</td>
-                                <td className="text-danger">
-                                    {convertToGbp(ni / 12)}
-                                </td>
-                                <td className="text-danger">
-                                    {convertToGbp(paye / 12)}
-                                </td>
-                                <td className="text-danger">
-                                    {convertToGbp(studentLoan / 12)}
-                                </td>
-                                <td className="text-danger">
-                                    {convertToGbp(
-                                        x.pensionable_pay * x.pension_perc
-                                    )}
-                                </td>
-                                <td className="text-success">
-                                    {convertToGbp(
-                                        x.gross_pay -
-                                            paye / 12 -
-                                            ni / 12 -
-                                            studentLoan / 12 -
-                                            x.pensionable_pay * x.pension_perc
-                                    )}
-                                </td>
-                            </tr>
-                        );
-                    })}
+                    {pay.map((x) => (
+                        <tr key={x.pay_date + x.employment_name}>
+                            <th scope="row">{formatDate(x.pay_date, "pay")}</th>
+                            <th>{x.employment_name}</th>
+                            <td>{convertToGbp(x.basic_pay)}</td>
+                            <td>{convertToGbp(x.hca_pay)}</td>
+                            <td>{convertToGbp(x.extras_pay)}</td>
+                            <td>{convertToGbp(x.shift_pay)}</td>
+                            <td className="text-success">
+                                {convertToGbp(x.gross_pay)}
+                            </td>
+                            <td>{convertToGbp(x.pensionable_pay)}</td>
+                            <td>{convertToGbp(x.taxable_pay)}</td>
+                            <td className="text-danger">
+                                {convertToGbp(x.deduction_ni)}
+                            </td>
+                            <td className="text-danger">
+                                {convertToGbp(x.deduction_paye)}
+                            </td>
+                            <td className="text-danger">
+                                {convertToGbp(x.deduction_student_loan)}
+                            </td>
+                            <td className="text-danger">
+                                {convertToGbp(x.deduction_pension)}
+                            </td>
+                            <td className="text-success">
+                                {convertToGbp(x.net_pay)}
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </Table>
             <div className="position-fixed bottom-0 start-0 ms-4 mb-3 d-flex gap-3">

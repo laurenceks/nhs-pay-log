@@ -114,6 +114,13 @@ export type ParsedApiShift = Omit<ApiShift, keyof ShiftStringToNumberKeys> & {
 
 export type ParsedApiPay = Omit<ApiPay, keyof PayStringToNumberKeys> & {
     [K in keyof PayStringToNumberKeys]: number;
+} & {
+    deduction_ni: number;
+    deduction_paye: number;
+    deduction_student_loan: number;
+    deduction_pension: number;
+    deductions_total: number;
+    net_pay: number;
 };
 
 export interface ClientUser {

@@ -9,11 +9,13 @@ import {
     SortingState,
     useReactTable,
 } from "@tanstack/react-table";
-import { filterTimeOrDateRange } from "../common/table/filters/filterFns";
+import {
+    filterInArray,
+    filterTimeOrDateRange,
+} from "../common/table/filters/filterFns";
 import { payTableColumnsDef } from "../common/table/columnDefs/payTableColumnDefs";
 import TanStackTable from "../common/table/TanStackTable";
-import IconWrap from "../common/IconWrap";
-import { IoFunnel } from "react-icons/io5";
+import FilterButton from "../common/table/filters/FilterButton";
 
 const Pay = () => {
     const navigate = useNavigate();
@@ -38,6 +40,7 @@ const Pay = () => {
         filterFns: {
             inDateRange: filterTimeOrDateRange,
             inTimeRange: filterTimeOrDateRange,
+            inArray: filterInArray,
         },
     });
 
@@ -55,15 +58,11 @@ const Pay = () => {
                 >
                     Home
                 </Button>
-                <Button
-                    variant="dark"
-                    className="d-flex align-items-center justify-content-center px-2"
-                    onClick={() => setShowFilters(!showFilters)}
-                >
-                    <IconWrap variant="light" width={"1.5rem"} as="span">
-                        <IoFunnel />
-                    </IconWrap>
-                </Button>
+                <FilterButton
+                    showFilters={showFilters}
+                    setShowFilters={setShowFilters}
+                    activeFiltersCount={columnFilters.length}
+                />
             </div>
         </div>
     );

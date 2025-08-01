@@ -9,22 +9,28 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { logTableColumnsDef } from "../common/table/columnDefs/logTableColumnsDef";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import TanStackTable from "../common/table/TanStackTable";
 import { useNavigate } from "@tanstack/react-router";
-import { filterTimeOrDateRange } from "../common/table/filters/filterFns";
+import {
+    filterInArray,
+    filterTimeOrDateRange,
+} from "../common/table/filters/filterFns";
 
 const LogTable = ({
     log,
     showFilters,
+    columnFilters,
+    setColumnFilters,
 }: {
     log: ParsedApiShift[];
     showFilters: boolean;
+    columnFilters: ColumnFiltersState;
+    setColumnFilters: Dispatch<SetStateAction<ColumnFiltersState>>;
 }) => {
     const navigate = useNavigate();
     const columns = useMemo(() => logTableColumnsDef, []);
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const table = useReactTable({
         data: log,
         columns,
@@ -41,8 +47,13 @@ const LogTable = ({
         filterFns: {
             inDateRange: filterTimeOrDateRange,
             inTimeRange: filterTimeOrDateRange,
+            inArray: filterInArray,
         },
     });
+
+    useEffect(() => {
+        console.log(columnFilters);
+    }, [columnFilters]);
 
     return (
         <TanStackTable

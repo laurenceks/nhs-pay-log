@@ -204,6 +204,7 @@ declare module "@tanstack/react-table" {
     interface FilterFns {
         inDateRange: FilterFn<ParsedApiShift>;
         inTimeRange: FilterFn<ParsedApiShift>;
+        inArray: FilterFn<ParsedApiShift>;
     }
 
     interface ColumnMeta<_TData extends RowData, _TValue> {

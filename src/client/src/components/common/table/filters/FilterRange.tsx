@@ -24,10 +24,14 @@ const FilterRange = <T,>({
                         type === "number"
                             ? Number(e.target.value)
                             : e.target.value;
-                    column.setFilterValue([
-                        e.target.value ? parsedVal : undefined,
-                        currentVal[1],
-                    ]);
+                    column.setFilterValue(
+                        !e.target.value && !currentVal[1]
+                            ? undefined
+                            : [
+                                  e.target.value ? parsedVal : undefined,
+                                  currentVal[1],
+                              ]
+                    );
                 }}
             ></Form.Control>
             <Form.Control
@@ -39,10 +43,14 @@ const FilterRange = <T,>({
                         type === "number"
                             ? Number(e.target.value)
                             : e.target.value;
-                    column.setFilterValue([
-                        currentVal[0],
-                        e.target.value ? parsedVal : undefined,
-                    ]);
+                    column.setFilterValue(
+                        !e.target.value && !currentVal[0]
+                            ? undefined
+                            : [
+                                  currentVal[0],
+                                  e.target.value ? parsedVal : undefined,
+                              ]
+                    );
                 }}
             ></Form.Control>
         </div>

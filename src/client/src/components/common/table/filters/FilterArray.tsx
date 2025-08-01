@@ -14,7 +14,7 @@ const FilterArray = <T,>({ column }: { column: Column<T> }) => {
         } else {
             const newState = [...selected];
             newState.splice(index, 1);
-            column.setFilterValue(newState);
+            column.setFilterValue(newState.length ? newState : undefined);
         }
     };
 

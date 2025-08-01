@@ -24,11 +24,7 @@ const Filter = <T,>({ column }: { column: Column<T> }) => {
         );
     }
 
-    if (
-        filterType === "arrIncludes" ||
-        filterType === "arrIncludesAll" ||
-        filterType === "arrIncludesSome"
-    ) {
+    if (filterType === "inArray") {
         return <FilterArray column={column} />;
     }
 

@@ -38,12 +38,12 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
     {
         header: "Type",
         accessorKey: "type",
-        filterFn: "arrIncludesSome",
+        filterFn: "inArray",
     },
     {
         header: "Overrun type",
         accessorKey: "overrun_type",
-        filterFn: "arrIncludesSome",
+        filterFn: "inArray",
     },
     {
         header: "TOIL",

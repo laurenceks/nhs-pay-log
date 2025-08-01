@@ -14,7 +14,7 @@ const IconWrap = ({
     as = "div",
 }: {
     children: ReactElement<{ className?: string; style?: CSSProperties }>;
-    variant: Variant;
+    variant?: Variant;
     width?: number | string;
     as?: keyof HTMLElementTagNameMap;
     className?: string;

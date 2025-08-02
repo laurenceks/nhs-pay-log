@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { Outlet, useLoaderData, useNavigate } from "@tanstack/react-router";
 import { Button } from "react-bootstrap";
 import { useMemo, useState } from "react";
 import {
@@ -46,7 +46,20 @@ const Pay = () => {
 
     return (
         <div className="position-relative">
-            <TanStackTable table={table} showFilters={showFilters} />
+            <TanStackTable
+                table={table}
+                showFilters={showFilters}
+                rowClick={(row) => {
+                    navigate({
+                        to: "/pay/$employmentId/$payMonth",
+                        params: {
+                            employmentId: row.original.employment_id.toString(),
+                            payMonth: row.original.pay_month,
+                        },
+                    });
+                }}
+            />
+            <Outlet />
             <div className="position-fixed bottom-0 start-0 ms-4 mb-3 d-flex gap-3">
                 <Button
                     variant="secondary"

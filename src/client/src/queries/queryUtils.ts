@@ -4,7 +4,7 @@ import {
     QueryOptions,
 } from "@tanstack/react-query";
 import { ApiResponse } from "../../../../types/responseTypes";
-import { queryClient } from "../App";
+import { queryClient } from "../../../shared/queryClient";
 
 export const publicFetchJson = async <T = undefined>(
     url: string,

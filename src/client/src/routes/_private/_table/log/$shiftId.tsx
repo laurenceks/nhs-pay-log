@@ -3,7 +3,6 @@ import { ClientShift, Contract } from "../../../../../../../types/commonTypes";
 import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
 import { getLogShiftQueryOptions } from "../../../../queries/logQueries";
 import { formatDate } from "../../../../../../shared/utils/formatDates";
-import { queryClient } from "../../../../App";
 import { ApiResponse } from "../../../../../../../types/responseTypes";
 import { updateShiftContract } from "../../../../../../shared/utils/updateShiftContract";
 import {
@@ -12,6 +11,7 @@ import {
 } from "../../../../../../shared/calculations/payDates";
 import { memo } from "react";
 import ShiftEdit from "../../../../components/shiftEdit/ShiftEdit";
+import { queryClient } from "../../../../../../shared/queryClient";
 
 export const Route = createFileRoute("/_private/_table/log/$shiftId")({
     component: memo(ShiftEdit),

@@ -1,8 +1,9 @@
 import { Contract, ShiftExtra } from "../../../types/commonTypes";
 import { formatDate } from "./formatDates";
 import { LookupTable, PayBand, PayBandTable } from "../../../types/lookupTypes";
-import { queryClient } from "../../client/src/App";
+
 import { ApiResponse } from "../../../types/responseTypes";
+import { queryClient } from "../queryClient";
 
 const withinDateRange = <T>(d: string | Date, x: LookupTable<T>[0]) => {
     const dSorting = formatDate(d, "yyyy-mm-dd");

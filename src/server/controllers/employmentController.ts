@@ -19,7 +19,7 @@ import {
     readOrphanedLogByUserIdAndEmploymentIdAndNewFromOrTo,
     updateOrphanedLogShiftByUserIdAndFormerEmploymentID,
 } from "../crud/logCrud";
-import allowFirstFromAndLastTo from "../../client/src/reducers/allowFirstFromAndLastTo";
+import allowFirstFromAndLastTo from "../../shared/utils/allowFirstFromAndLastTo";
 import { formatDate } from "../../shared/utils/formatDates";
 
 export const getEmployments = async (req: Request, res: Response) => {

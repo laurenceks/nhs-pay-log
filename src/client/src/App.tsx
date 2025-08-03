@@ -1,5 +1,5 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { useState } from "react";
 import { ClientUser } from "../../../types/commonTypes";
@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { toast, Toaster } from "react-hot-toast";
 import { fetchLogout } from "./queries/queryUtils";
 import Cookies from "js-cookie";
+import { queryClient } from "../../shared/queryClient";
 
 export type Auth = {
     loginCheckedOnce: boolean;
@@ -18,7 +19,6 @@ export type Auth = {
     setRedirect: (url: string) => void;
 };
 
-export const queryClient = new QueryClient();
 const router = createRouter({
     routeTree,
     defaultPendingMinMs: 0,

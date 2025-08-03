@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "client": "vite --host",
-    "server": "tsx watch ./src/server/app.ts",
+    "server": "tsx watch ./src/server/app.ts --ignore 'src/client/**' --ignore 'src/client/**/*'",
     "buildClient": "tsc -b && vite build",
     "buildServer": "tsx esbuild.ts",
     "lint": "eslint .",

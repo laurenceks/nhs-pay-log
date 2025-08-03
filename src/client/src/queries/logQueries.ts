@@ -1,7 +1,7 @@
 import { MutationOptions, queryOptions } from "@tanstack/react-query";
 import { fetchJson } from "./queryUtils";
 import { ApiShift, ShiftEdit } from "../../../../types/commonTypes";
-import { queryClient } from "../App";
+import { queryClient } from "../../../shared/queryClient";
 import { invalidatePayQuery } from "./payQueries";
 
 export const getLogFetch = async () => {

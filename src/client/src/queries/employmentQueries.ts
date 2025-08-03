@@ -2,7 +2,7 @@ import { MutationOptions, queryOptions } from "@tanstack/react-query";
 import { fetchJson } from "./queryUtils";
 import { Employment } from "../../../../types/lookupTypes";
 import { EmploymentEdit } from "../../../../types/commonTypes";
-import { queryClient } from "../App";
+import { queryClient } from "../../../shared/queryClient";
 import { toast } from "react-hot-toast";
 
 export const getEmploymentsFetch = async () => {

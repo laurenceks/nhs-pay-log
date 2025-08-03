@@ -4,7 +4,7 @@ import {
     shiftDateValidationSchema,
 } from "./commonValidationSchemas";
 import { registerValidationSchema } from "./registerValidationSchema";
-import allowFirstFromAndLastTo from "../../client/src/reducers/allowFirstFromAndLastTo";
+import allowFirstFromAndLastTo from "../utils/allowFirstFromAndLastTo";
 import dayjs from "dayjs";
 import { Contract } from "../../../types/commonTypes";
 

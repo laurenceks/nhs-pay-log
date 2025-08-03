@@ -13,8 +13,8 @@ import {
     nextPayDate,
 } from "../../../shared/calculations/payDates";
 import { updateShiftContract } from "../../../shared/utils/updateShiftContract";
-import { queryClient } from "../App";
 import { toast } from "react-hot-toast";
+import { queryClient } from "../../../shared/queryClient";
 
 export type LogShiftReducerOptions =
     | {

@@ -8,7 +8,7 @@ import { Form } from "react-bootstrap";
 import { ActionDispatch, ChangeEvent, Dispatch, SetStateAction } from "react";
 import { EmploymentReducerOptions } from "../../../../reducers/employmentReducer";
 import { roundTo } from "round-to";
-import allowFirstFromAndLastTo from "../../../../reducers/allowFirstFromAndLastTo";
+import allowFirstFromAndLastTo from "../../../../../../shared/utils/allowFirstFromAndLastTo";
 import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
 import SettingsContractRowEditButton from "./SettingsContractRowEditButton";
 

@@ -8,11 +8,11 @@ import {
 } from "../../../shared/utils/formatDates";
 import { calculatePersonalAllowance } from "@saving-tool/hmrc-income-tax";
 import { filterOptionsByDate } from "../../../shared/utils/lookup";
-import { queryClient } from "../App";
+import { queryClient } from "../../../shared/queryClient";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import { roundTo } from "round-to";
-import allowFirstFromAndLastTo from "./allowFirstFromAndLastTo";
+import allowFirstFromAndLastTo from "../../../shared/utils/allowFirstFromAndLastTo";
 
 const defaultContract = (
     employmentId: Contract["employment_id"],

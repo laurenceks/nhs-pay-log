@@ -1,8 +1,8 @@
 import { ClientShift, Contract } from "../../../types/commonTypes";
 import { lookupPayByContract, lookupShiftExtra } from "../utils/lookup";
 import { msToDecimalHours } from "../utils/conversions";
-import { queryClient } from "../../client/src/App";
 import { ApiResponse } from "../../../types/responseTypes";
+import { queryClient } from "../queryClient";
 
 const calculateExtraPay = (logShift: ClientShift) => {
     const pay = lookupPayByContract({

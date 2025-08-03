@@ -1,6 +1,6 @@
-import { queryClient } from "../App";
-import { ApiResponse } from "../../../../types/responseTypes";
-import { Contract } from "../../../../types/commonTypes";
+import { ApiResponse } from "../../../types/responseTypes";
+import { Contract } from "../../../types/commonTypes";
+import { queryClient } from "../queryClient";
 
 const allowFirstFromAndLastTo = (
     currentEmploymentId: Contract["employment_id"],

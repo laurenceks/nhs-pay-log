@@ -7,9 +7,12 @@ const setSessionExpiryCookie = (req: Request, res: Response) => {
 
     res.cookie("sessionExpiry", expires.toISOString(), {
         expires,
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         maxAge: req.session.cookie.originalMaxAge || 0,
-        domain: req.session.cookie.domain,
+        domain:
+            process.env.NODE_ENV === "production"
+                ? req.session.cookie.domain
+                : undefined,
         sameSite: true,
         path: "/",
     });

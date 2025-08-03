@@ -1,6 +1,6 @@
 import { configDotenv } from "dotenv";
 import express from "express";
-import session from "express-session";
+import session, { SessionOptions } from "express-session";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
@@ -40,18 +40,20 @@ if (process.env.NODE_ENV !== "development") {
     );
 }
 
-const sessionOptions = {
+const sessionOptions: SessionOptions = {
     secret: process.env.SESSION_SECRET as string,
     resave: false,
     rolling: true,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 300000 },
+    cookie: { secure: false, maxAge: 300000, sameSite: "strict" },
     store: sessionStore,
 };
 
 if (process.env.NODE_ENV === "production") {
     app.set("trust proxy", 1); // trust first proxy
-    sessionOptions.cookie.secure = true; // serve secure cookies
+    if (sessionOptions.cookie) {
+        sessionOptions.cookie.secure = true; // serve secure cookies
+    }
 }
 
 app.use(express.json());

@@ -21,7 +21,9 @@ const logoutAndDestroySession = (
     });
     if (req.session) {
         req.session.destroy((e) => {
-            console.log(e);
+            if (e instanceof Error) {
+                console.log(e);
+            }
         });
     }
 };

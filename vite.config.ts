@@ -7,6 +7,18 @@ console.log("Config loaded");
 export default defineConfig({
     root: "src/client/",
     base: "/",
+    css: {
+        preprocessorOptions: {
+            scss: {
+                silenceDeprecations: [
+                    "mixed-decls",
+                    "color-functions",
+                    "global-builtin",
+                    "import",
+                ],
+            },
+        },
+    },
     plugins: [
         TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
         react(),
@@ -15,9 +27,6 @@ export default defineConfig({
     build: {
         outDir: "../../dist/client",
         emptyOutDir: true,
-    },
-    resolve: {
-        alias: [{ find: "node_modules", replacement: "node_modules" }],
     },
     server: {
         proxy: {

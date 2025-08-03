@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLoaderData, useNavigate, useParams } from "@tanstack/react-router";
-import { Button, Modal } from "react-bootstrap";
-import ShiftEditModalCalculation from "../shiftEdit/ShiftEditModalCalculation";
+import { Badge, Button, Modal, Table } from "react-bootstrap";
 import { toast } from "react-hot-toast";
 import { formatDate } from "../../../../shared/utils/formatDates";
 import CalculationNumberFlow from "../common/CalculationNumberFlow";
@@ -57,97 +56,186 @@ const PayDetailModal = () => {
             </Modal.Header>
             <Modal.Body>
                 <div className="d-flex flex-column gap-2">
-                    <h5>Hours</h5>
-                    <div className="d-flex flex-wrap">
-                        <ShiftEditModalCalculation
-                            label="TOIL"
-                            value={payDetails.toil}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Flat"
-                            value={payDetails.flat}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Lower rate"
-                            value={payDetails.lower_rate}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Higher rate"
-                            value={payDetails.higher_rate}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Time and a half"
-                            value={payDetails.time_and_half}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Double"
-                            value={payDetails.double}
-                        />
+                    <div className="rounded-3 bg-dark-subtle p-3">
+                        <h4>
+                            <Badge bg="dark">Hours</Badge>
+                        </h4>
+                        <Table
+                            size={"sm"}
+                            responsive
+                            className="pay-details-table hours"
+                        >
+                            <thead>
+                                <tr>
+                                    <th>TOIL</th>
+                                    <th>Flat</th>
+                                    <th>Lower rate</th>
+                                    <th>Time and half</th>
+                                    <th>Higher rate</th>
+                                    <th>Double</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.toil}
+                                            precision={5}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.flat}
+                                            precision={5}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.lower_rate}
+                                            precision={5}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.time_and_half}
+                                            precision={5}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.higher_rate}
+                                            precision={5}
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.double}
+                                            precision={5}
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
                     </div>
-                    <h5>Pay</h5>
-                    <div className="d-flex flex-wrap">
-                        <ShiftEditModalCalculation
-                            label="Basic"
-                            value={payDetails.basic_pay}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="Shifts"
-                            value={payDetails.shift_pay}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="Extras"
-                            value={payDetails.extras_pay}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="HCA"
-                            value={payDetails.hca_pay}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="Gross"
-                            value={payDetails.gross_pay}
-                            currency
-                        />
+                    <div className="rounded-3 bg-success-subtle p-3">
+                        <h4>
+                            <Badge bg="success">Pay</Badge>
+                        </h4>
+                        <Table
+                            size={"sm"}
+                            responsive
+                            className="pay-details-table pay"
+                        >
+                            <thead>
+                                <tr>
+                                    <th>Basic</th>
+                                    <th>Shifts</th>
+                                    <th>Extras</th>
+                                    <th>HCA</th>
+                                    <th>Gross</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.basic_pay}
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.shift_pay}
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.extras_pay}
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.hca_pay}
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.gross_pay}
+                                            currency
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
                     </div>
-                    <h5>Deductions</h5>
-                    <div className="d-flex flex-wrap">
-                        <ShiftEditModalCalculation
-                            label={`Pension`}
-                            value={payDetails.deduction_pension}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="PAYE"
-                            value={payDetails.deduction_paye}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="NI"
-                            value={payDetails.deduction_ni}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="Student loan"
-                            value={payDetails.deduction_student_loan}
-                            currency
-                        />
-                        <ShiftEditModalCalculation
-                            label="Total"
-                            value={payDetails.deductions_total}
-                            currency
-                        />
+                    <div className="rounded-3 bg-danger-subtle p-3">
+                        <h4>
+                            <Badge bg="danger">Deductions</Badge>
+                        </h4>
+                        <Table
+                            size={"sm"}
+                            responsive
+                            className="pay-details-table pay"
+                        >
+                            <thead>
+                                <tr>
+                                    <th>Pension</th>
+                                    <th>PAYE</th>
+                                    <th>NI</th>
+                                    <th>Student loan</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.deduction_pension}
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.deduction_paye}
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.deduction_ni}
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={
+                                                payDetails.deduction_student_loan
+                                            }
+                                            currency
+                                        />
+                                    </td>
+                                    <td>
+                                        <CalculationNumberFlow
+                                            value={payDetails.deductions_total}
+                                            currency
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
                     </div>
-                    <h2 className="my-3">
+                    <h2 className="m-3">
                         Net pay:{" "}
                         <span className="text-success">
-                            <CalculationNumberFlow
-                                value={payDetails.net_pay}
-                                currency={true}
-                                precision={5}
-                            />
+                            <strong>
+                                <CalculationNumberFlow
+                                    value={payDetails.net_pay}
+                                    currency
+                                />
+                            </strong>
                         </span>
                     </h2>
                 </div>

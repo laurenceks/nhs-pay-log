@@ -62,9 +62,25 @@ number-flow-react::part(symbol) {
     }
 }
 
-input.xs {
-    padding: 0.25rem;
+.filter-container {
     min-width: 100%;
     max-width: min-content;
+}
+
+input.xs {
+    padding: 0.25rem;
     font-size: 0.675rem;
+}
+
+table.pay-details-table {
+    &.hours th {
+        width: 16%;
+        &:nth-of-type(4) {
+            width: 20%;
+        }
+    }
+    &.pay th,
+    &.deductions th {
+        width: 20%;
+    }
 }

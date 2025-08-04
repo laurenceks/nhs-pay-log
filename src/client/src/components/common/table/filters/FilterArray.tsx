@@ -1,6 +1,6 @@
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import IconWrap from "../../IconWrap";
-import { IoCheckbox, IoSquareOutline } from "react-icons/io5";
+import { IoCheckbox, IoCloseCircle, IoSquareOutline } from "react-icons/io5";
 import { Column } from "@tanstack/react-table";
 import columnFilterLists from "../columnDefs/columnFilterLists";
 
@@ -24,7 +24,17 @@ const FilterArray = <T,>({ column }: { column: Column<T> }) => {
             title={column.columnDef.header as string}
             variant="outline-secondary"
             autoClose={"outside"}
+            disabled={!columnFilterLists[column.id]?.length}
         >
+            <Dropdown.Item
+                onClick={() => column.setFilterValue(undefined)}
+                className="d-flex align-items-center gap-1"
+            >
+                <IconWrap variant="dark" width={"1rem"}>
+                    <IoCloseCircle />
+                </IconWrap>
+                Clear all
+            </Dropdown.Item>
             {(columnFilterLists[column.id] || []).map((x) => (
                 <Dropdown.Item
                     key={x}

@@ -1,6 +1,7 @@
 import { makeToAlwaysLater } from "../utils/conversions";
 import { isBankHoliday } from "./shiftLengths";
-import { ShiftTypes } from "../../../types/commonTypes";
+import { ClientShift, ShiftTypes } from "../../../types/commonTypes";
+import { addDaysToTimestamp, formatDate } from "../utils/formatDates";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
     // returns in ms the total time within the lower rate windows
@@ -127,7 +128,9 @@ export const calculateUsh = (
     from: Date | string,
     to: Date | string,
     type: ShiftTypes = "Normal",
-    hoursOverThreshold = 0
+    hoursOverThresholdMs = 0,
+    weeklyHoursMs = 37.5,
+    log: ClientShift[] = []
 ) => {
     let lowerRateRaw = 0;
     let higherRateRaw = 0;
@@ -149,9 +152,9 @@ export const calculateUsh = (
 
         const remainingBreak = shiftLength > 21600000 ? 1800000 : 0;
 
-        if (hoursOverThreshold) {
+        if (hoursOverThresholdMs) {
             //recalculate USH based on new end
-            toObj.setTime(toObj.getTime() + hoursOverThreshold * -1);
+            toObj.setTime(toObj.getTime() + hoursOverThresholdMs * -1);
             lowerRateRaw = calculateRawLowerRate(
                 new Date(fromObj),
                 new Date(toObj)
@@ -168,16 +171,16 @@ export const calculateUsh = (
                 // only lower rate
                 lowerRateRaw = Math.max(
                     0,
-                    shiftLength - remainingBreak - hoursOverThreshold
+                    shiftLength - remainingBreak - hoursOverThresholdMs
                 );
             } else if (!lowerRateRaw) {
                 // only higher rate
                 higherRateRaw = Math.max(
                     0,
-                    shiftLength - remainingBreak - hoursOverThreshold
+                    shiftLength - remainingBreak - hoursOverThresholdMs
                 );
             } else {
-                if (hoursOverThreshold) {
+                if (hoursOverThresholdMs) {
                     // update shift length to match USH length with OT hours deducted
                     shiftLength = toObj.getTime() - fromObj.getTime();
                 }
@@ -187,11 +190,34 @@ export const calculateUsh = (
                 higherRateRaw -= remainingBreak - segmentBreak;
             }
         }
+    } else if (type === "AL (relief)" || type === "Absent (TOIL relief)") {
+        const averagePeriodStart = formatDate(
+            addDaysToTimestamp(from, -91),
+            "yyyy-mm-dd"
+        );
+        const fromYyyyMmDD = formatDate(from, "yyyy-mm-dd");
+        const totalUsh = { lower: 0, higher: 0 };
+        for (const shift of log) {
+            if (shift.date < averagePeriodStart) {
+                continue;
+            }
+            if (shift.date >= fromYyyyMmDD) {
+                break;
+            }
+            totalUsh.lower = totalUsh.lower + shift.lower_rate;
+            totalUsh.higher = totalUsh.higher + shift.higher_rate;
+        }
+        const shiftLength = new Date(to).getTime() - new Date(from).getTime();
+        lowerRateRaw = Math.round(
+            (totalUsh.lower / (weeklyHoursMs * 13)) * shiftLength
+        );
+        higherRateRaw = Math.round(
+            (totalUsh.higher / (weeklyHoursMs * 13)) * shiftLength
+        );
     }
 
     return {
         lower_rate: Math.max(0, lowerRateRaw),
         higher_rate: Math.max(0, higherRateRaw),
     };
-    //}
 };

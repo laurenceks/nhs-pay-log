@@ -34,6 +34,7 @@ import { ApiResponse } from "../../../../../types/responseTypes";
 import { logShiftValidationSchema } from "../../../../shared/validationSchemas/logShiftValidationSchema";
 import { overrunTypeList, typeList } from "../../../../shared/lists";
 import ShiftEditModalListOptions from "./ShiftEditModalListOptions";
+import { decimalHoursToMs } from "../../../../shared/utils/conversions";
 
 const ShiftEditModal = ({
     setToastMessage,
@@ -157,7 +158,9 @@ const ShiftEditModal = ({
                         ? editState.actual_to
                         : editState.planned_to,
                     editState.type,
-                    additionalHours.time_and_half + additionalHours.double
+                    additionalHours.time_and_half + additionalHours.double,
+                    decimalHoursToMs(editState.weekly_hours),
+                    log
                 ),
                 ...additionalHours,
             });

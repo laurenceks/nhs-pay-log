@@ -15,7 +15,6 @@ import {
 
 const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
 
-//TODO sickness/absence
 export const calculateCumulativeAdditionalHours = (
     from: Date,
     id: number,

@@ -22,11 +22,22 @@ export const readLogShiftByUserIdAndShiftId = async (
 };
 export const readAffectedLogByUserIdAndShiftId = async (
     userId: string,
-    from: string
+    from: string,
+    employmentId: string
 ) => {
     return await executeReadByPlaceholders<ClientShift>(
-        "SELECT `log`.*, `contracts`.`weekly_hours`\nFROM `log`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nWHERE `log`.`user_id` = :userId\n  AND `contracts`.`user_id` = :userId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL WEEKDAY(:from) DAY)\n  AND `log`.`from` < DATE_ADD(DATE(:from), INTERVAL (7 - WEEKDAY(:from)) DAY)\nORDER BY `log`.`from`",
-        { userId, from }
+        "SELECT `log`.*, `contracts`.`weekly_hours`\nFROM `log`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nWHERE `log`.`user_id` = :userId\n  AND `contracts`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL WEEKDAY(:from) DAY)\n  AND `log`.`from` < DATE_ADD(DATE(:from), INTERVAL (7 - WEEKDAY(:from)) DAY)\nORDER BY `log`.`from`",
+        { userId, from, employmentId }
+    );
+};
+export const readUshAverageLogByUserIdAndEmploymentId = async (
+    userId: string,
+    from: string,
+    employmentId: string
+) => {
+    return await executeReadByPlaceholders<ClientShift>(
+        "SELECT `log`.`lower_rate`, `log`.`higher_rate`\nFROM `log`\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL 13 WEEK )\n  AND `log`.`from` < DATE(:from)\nORDER BY `log`.`from`",
+        { userId, from, employmentId }
     );
 };
 

@@ -6,18 +6,25 @@ import {
     readAffectedLogByUserIdAndShiftId,
     readLogByUserId,
     readLogShiftByUserIdAndShiftId,
+    readUshAverageLogByUserIdAndEmploymentId,
     updateLogShiftByUserIdAndShiftId,
 } from "../crud/logCrud";
 import { calculateUsh } from "../../shared/calculations/ush";
 import { calculateAdditionalHours } from "../../shared/calculations/additionalHours";
 import { createLogExtra, deleteLogExtraByShiftId } from "../crud/logExtraCrud";
+import { decimalHoursToMs } from "../../shared/utils/conversions";
 
-const updateAffectedShifts = async (userId: string, from: string) => {
+const updateAffectedShifts = async (
+    userId: string,
+    from: string,
+    employmentId: string
+) => {
     const affectedShifts = await readAffectedLogByUserIdAndShiftId(
         userId,
-        from
+        from,
+        employmentId
     );
-
+    //TODO pass log for relief USH calculations
     for (const shift of affectedShifts) {
         const additionalHours = calculateAdditionalHours(shift, affectedShifts);
         await updateLogShiftByUserIdAndShiftId(userId, {
@@ -29,7 +36,13 @@ const updateAffectedShifts = async (userId: string, from: string) => {
                         ? shift.actual_to
                         : shift.planned_to,
                     shift.type,
-                    additionalHours.time_and_half + additionalHours.double
+                    additionalHours.time_and_half + additionalHours.double,
+                    decimalHoursToMs(shift.weekly_hours),
+                    await readUshAverageLogByUserIdAndEmploymentId(
+                        userId,
+                        from,
+                        employmentId
+                    )
                 ),
                 ...additionalHours,
             },
@@ -74,7 +87,11 @@ export const postLogShift = async (req: Request, res: Response) => {
             req.body
         );
         if (insertId) {
-            await updateAffectedShifts(req.authenticatedUser.id, req.body.from);
+            await updateAffectedShifts(
+                req.authenticatedUser.id,
+                req.body.from,
+                req.body.employment_id
+            );
             await updateLogExtras(insertId, req.body.extras_ids_string);
             sendRes(res);
         } else {
@@ -91,7 +108,11 @@ export const patchLogShift = async (req: Request, res: Response) => {
             req.authenticatedUser.id,
             req.body
         );
-        await updateAffectedShifts(req.authenticatedUser.id, req.body.from);
+        await updateAffectedShifts(
+            req.authenticatedUser.id,
+            req.body.from,
+            req.body.employment_id
+        );
         await deleteLogExtraByShiftId(req.params.shiftId);
         await updateLogExtras(req.params.shiftId, req.body.extras_ids_string);
         sendRes(res);
@@ -111,7 +132,11 @@ export const deleteLogShift = async (req: Request, res: Response) => {
             req.params.shiftId
         );
         if (result?.from) {
-            await updateAffectedShifts(req.authenticatedUser.id, result?.from);
+            await updateAffectedShifts(
+                req.authenticatedUser.id,
+                result?.from,
+                result.employment_id.toString()
+            );
         }
         sendRes(res);
     } catch (e) {

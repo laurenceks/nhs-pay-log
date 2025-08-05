@@ -9,16 +9,16 @@ import TanStackTableAggregationRow from "./TanStackTableAggregationRow";
 const TanStackTable = <T,>({
     table,
     showFilters,
-    aggregation,
     rowClick,
+    aggregation = null,
 }: {
     table: TanTable<T>;
     showFilters: boolean;
-    aggregation: Aggregations | null;
     rowClick?: (row: Row<T>) => void;
+    aggregation?: Aggregations | null;
 }) => {
     return (
-        <div>
+        <div className="pb-5">
             <Table striped={true} hover={true} responsive={true}>
                 <thead>
                     {table.getHeaderGroups().map((headerGroup) => (

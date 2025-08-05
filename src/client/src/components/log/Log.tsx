@@ -8,6 +8,8 @@ import {
     formatDate,
 } from "../../../../shared/utils/formatDates";
 import FilterButton from "../common/table/filters/FilterButton";
+import { Aggregations } from "../../../../../types/commonTypes";
+import AggregationButton from "../common/table/aggregation/AggregationButton";
 
 const getDefaultDateFilter = () => {
     const today = new Date();
@@ -22,6 +24,7 @@ const Log = memo(({ disabled }: { disabled: boolean }) => {
     const navigate = useNavigate();
     const { displayLog } = useLoaderData({ from: "/_private/_table/log" });
     const [showFilters, setShowFilters] = useState(false);
+    const [aggregation, setAggregation] = useState<Aggregations | null>(null);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
         { id: "from", value: getDefaultDateFilter() },
     ]);
@@ -31,11 +34,12 @@ const Log = memo(({ disabled }: { disabled: boolean }) => {
             <LogTable
                 log={displayLog}
                 showFilters={showFilters}
+                aggregation={aggregation}
                 columnFilters={columnFilters}
                 setColumnFilters={setColumnFilters}
             />
             <Outlet />
-            <div className="position-fixed bottom-0 start-0 ms-4 mb-3 d-flex gap-3">
+            <div className="position-fixed bottom-0 start-0 m-3 d-flex gap-3">
                 <Button
                     variant="secondary"
                     disabled={disabled}
@@ -63,6 +67,10 @@ const Log = memo(({ disabled }: { disabled: boolean }) => {
                     showFilters={showFilters}
                     setShowFilters={setShowFilters}
                     activeFiltersCount={columnFilters.length}
+                />
+                <AggregationButton
+                    aggregation={aggregation}
+                    setAggregation={setAggregation}
                 />
             </div>
         </div>

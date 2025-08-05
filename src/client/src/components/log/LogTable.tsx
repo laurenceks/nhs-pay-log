@@ -1,4 +1,4 @@
-import { ParsedApiShift } from "../../../../../types/commonTypes";
+import { Aggregations, ParsedApiShift } from "../../../../../types/commonTypes";
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -9,7 +9,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { logTableColumnsDef } from "../common/table/columnDefs/logTableColumnsDef";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import TanStackTable from "../common/table/TanStackTable";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -22,11 +22,13 @@ const LogTable = ({
     showFilters,
     columnFilters,
     setColumnFilters,
+    aggregation,
 }: {
     log: ParsedApiShift[];
     showFilters: boolean;
     columnFilters: ColumnFiltersState;
     setColumnFilters: Dispatch<SetStateAction<ColumnFiltersState>>;
+    aggregation: Aggregations | null;
 }) => {
     const navigate = useNavigate();
     const columns = useMemo(() => logTableColumnsDef, []);
@@ -51,14 +53,11 @@ const LogTable = ({
         },
     });
 
-    useEffect(() => {
-        console.log(columnFilters);
-    }, [columnFilters]);
-
     return (
         <TanStackTable
             table={table}
             showFilters={showFilters}
+            aggregation={aggregation}
             rowClick={(row: Row<ParsedApiShift>) =>
                 navigate({
                     to: "/log/$shiftId",

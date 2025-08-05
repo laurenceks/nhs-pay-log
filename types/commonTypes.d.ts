@@ -189,6 +189,9 @@ export type ColumnFilterMap<T> = {
     [key in keyof Partial<T>]: customColumnFilters;
 };
 
+export type Aggregations = "sum" | "mean" | "median" | "min" | "max";
+export type Aggregated = { [key: string]: string | number };
+
 declare global {
     namespace Express {
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -210,5 +213,6 @@ declare module "@tanstack/react-table" {
     interface ColumnMeta<_TData extends RowData, _TValue> {
         textVariant?: Variant;
         iconType?: ColumnIconDataType;
+        aggregationTypes?: "all" | Aggregations[];
     }
 }

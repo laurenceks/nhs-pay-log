@@ -3,14 +3,18 @@ import { Table } from "react-bootstrap";
 import Filter from "./filters/Filter";
 import TanStackTableTh from "./TanStackTableTh";
 import TanStackTableTbodyTr from "./TanStackTableTbodyTr";
+import { Aggregations } from "../../../../../../types/commonTypes";
+import TanStackTableAggregationRow from "./TanStackTableAggregationRow";
 
 const TanStackTable = <T,>({
     table,
     showFilters,
+    aggregation,
     rowClick,
 }: {
     table: TanTable<T>;
     showFilters: boolean;
+    aggregation: Aggregations | null;
     rowClick?: (row: Row<T>) => void;
 }) => {
     return (
@@ -53,6 +57,12 @@ const TanStackTable = <T,>({
                         />
                     ))}
                 </tbody>
+                {aggregation && (
+                    <TanStackTableAggregationRow
+                        table={table}
+                        aggregation={aggregation}
+                    />
+                )}
             </Table>
         </div>
     );

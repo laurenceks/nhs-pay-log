@@ -1,4 +1,4 @@
-import { Dropdown, DropdownButton } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import IconWrap from "../../IconWrap";
 import { IoCheckbox, IoCloseCircle, IoSquareOutline } from "react-icons/io5";
 import { Column } from "@tanstack/react-table";
@@ -19,39 +19,43 @@ const FilterArray = <T,>({ column }: { column: Column<T> }) => {
     };
 
     return (
-        <DropdownButton
-            size="sm"
-            title={column.columnDef.header as string}
-            variant="outline-secondary"
-            autoClose={"outside"}
-            disabled={!columnFilterLists[column.id]?.length}
-        >
-            <Dropdown.Item
-                onClick={() => column.setFilterValue(undefined)}
-                className="d-flex align-items-center gap-1"
+        <Dropdown autoClose={"outside"}>
+            <Dropdown.Toggle
+                size="sm"
+                title={column.columnDef.header as string}
+                variant="outline-secondary"
+                disabled={!columnFilterLists[column.id]?.length}
             >
-                <IconWrap variant="dark" width={"1rem"}>
-                    <IoCloseCircle />
-                </IconWrap>
-                Clear all
-            </Dropdown.Item>
-            {(columnFilterLists[column.id] || []).map((x) => (
+                {column.columnDef.header as string}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
                 <Dropdown.Item
-                    key={x}
-                    onClick={() => onClick(x)}
+                    onClick={() => column.setFilterValue(undefined)}
                     className="d-flex align-items-center gap-1"
                 >
                     <IconWrap variant="dark" width={"1rem"}>
-                        {selected.includes(x) ? (
-                            <IoCheckbox />
-                        ) : (
-                            <IoSquareOutline />
-                        )}
+                        <IoCloseCircle />
                     </IconWrap>
-                    {x}
+                    Clear all
                 </Dropdown.Item>
-            ))}
-        </DropdownButton>
+                {(columnFilterLists[column.id] || []).map((x) => (
+                    <Dropdown.Item
+                        key={x}
+                        onClick={() => onClick(x)}
+                        className="d-flex align-items-center gap-1"
+                    >
+                        <IconWrap variant="dark" width={"1rem"}>
+                            {selected.includes(x) ? (
+                                <IoCheckbox />
+                            ) : (
+                                <IoSquareOutline />
+                            )}
+                        </IconWrap>
+                        {x}
+                    </Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+        </Dropdown>
     );
 };
 export default FilterArray;

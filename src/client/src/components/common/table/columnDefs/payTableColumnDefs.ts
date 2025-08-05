@@ -28,35 +28,55 @@ export const payTableColumnsDef: ColumnDef<ParsedApiPay>[] = [
         accessorKey: "basic_pay",
         filterFn: "inNumberRange",
         cell: renderAsGbp,
-        meta: { iconType: "numeric" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: convertToGbp,
+        },
     },
     {
         header: "Extra",
         accessorKey: "extra_pay",
         filterFn: "inNumberRange",
         cell: renderAsGbp,
-        meta: { iconType: "numeric" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: convertToGbp,
+        },
     },
     {
         header: "Gross",
         accessorKey: "gross_pay",
         filterFn: "inNumberRange",
         cell: renderAsGbp,
-        meta: { iconType: "numeric" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: convertToGbp,
+        },
     },
     {
         header: "Deductions",
         accessorKey: "deductions_total",
         filterFn: "inNumberRange",
         cell: renderAsGbp,
-        meta: { textVariant: "danger" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: convertToGbp,
+        },
     },
     {
         header: "Net",
         accessorKey: "net_pay",
         filterFn: "inNumberRange",
         cell: renderAsGbp,
-        meta: { textVariant: "success", iconType: "numeric" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: convertToGbp,
+        },
     },
 ];
 

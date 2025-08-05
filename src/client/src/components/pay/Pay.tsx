@@ -16,6 +16,8 @@ import {
 import { payTableColumnsDef } from "../common/table/columnDefs/payTableColumnDefs";
 import TanStackTable from "../common/table/TanStackTable";
 import FilterButton from "../common/table/filters/FilterButton";
+import AggregationButton from "../common/table/aggregation/AggregationButton";
+import { Aggregations } from "../../../../../types/commonTypes";
 
 const Pay = () => {
     const navigate = useNavigate();
@@ -23,6 +25,7 @@ const Pay = () => {
     const columns = useMemo(() => payTableColumnsDef, []);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [aggregation, setAggregation] = useState<Aggregations | null>(null);
     const [showFilters, setShowFilters] = useState(false);
     const table = useReactTable({
         data: pay,
@@ -49,6 +52,7 @@ const Pay = () => {
             <TanStackTable
                 table={table}
                 showFilters={showFilters}
+                aggregation={aggregation}
                 rowClick={(row) => {
                     navigate({
                         to: "/pay/$employmentId/$payMonth",
@@ -75,6 +79,10 @@ const Pay = () => {
                     showFilters={showFilters}
                     setShowFilters={setShowFilters}
                     activeFiltersCount={columnFilters.length}
+                />
+                <AggregationButton
+                    aggregation={aggregation}
+                    setAggregation={setAggregation}
                 />
             </div>
         </div>

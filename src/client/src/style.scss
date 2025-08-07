@@ -1,3 +1,6 @@
+@use "sass:map";
+@use "sass:list";
+
 @import "bootswatch/dist/zephyr/variables";
 @import "bootstrap/scss/bootstrap";
 @import "bootswatch/dist/zephyr/bootswatch";
@@ -82,5 +85,29 @@ table.pay-details-table {
     &.pay th,
     &.deductions th {
         width: 20%;
+    }
+}
+
+.main-menu-tooltip {
+    @each $variant in map.keys($theme-colors) {
+        &.#{$variant} {
+            > .tooltip-inner {
+                background-color: map.get($theme-colors, "secondary");
+                color: map.get($theme-colors, $variant);
+                border: 1px solid map.get($theme-colors, $variant);
+            }
+            &.bs-tooltip-top > .tooltip-arrow::before {
+                border-top-color: map.get($theme-colors, $variant);
+            }
+            &.bs-tooltip-bottom > .tooltip-arrow::before {
+                border-bottom-color: map.get($theme-colors, $variant);
+            }
+            &.bs-tooltip-end > .tooltip-arrow::before {
+                border-right-color: map.get($theme-colors, $variant);
+            }
+            &.bs-tooltip-start > .tooltip-arrow::before {
+                border-left-color: map.get($theme-colors, $variant);
+            }
+        }
     }
 }

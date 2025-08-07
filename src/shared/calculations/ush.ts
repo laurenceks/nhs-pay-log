@@ -195,13 +195,17 @@ export const calculateUsh = (
             addDaysToTimestamp(from, -91),
             "yyyy-mm-dd"
         );
-        const fromYyyyMmDD = formatDate(from, "yyyy-mm-dd");
+        const fromSortingString = formatDate(from, "yyyy-mm-dd");
         const totalUsh = { lower: 0, higher: 0 };
         for (const shift of log) {
-            if (shift.date < averagePeriodStart) {
+            if (
+                shift.date < averagePeriodStart ||
+                shift.type === "AL (relief)" ||
+                shift.type === "Absent (TOIL relief)"
+            ) {
                 continue;
             }
-            if (shift.date >= fromYyyyMmDD) {
+            if (shift.date >= fromSortingString) {
                 break;
             }
             totalUsh.lower = totalUsh.lower + shift.lower_rate;

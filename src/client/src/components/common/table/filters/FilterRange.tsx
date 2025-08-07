@@ -3,6 +3,7 @@ import { Column } from "@tanstack/react-table";
 import IconWrap from "../../IconWrap";
 import { IoCloseCircle } from "react-icons/io5";
 import { useRef } from "react";
+import InputClearButton from "../../InputClearButton";
 
 type Val = [number | string | undefined, number | string | undefined];
 const FilterRange = <T,>({
@@ -86,10 +87,7 @@ const FilterRange = <T,>({
                     }}
                 ></Form.Control>
                 {type !== "number" && (
-                    <Button
-                        size="sm"
-                        variant="secondary"
-                        className="d-flex align-items-center justify-content-center p-1"
+                    <InputClearButton
                         onClick={() => {
                             if (input2.current) {
                                 input2.current.value = "";
@@ -100,11 +98,7 @@ const FilterRange = <T,>({
                                     : [currentVal[0], undefined]
                             );
                         }}
-                    >
-                        <IconWrap width={"1rem"}>
-                            <IoCloseCircle />
-                        </IconWrap>
-                    </Button>
+                    />
                 )}
             </div>
         </div>

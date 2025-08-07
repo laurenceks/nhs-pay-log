@@ -11,6 +11,7 @@ import { roundTo } from "round-to";
 import allowFirstFromAndLastTo from "../../../../../../shared/utils/allowFirstFromAndLastTo";
 import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
 import SettingsContractRowEditButton from "./SettingsContractRowEditButton";
+import InputClearButton from "../../../common/InputClearButton";
 
 const SettingsContractRowEdit = ({
     contract,
@@ -53,42 +54,78 @@ const SettingsContractRowEdit = ({
     return (
         <tr>
             <td>
-                <Form.Control
-                    type="date"
-                    size="sm"
-                    value={contract.from || ""}
-                    disabled={first && !allowFirstFrom}
-                    onChange={(e) =>
-                        setEmploymentContracts({
-                            action: "from",
-                            payload: {
-                                currentContractId: contract.id,
-                                newDate: e.currentTarget.value,
-                                employmentId: contract.employment_id,
-                                employmentName: contract.employment_name,
-                            },
-                        })
-                    }
-                />
+                <div className="d-flex gap-1">
+                    <Form.Control
+                        type="date"
+                        size="sm"
+                        value={contract.from || ""}
+                        disabled={first && !allowFirstFrom}
+                        onChange={(e) =>
+                            setEmploymentContracts({
+                                action: "from",
+                                payload: {
+                                    currentContractId: contract.id,
+                                    newDate: e.currentTarget.value,
+                                    employmentId: contract.employment_id,
+                                    employmentName: contract.employment_name,
+                                },
+                            })
+                        }
+                    />
+                    {first && !(first && !allowFirstFrom) && (
+                        <InputClearButton
+                            onClick={() =>
+                                setEmploymentContracts({
+                                    action: "from",
+                                    payload: {
+                                        currentContractId: contract.id,
+                                        newDate: "",
+                                        employmentId: contract.employment_id,
+                                        employmentName:
+                                            contract.employment_name,
+                                    },
+                                })
+                            }
+                        />
+                    )}
+                </div>
             </td>
             <td>
-                <Form.Control
-                    type="date"
-                    size="sm"
-                    value={contract.to || ""}
-                    disabled={last && !allowLastTo}
-                    onChange={(e) =>
-                        setEmploymentContracts({
-                            action: "to",
-                            payload: {
-                                currentContractId: contract.id,
-                                newDate: e.currentTarget.value,
-                                employmentId: contract.employment_id,
-                                employmentName: contract.employment_name,
-                            },
-                        })
-                    }
-                />
+                <div className="d-flex gap-1">
+                    <Form.Control
+                        type="date"
+                        size="sm"
+                        value={contract.to || ""}
+                        disabled={last && !allowLastTo}
+                        onChange={(e) =>
+                            setEmploymentContracts({
+                                action: "to",
+                                payload: {
+                                    currentContractId: contract.id,
+                                    newDate: e.currentTarget.value,
+                                    employmentId: contract.employment_id,
+                                    employmentName: contract.employment_name,
+                                },
+                            })
+                        }
+                    />
+                    {last && !(last && !allowLastTo) && (
+                        <InputClearButton
+                            onClick={() =>
+                                setEmploymentContracts({
+                                    action: "to",
+                                    payload: {
+                                        currentContractId: contract.id,
+                                        newDate: "",
+                                        employmentId: contract.employment_id,
+                                        employmentName:
+                                            contract.employment_name,
+                                    },
+                                })
+                            }
+                        />
+                    )}
+                </div>
             </td>
             <td>
                 <Form.Select

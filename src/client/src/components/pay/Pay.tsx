@@ -1,5 +1,4 @@
 import { Outlet, useLoaderData, useNavigate } from "@tanstack/react-router";
-import { Button } from "react-bootstrap";
 import { useMemo, useState } from "react";
 import {
     ColumnFiltersState,
@@ -65,16 +64,6 @@ const Pay = () => {
             />
             <Outlet />
             <div className="position-fixed bottom-0 start-0 ms-4 mb-3 d-flex gap-3">
-                <Button
-                    variant="secondary"
-                    onClick={() =>
-                        navigate({
-                            to: "/",
-                        })
-                    }
-                >
-                    Home
-                </Button>
                 <FilterButton
                     showFilters={showFilters}
                     setShowFilters={setShowFilters}

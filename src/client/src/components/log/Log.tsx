@@ -41,17 +41,6 @@ const Log = memo(({ disabled }: { disabled: boolean }) => {
             <Outlet />
             <div className="position-fixed bottom-0 start-0 m-3 d-flex gap-3">
                 <Button
-                    variant="secondary"
-                    disabled={disabled}
-                    onClick={() =>
-                        navigate({
-                            to: "/",
-                        })
-                    }
-                >
-                    Home
-                </Button>
-                <Button
                     variant="success"
                     disabled={disabled}
                     onClick={() =>

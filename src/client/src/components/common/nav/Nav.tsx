@@ -5,7 +5,7 @@ const Nav = () => {
     return (
         <Navbar
             bg="secondary"
-            className="shadow gap-2 px-3 mb-1"
+            className="shadow gap-2 px-3 mb-1 align-items-center"
             sticky="top"
             style={{ zIndex: 1021 }}
         >
@@ -44,6 +44,16 @@ const Nav = () => {
             <Link to={"/logout"} className="btn btn-sm btn-light">
                 Logout
             </Link>
+            <img
+                src="logoWide.svg"
+                className="ms-auto d-none d-md-flex align-items-center justify-content-center"
+                style={{ maxHeight: "2rem", justifySelf: "end" }}
+            />
+            <img
+                src="logo.svg"
+                className="ms-auto d-flex d-md-none align-items-center justify-content-center"
+                style={{ maxHeight: "3rem", justifySelf: "end" }}
+            />
         </Navbar>
     );
 };

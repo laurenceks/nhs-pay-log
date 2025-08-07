@@ -29,13 +29,30 @@ const aggregateFilteredRows = <T>(
     switch (aggregation) {
         case "median":
             {
-                //TODO sort the array before selecting the median!
-                const midRow =
-                    table.getFilteredRowModel().rows[
-                        Math.floor(table.getFilteredRowModel().rows.length / 2)
-                    ];
+                const filteredColumns: {
+                    [key in (typeof aggregationIds)[number]]: (
+                        | string
+                        | number
+                    )[];
+                } = {};
+                const rows = table.getFilteredRowModel().rows;
+                rows.forEach((row) => {
+                    aggregationIds.forEach((x) => {
+                        if (filteredColumns[x]) {
+                            filteredColumns[x].push(row.getValue(x));
+                        } else {
+                            filteredColumns[x] = [row.getValue(x)];
+                        }
+                    });
+                });
                 aggregationIds.forEach((x) => {
-                    aggregated[x] = midRow.getValue(x);
+                    aggregated[x] =
+                        filteredColumns[x]?.sort()[
+                            Math.floor(filteredColumns[x].length / 2)
+                        ] ||
+                        (typeof table.getRow("0").getValue(x) === "number"
+                            ? 0
+                            : "");
                 });
             }
             break;

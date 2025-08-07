@@ -54,6 +54,7 @@ const SettingsEmployment = ({
                     employment={employment}
                     employmentContracts={employmentContracts}
                     contractEditId={contractEditId}
+                    employmentEditId={employmentEditId}
                     setEmploymentEditId={setEmploymentEditId}
                     isOnlyEmployment={isOnlyEmployment}
                     deleteMutate={deleteMutate}

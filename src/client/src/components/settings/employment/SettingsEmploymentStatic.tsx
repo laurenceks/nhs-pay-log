@@ -14,6 +14,7 @@ const SettingsEmploymentStatic = ({
     contractEditId,
     deleteMutate,
     deletePending,
+    employmentEditId,
     setEmploymentEditId,
 }: {
     employment: Employment;
@@ -22,6 +23,7 @@ const SettingsEmploymentStatic = ({
     isOnlyEmployment: boolean;
     deleteMutate: UseMutateAsyncFunction;
     deletePending: boolean;
+    employmentEditId: Contract["employment_id"] | null;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
 }) => {
     return (
@@ -42,7 +44,7 @@ const SettingsEmploymentStatic = ({
             <div className="ms-3 d-flex column-gap-2">
                 <Button
                     variant="warning"
-                    disabled={deletePending}
+                    disabled={deletePending || !!employmentEditId}
                     onClick={() => {
                         setEmploymentEditId(employment.id);
                     }}
@@ -52,7 +54,7 @@ const SettingsEmploymentStatic = ({
                 <SettingsEmploymentDeleteButton
                     employmentName={employment.name}
                     deleteMutate={deleteMutate}
-                    disabled={deletePending}
+                    disabled={deletePending || !!employmentEditId}
                     isOnlyEmployment={isOnlyEmployment}
                 />
             </div>

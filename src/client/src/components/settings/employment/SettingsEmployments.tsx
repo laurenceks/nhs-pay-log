@@ -40,7 +40,7 @@ const SettingsEmployments = () => {
             <Button
                 className="ms-3"
                 variant="success"
-                disabled={isPending}
+                disabled={isPending || !!employmentEditId}
                 onClick={async () => {
                     try {
                         await mutateAsync();

@@ -1,13 +1,28 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import {
+    createFileRoute,
+    Outlet,
+    redirect,
+    useLocation,
+} from "@tanstack/react-router";
 import { stripQueryOptionsForEnsureQuery } from "../../queries/queryUtils";
 import { getExtrasQueryOptions } from "../../queries/extraQueries";
 import { ShiftExtra } from "../../../../../types/commonTypes";
 import { getPayBandsQueryOptions } from "../../queries/payBandQueries";
 import { PayBand } from "../../../../../types/lookupTypes";
 import Cookies from "js-cookie";
+import Nav from "../../components/common/nav/Nav";
+import { ReactElement } from "react";
 
 export const Route = createFileRoute("/_private")({
-    component: Outlet,
+    component: (): ReactElement => {
+        const { pathname } = useLocation();
+        return (
+            <>
+                {pathname !== "/" && <Nav />}
+                <Outlet />
+            </>
+        );
+    },
     loader: async ({ context }) => {
         const extras =
             (

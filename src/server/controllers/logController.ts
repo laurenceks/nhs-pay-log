@@ -24,9 +24,18 @@ const updateAffectedShifts = async (
         from,
         employmentId
     );
-    //TODO pass log for relief USH calculations
     for (const shift of affectedShifts) {
         const additionalHours = calculateAdditionalHours(shift, affectedShifts);
+        const log =
+            shift.type === "AL (relief)" ||
+            shift.type === "Absent (TOIL relief)"
+                ? await readUshAverageLogByUserIdAndEmploymentId(
+                      userId,
+                      from,
+                      employmentId
+                  )
+                : [];
+
         await updateLogShiftByUserIdAndShiftId(userId, {
             ...shift,
             ...{
@@ -38,11 +47,7 @@ const updateAffectedShifts = async (
                     shift.type,
                     additionalHours.time_and_half + additionalHours.double,
                     decimalHoursToMs(shift.weekly_hours),
-                    await readUshAverageLogByUserIdAndEmploymentId(
-                        userId,
-                        from,
-                        employmentId
-                    )
+                    log
                 ),
                 ...additionalHours,
             },

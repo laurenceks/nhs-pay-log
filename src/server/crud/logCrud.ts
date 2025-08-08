@@ -36,7 +36,7 @@ export const readUshAverageLogByUserIdAndEmploymentId = async (
     employmentId: string
 ) => {
     return await executeReadByPlaceholders<ClientShift>(
-        "SELECT `log`.`lower_rate`, `log`.`higher_rate`\nFROM `log`\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL 13 WEEK )\n  AND `log`.`from` < DATE(:from)\nORDER BY `log`.`from`",
+        "SELECT `log`.`date`, `log`.`type`, `log`.`lower_rate`, `log`.`higher_rate`\nFROM `log`\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL 13 WEEK)\n  AND `log`.`from` < DATE(:from)\nORDER BY `log`.`from`",
         { userId, from, employmentId }
     );
 };

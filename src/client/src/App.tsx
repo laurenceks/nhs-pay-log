@@ -69,7 +69,7 @@ const App = () => {
                 }}
             />
             <QueryClientProvider client={queryClient}>
-                <div className="mw-100 w-100" style={{ minHeight: "100%" }}>
+                <div className="mw-100 w-100 minh-100">
                     <RouterProvider
                         router={router}
                         context={{

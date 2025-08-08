@@ -54,17 +54,23 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
         const from0600 = from.setHours(6, 0, 0, 0);
 
         if (fromTime < from0600) {
+            // start before 0600
             lowerRateHours += Math.min(from0600, toTime) - fromTime;
         }
 
         const from2400 = from.setHours(24, 0, 0, 0);
 
-        if ((fromTime < from2000 && toTime > from2000) || fromTime > from2000) {
+        if (
+            (fromTime <= from2000 && toTime > from2000) ||
+            fromTime > from2000
+        ) {
+            // from 2000 to midnight
             lowerRateHours +=
                 Math.min(toTime, from2400) - Math.max(from2000, fromTime);
         }
 
         if (toTime > from2400) {
+            // from midnight to 0600
             lowerRateHours +=
                 Math.min(toTime, toObj.setHours(6, 0, 0, 0)) - from2400;
         }
@@ -72,6 +78,7 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
         const to2000 = toObj.setHours(20, 0, 0, 0);
 
         if (toTime > to2000 && to2000 > from2400) {
+            // end after 2000
             lowerRateHours += toTime - Math.max(to2000, fromTime);
         }
     }

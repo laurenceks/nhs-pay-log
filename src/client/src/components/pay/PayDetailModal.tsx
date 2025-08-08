@@ -9,11 +9,11 @@ const PayDetailModal = () => {
     const navigate = useNavigate();
     const [show, setShow] = useState(true);
     const { employmentId, payMonth } = useParams({
-        from: "/_private/_table/pay/$employmentId/$payMonth",
+        from: "/_private/_nav/_table/pay/$employmentId/$payMonth",
     });
 
     const { pay: allPay } = useLoaderData({
-        from: "/_private/_table/pay",
+        from: "/_private/_nav/_table/pay",
     });
 
     const foundIndex = allPay.findIndex(

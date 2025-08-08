@@ -45,10 +45,12 @@ const ShiftEditModal = ({
     setShowDeleteModal: Dispatch<SetStateAction<boolean>>;
     setShow: Dispatch<SetStateAction<boolean>>;
 }) => {
-    const { log, contracts } = useLoaderData({ from: "/_private/_table/log" });
+    const { log, contracts } = useLoaderData({
+        from: "/_private/_nav/_table/log",
+    });
     const { extras, payBands } = useLoaderData({ from: "/_private" });
     const shift = useLoaderData({
-        from: "/_private/_table/log/$shiftId",
+        from: "/_private/_nav/_table/log/$shiftId",
     });
 
     const { updatedExtras, updatedExtrasGroupIds, filteredExtras } =

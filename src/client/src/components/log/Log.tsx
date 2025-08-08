@@ -22,7 +22,7 @@ const getDefaultDateFilter = () => {
 // eslint-disable-next-line react/display-name
 const Log = memo(({ disabled }: { disabled: boolean }) => {
     const navigate = useNavigate();
-    const { displayLog } = useLoaderData({ from: "/_private/_table/log" });
+    const { displayLog } = useLoaderData({ from: "/_private/_nav/_table/log" });
     const [showFilters, setShowFilters] = useState(false);
     const [aggregation, setAggregation] = useState<Aggregations | null>(null);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([

@@ -1,9 +1,9 @@
+import { stripQueryOptionsForEnsureQuery } from "../../../../../queries/queryUtils";
 import { createFileRoute } from "@tanstack/react-router";
 import { memo } from "react";
-import Pay from "../../../../components/pay/Pay";
-import { ParsedApiPay } from "../../../../../../../types/commonTypes";
-import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
-import { getPayQueryOptions } from "../../../../queries/payQueries";
+import Pay from "../../../../../components/pay/Pay";
+import { ParsedApiPay } from "../../../../../../../../types/commonTypes";
+import { getPayQueryOptions } from "../../../../../queries/payQueries";
 import { TaxYear } from "@saving-tool/hmrc-income-tax/lib/types";
 import {
     calculateEmployeeNationalInsurance,
@@ -12,7 +12,7 @@ import {
     calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
 
-export const Route = createFileRoute("/_private/_table/pay")({
+export const Route = createFileRoute("/_private/_nav/_table/pay")({
     component: memo(Pay),
     loader: async ({ context }) => {
         const pay: ParsedApiPay[] =

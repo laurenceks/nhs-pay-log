@@ -20,7 +20,7 @@ import { Aggregations } from "../../../../../types/commonTypes";
 
 const Pay = () => {
     const navigate = useNavigate();
-    const { pay } = useLoaderData({ from: "/_private/_table/pay" });
+    const { pay } = useLoaderData({ from: "/_private/_nav/_table/pay" });
     const columns = useMemo(() => payTableColumnsDef, []);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

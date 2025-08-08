@@ -10,7 +10,9 @@ import { Modal } from "react-bootstrap";
 const ShiftEdit = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>("");
-    const { shiftId } = useParams({ from: "/_private/_table/log/$shiftId" });
+    const { shiftId } = useParams({
+        from: "/_private/_nav/_table/log/$shiftId",
+    });
 
     const { mutateAsync, isPending } = useMutation({
         ...deleteLogShiftMutationOptions(Number(shiftId)),

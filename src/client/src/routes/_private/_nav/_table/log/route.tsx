@@ -1,15 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { memo } from "react";
-import Log from "../../../../components/log/Log";
-import { ParsedApiShift } from "../../../../../../../types/commonTypes";
-import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
-import { getLogQueryOptions } from "../../../../queries/logQueries";
-import { getContractsQueryOptions } from "../../../../queries/contractQueries";
-import { msToDecimalHours } from "../../../../../../shared/utils/conversions";
-import { formatDate } from "../../../../../../shared/utils/formatDates";
+import Log from "../../../../../components/log/Log";
+import { ParsedApiShift } from "../../../../../../../../types/commonTypes";
+import { stripQueryOptionsForEnsureQuery } from "../../../../../queries/queryUtils";
+import { getLogQueryOptions } from "../../../../../queries/logQueries";
+import { formatDate } from "../../../../../../../shared/utils/formatDates";
 import { roundTo } from "round-to";
+import { msToDecimalHours } from "../../../../../../../shared/utils/conversions";
+import { getContractsQueryOptions } from "../../../../../queries/contractQueries";
 
-export const Route = createFileRoute("/_private/_table/log")({
+export const Route = createFileRoute("/_private/_nav/_table/log")({
     component: memo(Log),
     loader: async ({ context }) => {
         const log: ParsedApiShift[] =

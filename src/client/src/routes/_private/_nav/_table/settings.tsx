@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Settings from "../../../components/settings/Settings";
-import { stripQueryOptionsForEnsureQuery } from "../../../queries/queryUtils";
-import { getContractsQueryOptions } from "../../../queries/contractQueries";
-import { getEmploymentsQueryOptions } from "../../../queries/employmentQueries";
+import Settings from "../../../../components/settings/Settings";
+import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
+import { getContractsQueryOptions } from "../../../../queries/contractQueries";
+import { getEmploymentsQueryOptions } from "../../../../queries/employmentQueries";
 
-export const Route = createFileRoute("/_private/_table/settings")({
+export const Route = createFileRoute("/_private/_nav/_table/settings")({
     component: Settings,
     loader: async ({ context }) => {
         const contracts = (

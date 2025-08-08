@@ -1,19 +1,22 @@
+import { stripQueryOptionsForEnsureQuery } from "../../../../../queries/queryUtils";
+import { getLogShiftQueryOptions } from "../../../../../queries/logQueries";
 import { createFileRoute } from "@tanstack/react-router";
-import { ClientShift, Contract } from "../../../../../../../types/commonTypes";
-import { stripQueryOptionsForEnsureQuery } from "../../../../queries/queryUtils";
-import { getLogShiftQueryOptions } from "../../../../queries/logQueries";
-import { formatDate } from "../../../../../../shared/utils/formatDates";
-import { ApiResponse } from "../../../../../../../types/responseTypes";
-import { updateShiftContract } from "../../../../../../shared/utils/updateShiftContract";
+import { memo } from "react";
+import ShiftEdit from "../../../../../components/shiftEdit/ShiftEdit";
+import {
+    ClientShift,
+    Contract,
+} from "../../../../../../../../types/commonTypes";
+import { formatDate } from "../../../../../../../shared/utils/formatDates";
+import { queryClient } from "../../../../../../../shared/queryClient";
+import { ApiResponse } from "../../../../../../../../types/responseTypes";
+import { updateShiftContract } from "../../../../../../../shared/utils/updateShiftContract";
 import {
     financialYear,
     flowersPayMonth,
-} from "../../../../../../shared/calculations/payDates";
-import { memo } from "react";
-import ShiftEdit from "../../../../components/shiftEdit/ShiftEdit";
-import { queryClient } from "../../../../../../shared/queryClient";
+} from "../../../../../../../shared/calculations/payDates";
 
-export const Route = createFileRoute("/_private/_table/log/$shiftId")({
+export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
     component: memo(ShiftEdit),
     loader: async ({ params, context }): Promise<ClientShift> => {
         if (params.shiftId !== "new") {

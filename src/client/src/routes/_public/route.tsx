@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import PageMargin from "../../components/common/PageMargin";
 
 export const Route = createFileRoute("/_public")({
     beforeLoad: async ({ context, location }) => {
@@ -11,8 +12,8 @@ export const Route = createFileRoute("/_public")({
         }
     },
     component: () => (
-        <div className="p-3 minh-100">
+        <PageMargin>
             <Outlet />
-        </div>
+        </PageMargin>
     ),
 });

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import PageMargin from "../../../components/common/PageMargin";
+import PageMargin from "../../../../components/common/PageMargin";
 
 export const Route = createFileRoute("/_private/_nav/_margin")({
     component: () => (

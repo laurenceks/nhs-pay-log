@@ -46,6 +46,8 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 snsc: 0,
                 ooamb: 0,
                 oowmb: 0,
+                overrun: false,
+                sick: false,
             };
         }
         if (j < data.length && data[j].date === dateString) {
@@ -66,14 +68,16 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 data[j].type === "AL" ||
                 data[j].type === "AL (relief)" ||
                 data[j].type === "Absent (TOIL)" ||
-                data[j].type === "Absent (TOIL relief)"
+                data[j].type === "Absent (TOIL relief)" ||
+                data[j].type === "Sick"
             ) {
-                const isToil =
+                const absent =
                     data[j].type === "Absent (TOIL)" ||
-                    data[j].type === "Absent (TOIL relief)";
+                    data[j].type === "Absent (TOIL relief)" ||
+                    data[j].type === "Sick";
 
                 rows[i].absences.push({
-                    label: `${isToil ? "ABSENT" : "A/LEAVE"} (${msToFormattedHours(data[j].absent_hours)})`,
+                    label: `${absent ? "ABSENT" : "A/LEAVE"} (${msToFormattedHours(data[j].absent_hours)})`,
                     toil:
                         data[j].type === "Absent (TOIL)" ||
                         data[j].type === "Absent (TOIL relief)",
@@ -90,6 +94,9 @@ export const getTimesheet = async (req: Request, res: Response) => {
             rows[i].oowmb += data[j].oowmb;
             rows[i].ooamb += data[j].ooamb;
             rows[i].snsc += data[j].snsc;
+            rows[i].overrun =
+                rows[i].overrun || data[j].planned_end !== data[j].actual_end;
+            rows[i].sick = rows[i].sick || data[j].type === "Sick";
 
             if (data[j + 1]?.date !== dateString) {
                 d.setDate(d.getDate() + 1);

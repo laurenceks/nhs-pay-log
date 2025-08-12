@@ -72,6 +72,8 @@ export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
                 type: "Normal",
                 pay_id_override: null,
                 weekly_hours: onlyContract?.weekly_hours || 37.5,
+                absent_hours: 0,
+                overrun_hours: 0,
             };
         }
     },

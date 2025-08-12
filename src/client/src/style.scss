@@ -111,3 +111,55 @@ table.pay-details-table {
         }
     }
 }
+
+table.table-timesheet {
+    font:
+        12px Tahoma,
+        Geneva,
+        sans-serif;
+    font-family: "Segoe UI" !important;
+    font-size: 14px !important;
+    > thead {
+        > tr > th {
+            border: 1px solid #a3c0e8;
+            background: #e2f0ff;
+            padding: 5px;
+            text-align: center;
+            color: #283b56;
+            font-weight: normal;
+        }
+    }
+    > tbody {
+        > tr {
+            > td {
+                border: 1px solid #bed6f6;
+                color: #000000;
+                &.table-timesheet-rest-day {
+                    background-color: #c0c0c0;
+                }
+                &.table-timesheet-time {
+                    text-align: center;
+                }
+                &.table-timesheet-overrun {
+                    position: relative;
+                    border: 2px solid red;
+                    &:after {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        background-color: red;
+                        width: 5px;
+                        height: 7px;
+                        content: "";
+                    }
+                }
+                &.table-timesheet-absence {
+                    background-color: #00ffff;
+                }
+                &.table-timesheet-sick {
+                    background-color: #00ff00;
+                }
+            }
+        }
+    }
+}

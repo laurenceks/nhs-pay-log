@@ -5,11 +5,13 @@ import contractRoutes from "./contractRoutes";
 import extraRoutes from "./extraRoutes";
 import payBandRoutes from "./payBandRoutes";
 import payRoutes from "./payRoutes";
+import timesheetRoutes from "./timesheetRoutes";
 
 const router = Router();
 
 router.use("/log", logRoutes);
 router.use("/pay", payRoutes);
+router.use("/timesheet", timesheetRoutes);
 router.use("/employment", employmentRoutes);
 router.use("/contract", contractRoutes);
 router.use("/extra", extraRoutes);

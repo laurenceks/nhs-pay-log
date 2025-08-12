@@ -3,6 +3,14 @@ import { roundTo } from "round-to";
 export const msToDecimalHours = (timeInMs: number) => timeInMs / 3600000;
 export const msToTableFormat = (timeInMs: number) =>
     roundTo(msToDecimalHours(timeInMs), 3);
+
+export const msToFormattedHours = (timeInMs: number) => {
+    const sign = timeInMs < 0 ? "-" : "";
+    const totalMinutes = Math.floor(Math.abs(timeInMs) / 60000);
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return `${sign}${h}:${String(m).padStart(2, "0")}`;
+};
 export const decimalHoursToMs = (timeInHrs: number) =>
     roundTo(timeInHrs * 3600000, 0);
 

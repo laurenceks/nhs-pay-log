@@ -85,7 +85,8 @@ export const getTimesheet = async (req: Request, res: Response) => {
             rows[i].toil += data[j].toil;
             rows[i].lowerRate += data[j].lower_rate;
             rows[i].higherRate += data[j].higher_rate;
-            rows[i].totalUsh += data[j].lower_rate + data[j].higher_rate;
+            rows[i].totalUsh += data[j].total_ush;
+            rows[i].absentHours += data[j].absent_hours;
 
             if (data[j + 1]?.date !== dateString) {
                 d.setDate(d.getDate() + 1);

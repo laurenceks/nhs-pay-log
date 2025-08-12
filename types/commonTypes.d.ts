@@ -84,6 +84,9 @@ export interface TimesheetShift
     > {
     type: ShiftTypes | "Rest day";
     total_ush: number;
+    snsc: number;
+    ooamb: number;
+    oowmb: number;
 }
 
 export type ApiTimesheet = {

@@ -71,6 +71,13 @@ export interface ClientShift extends AdditionalHours, USH, ShiftEdit {
     // mileageLocation: string;
     // mileageType: string;
 }
+
+export type TimesheetOption = {
+    employment_id: Employment["id"];
+    employment_name: ApiShift["employment_name"];
+    timesheet_month: string;
+    label: string;
+};
 export interface TimesheetShift
     extends Omit<
         ClientShift,
@@ -102,6 +109,8 @@ export type ApiTimesheet = {
     higherRate: number;
     totalUsh: number;
     absentHours: number;
+    overrun: boolean;
+    sick: boolean;
     snsc: number;
     ooamb: number;
     oowmb: number;

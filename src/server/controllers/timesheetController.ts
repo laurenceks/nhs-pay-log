@@ -15,7 +15,7 @@ export const getTimesheets = async (req: Request, res: Response) => {
 };
 export const getTimesheet = async (req: Request, res: Response) => {
     const d = new Date(`20${req.params.timesheetMonth}-01T00:00:00`);
-    console.log(d);
+
     const data = await readTimesheetByUserIdEmploymentIdAndTimesheetMonth(
         req.authenticatedUser.id,
         req.params.employmentId,
@@ -87,6 +87,9 @@ export const getTimesheet = async (req: Request, res: Response) => {
             rows[i].higherRate += data[j].higher_rate;
             rows[i].totalUsh += data[j].total_ush;
             rows[i].absentHours += data[j].absent_hours;
+            rows[i].oowmb += data[j].oowmb;
+            rows[i].ooamb += data[j].ooamb;
+            rows[i].snsc += data[j].snsc;
 
             if (data[j + 1]?.date !== dateString) {
                 d.setDate(d.getDate() + 1);

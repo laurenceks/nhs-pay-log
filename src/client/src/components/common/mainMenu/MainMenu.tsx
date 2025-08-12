@@ -26,9 +26,17 @@ const MainMenu = () => {
                         to={"/pay"}
                         buttonVariant="success"
                         tooltipVariant="success"
-                        tooltipText="See each month's pay"
+                        tooltipText="View pay summaries"
                     >
                         Pay
+                    </MainMenuButton>
+                    <MainMenuButton
+                        to={"/timesheet"}
+                        buttonVariant="info"
+                        tooltipVariant="info"
+                        tooltipText="View monthly timesheets"
+                    >
+                        Timesheets
                     </MainMenuButton>
                     <MainMenuButton
                         to={"/settings"}

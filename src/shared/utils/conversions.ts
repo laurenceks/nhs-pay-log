@@ -9,7 +9,7 @@ export const msToFormattedHours = (timeInMs: number) => {
     const totalMinutes = Math.floor(Math.abs(timeInMs) / 60000);
     const h = Math.floor(totalMinutes / 60);
     const m = totalMinutes % 60;
-    return `${sign}${h}:${String(m).padStart(2, "0")}`;
+    return `${sign}${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 };
 export const decimalHoursToMs = (timeInHrs: number) =>
     roundTo(timeInHrs * 3600000, 0);

@@ -91,7 +91,7 @@ export type ApiTimesheet = {
     plannedShifts: { label: string; ot: boolean }[];
     actualShifts: { label: string; overrun: boolean }[];
     absences: { label: string; toil: boolean }[];
-    additional_hours: number;
+    additionalHours: number;
     timeAndHalf: number;
     double: number;
     toil: number;

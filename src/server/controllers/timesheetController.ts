@@ -42,6 +42,7 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 lowerRate: 0,
                 higherRate: 0,
                 totalUsh: 0,
+                absentHours: 0,
                 snsc: 0,
                 ooamb: 0,
                 oowmb: 0,
@@ -70,9 +71,9 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 const isToil =
                     data[j].type === "Absent (TOIL)" ||
                     data[j].type === "Absent (TOIL relief)";
-                //TODO save absence hours in db?
+
                 rows[i].absences.push({
-                    label: `${isToil ? "ABSENT" : "A/LEAVE"} (${msToFormattedHours(data[j].planned_duration > 21600000 ? data[j].planned_duration - 1800000 : data[j].planned_duration)})}`,
+                    label: `${isToil ? "ABSENT" : "A/LEAVE"} (${msToFormattedHours(data[j].absent_hours)})`,
                     toil:
                         data[j].type === "Absent (TOIL)" ||
                         data[j].type === "Absent (TOIL relief)",

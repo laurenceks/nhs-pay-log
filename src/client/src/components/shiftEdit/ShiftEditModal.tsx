@@ -69,6 +69,8 @@ const ShiftEditModal = ({
         flat: 0,
         time_and_half: 0,
         double: 0,
+        absent_hours: 0,
+        overrun_hours: 0,
     });
 
     const filteredPayBands = filterOptionsByDate<PayBand>(
@@ -174,6 +176,8 @@ const ShiftEditModal = ({
                 flat: 0,
                 toil: 0,
                 time_and_half: 0,
+                absent_hours: 0,
+                overrun_hours: 0,
             });
         }
     }, [editState]);
@@ -411,6 +415,10 @@ const ShiftEditModal = ({
                         <ShiftEditModalCalculation
                             label="Double"
                             value={ushState.double}
+                        />
+                        <ShiftEditModalCalculation
+                            label="Absent"
+                            value={ushState.absent_hours}
                         />
                         <ShiftEditModalCalculation
                             label="Extra pay"

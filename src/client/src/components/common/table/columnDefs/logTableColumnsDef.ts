@@ -113,6 +113,16 @@ export const logTableColumnsDef: ColumnDef<ParsedApiShift>[] = [
         },
     },
     {
+        header: "Absent",
+        accessorKey: "absent_hours",
+        filterFn: "inNumberRange",
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
+    },
+    {
         header: "Extra pay",
         accessorKey: "extra_pay",
         accessorFn: (row) => row.extra_pay,

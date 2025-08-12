@@ -53,6 +53,11 @@ export const Route = createFileRoute("/_private/_nav/_table/log")({
                     ),
                     higher_rate: roundTo(msToDecimalHours(x.higher_rate), 3),
                     double: roundTo(msToDecimalHours(x.double), 3),
+                    absent_hours: roundTo(msToDecimalHours(x.absent_hours), 3),
+                    overrun_hours: roundTo(
+                        msToDecimalHours(x.overrun_hours),
+                        3
+                    ),
                 };
             }) || [];
 

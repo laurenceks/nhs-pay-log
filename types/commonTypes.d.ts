@@ -52,6 +52,8 @@ export type AdditionalHours = {
     time_and_half: number;
     toil: number;
     double: number;
+    absent_hours: number;
+    overrun_hours: number;
 };
 
 export type CalculatedHours = USH & AdditionalHours;
@@ -69,6 +71,38 @@ export interface ClientShift extends AdditionalHours, USH, ShiftEdit {
     // mileageLocation: string;
     // mileageType: string;
 }
+export interface TimesheetShift
+    extends Omit<
+        ClientShift,
+        | "from"
+        | "planned_to"
+        | "actual_to"
+        | "selectedExtras"
+        | "extras_ids_string"
+        | "contract_id"
+        | "weekly_hours"
+    > {
+    type: ShiftTypes | "Rest day";
+    total_ush: number;
+}
+
+export type ApiTimesheet = {
+    date: string;
+    plannedShifts: { label: string; ot: boolean }[];
+    actualShifts: { label: string; overrun: boolean }[];
+    absences: { label: string; toil: boolean }[];
+    additional_hours: number;
+    timeAndHalf: number;
+    double: number;
+    toil: number;
+    lowerRate: number;
+    higherRate: number;
+    totalUsh: number;
+    absentHours: number;
+    snsc: number;
+    ooamb: number;
+    oowmb: number;
+};
 
 interface ShiftStringToNumberKeys {
     extra_hours: string;
@@ -77,6 +111,8 @@ interface ShiftStringToNumberKeys {
     rate: string;
     shift_pay: string;
     total_ush: string;
+    absent_hours: string;
+    overrun_hours: string;
 }
 interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
     pensionable_pay: string;

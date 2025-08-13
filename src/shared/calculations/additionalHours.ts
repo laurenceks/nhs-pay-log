@@ -12,8 +12,10 @@ import {
     ShiftEdit,
     ShiftTypes,
 } from "../../../types/commonTypes";
-
-const additionalHoursShiftTypes = ["OT", "TOIL", "Bank"];
+import {
+    absentShiftTypes,
+    additionalHoursShiftTypes,
+} from "../utils/shiftTypes";
 
 export const calculateCumulativeAdditionalHours = (
     from: Date,
@@ -144,7 +146,13 @@ export const calculateAdditionalHours = (
                 ? 0
                 : calculateShiftLength(planned_to, overrunTo);
 
-        if (paidAdditionalHours || overrunHours) {
+        if (absentShiftTypes.includes(type)) {
+            const { fromObj, toObj } = makeToAlwaysLater(from, planned_to);
+            additionalHoursBreakdown.absent_hours = calculateShiftHours(
+                fromObj,
+                toObj
+            );
+        } else if (paidAdditionalHours || overrunHours) {
             const weeklyOtThresholdHours =
                 1.35e8 -
                 (weekly_hours && weekly_hours !== 0
@@ -210,18 +218,6 @@ export const calculateAdditionalHours = (
                     additionalHoursBreakdown.toil += overrunHours;
                 }
             }
-        } else if (
-            type === "AL" ||
-            type === "AL (relief)" ||
-            type === "Absent (TOIL)" ||
-            type === "Absent (TOIL relief)" ||
-            type === "Sick"
-        ) {
-            const { fromObj, toObj } = makeToAlwaysLater(from, planned_to);
-            additionalHoursBreakdown.absent_hours = calculateShiftHours(
-                fromObj,
-                toObj
-            );
         }
     }
 

@@ -35,6 +35,7 @@ import { logShiftValidationSchema } from "../../../../shared/validationSchemas/l
 import { overrunTypeList, typeList } from "../../../../shared/lists";
 import ShiftEditModalListOptions from "./ShiftEditModalListOptions";
 import { decimalHoursToMs } from "../../../../shared/utils/conversions";
+import { absentShiftTypes } from "../../../../shared/utils/shiftTypes";
 
 const ShiftEditModal = ({
     setToastMessage,
@@ -391,41 +392,49 @@ const ShiftEditModal = ({
                     </Form>
                     <div className="d-flex flex-wrap">
                         <ShiftEditModalCalculation
-                            label="TOIL"
-                            value={ushState.toil}
+                            label={
+                                absentShiftTypes.includes(editState.type)
+                                    ? "Absent"
+                                    : "TOIL"
+                            }
+                            value={
+                                absentShiftTypes.includes(editState.type)
+                                    ? ushState.absent_hours
+                                    : ushState.toil
+                            }
                         />
-                        <ShiftEditModalCalculation
-                            label="Lower rate"
-                            value={ushState.lower_rate}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Higher rate"
-                            value={ushState.higher_rate}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Flat"
-                            value={ushState.flat}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Time and a half"
-                            value={ushState.time_and_half}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Double"
-                            value={ushState.double}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Absent"
-                            value={ushState.absent_hours}
-                        />
-                        <ShiftEditModalCalculation
-                            label="Extra pay"
-                            value={calculateExtraPay({
-                                ...editState,
-                                ...ushState,
-                            })}
-                            currency
-                        />
+                        {!absentShiftTypes.includes(editState.type) && (
+                            <>
+                                <ShiftEditModalCalculation
+                                    label="Lower rate"
+                                    value={ushState.lower_rate}
+                                />
+                                <ShiftEditModalCalculation
+                                    label="Higher rate"
+                                    value={ushState.higher_rate}
+                                />
+                                <ShiftEditModalCalculation
+                                    label="Flat"
+                                    value={ushState.flat}
+                                />
+                                <ShiftEditModalCalculation
+                                    label="Time and a half"
+                                    value={ushState.time_and_half}
+                                />
+                                <ShiftEditModalCalculation
+                                    label="Double"
+                                    value={ushState.double}
+                                />
+                                <ShiftEditModalCalculation
+                                    label="Extra pay"
+                                    value={calculateExtraPay({
+                                        ...editState,
+                                        ...ushState,
+                                    })}
+                                    currency
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
             </Modal.Body>

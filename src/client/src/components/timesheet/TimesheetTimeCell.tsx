@@ -2,7 +2,7 @@ import { msToFormattedHours } from "../../../../shared/utils/conversions";
 
 const TimesheetTimeCell = ({ value }: { value: number }) => {
     return (
-        <td className="table-timesheet-time">
+        <td className="text-center">
             {value ? msToFormattedHours(value) : ""}
         </td>
     );

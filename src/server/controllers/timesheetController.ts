@@ -25,12 +25,29 @@ export const getTimesheet = async (req: Request, res: Response) => {
     const days = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
     let i = 0;
     let j = 0;
-    const rows: ApiTimesheet[] = [];
+    const timesheet: ApiTimesheet = {
+        rows: [],
+        totals: {
+            absentHours: 0,
+            actualHours: 0,
+            additionalHours: 0,
+            double: 0,
+            higherRate: 0,
+            lowerRate: 0,
+            ooamb: 0,
+            oowmb: 0,
+            plannedHours: 0,
+            snsc: 0,
+            timeAndHalf: 0,
+            toil: 0,
+            totalUsh: 0,
+        },
+    };
 
     while (i < days) {
         const dateString = formatDate(d, "yyyy-mm-dd");
-        if (!rows[i]) {
-            rows[i] = {
+        if (!timesheet.rows[i]) {
+            timesheet.rows[i] = {
                 date: dateString,
                 plannedShifts: [],
                 actualShifts: [],
@@ -58,11 +75,11 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 data[j].type === "OT" ||
                 data[j].type === "TOIL"
             ) {
-                rows[i].plannedShifts.push({
+                timesheet.rows[i].plannedShifts.push({
                     label: `${data[j].start}-${data[j].planned_end}`,
                     ot: data[j].type === "OT",
                 });
-                rows[i].actualShifts.push({
+                timesheet.rows[i].actualShifts.push({
                     label: `${data[j].start}-${data[j].actual_end}`,
                     overrun: data[j].planned_end !== data[j].actual_end,
                 });
@@ -78,29 +95,45 @@ export const getTimesheet = async (req: Request, res: Response) => {
                     data[j].type === "Absent (TOIL relief)" ||
                     data[j].type === "Sick";
 
-                rows[i].absences.push({
+                timesheet.rows[i].absences.push({
                     label: `${absent ? "ABSENT" : "A/LEAVE"} (${msToFormattedHours(data[j].absent_hours)})`,
                     toil:
                         data[j].type === "Absent (TOIL)" ||
                         data[j].type === "Absent (TOIL relief)",
                 });
             }
-            rows[i].additionalHours += data[j].additional_hours;
-            rows[i].plannedHours += data[j].planned_hours;
-            rows[i].actualHours += data[j].actual_hours;
-            rows[i].timeAndHalf += data[j].time_and_half;
-            rows[i].double += data[j].double;
-            rows[i].toil += data[j].toil;
-            rows[i].lowerRate += data[j].lower_rate;
-            rows[i].higherRate += data[j].higher_rate;
-            rows[i].totalUsh += data[j].total_ush;
-            rows[i].absentHours += data[j].absent_hours;
-            rows[i].oowmb += data[j].oowmb;
-            rows[i].ooamb += data[j].ooamb;
-            rows[i].snsc += data[j].snsc;
-            rows[i].overrun =
-                rows[i].overrun || data[j].planned_end !== data[j].actual_end;
-            rows[i].sick = rows[i].sick || data[j].type === "Sick";
+            timesheet.rows[i].additionalHours += data[j].additional_hours;
+            timesheet.rows[i].plannedHours += data[j].planned_hours;
+            timesheet.rows[i].actualHours += data[j].actual_hours;
+            timesheet.rows[i].timeAndHalf += data[j].time_and_half;
+            timesheet.rows[i].double += data[j].double;
+            timesheet.rows[i].toil += data[j].toil;
+            timesheet.rows[i].lowerRate += data[j].lower_rate;
+            timesheet.rows[i].higherRate += data[j].higher_rate;
+            timesheet.rows[i].totalUsh += data[j].total_ush;
+            timesheet.rows[i].absentHours += data[j].absent_hours;
+            timesheet.rows[i].oowmb += data[j].oowmb;
+            timesheet.rows[i].ooamb += data[j].ooamb;
+            timesheet.rows[i].snsc += data[j].snsc;
+            timesheet.rows[i].overrun =
+                timesheet.rows[i].overrun ||
+                data[j].planned_end !== data[j].actual_end;
+            timesheet.rows[i].sick =
+                timesheet.rows[i].sick || data[j].type === "Sick";
+
+            timesheet.totals.additionalHours += data[j].additional_hours;
+            timesheet.totals.plannedHours += data[j].planned_hours;
+            timesheet.totals.actualHours += data[j].actual_hours;
+            timesheet.totals.timeAndHalf += data[j].time_and_half;
+            timesheet.totals.double += data[j].double;
+            timesheet.totals.toil += data[j].toil;
+            timesheet.totals.lowerRate += data[j].lower_rate;
+            timesheet.totals.higherRate += data[j].higher_rate;
+            timesheet.totals.totalUsh += data[j].total_ush;
+            timesheet.totals.absentHours += data[j].absent_hours;
+            timesheet.totals.oowmb += data[j].oowmb;
+            timesheet.totals.ooamb += data[j].ooamb;
+            timesheet.totals.snsc += data[j].snsc;
 
             if (data[j + 1]?.date !== dateString) {
                 d.setDate(d.getDate() + 1);
@@ -114,6 +147,6 @@ export const getTimesheet = async (req: Request, res: Response) => {
     }
 
     sendRes(res, {
-        data: rows,
+        data: timesheet,
     });
 };

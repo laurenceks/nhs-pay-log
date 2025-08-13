@@ -113,11 +113,7 @@ table.pay-details-table {
 }
 
 table.table-timesheet {
-    font:
-        12px Tahoma,
-        Geneva,
-        sans-serif;
-    font-family: "Segoe UI" !important;
+    font-family: "Segoe UI", "Tahoma", Tahoma, sans-serif !important;
     font-size: 14px !important;
     > thead {
         > tr > th {
@@ -137,9 +133,6 @@ table.table-timesheet {
                 &.table-timesheet-rest-day {
                     background-color: #c0c0c0;
                 }
-                &.table-timesheet-time {
-                    text-align: center;
-                }
                 &.table-timesheet-overrun {
                     position: relative;
                     border: 2px solid red;
@@ -153,13 +146,26 @@ table.table-timesheet {
                         content: "";
                     }
                 }
-                &.table-timesheet-absence {
+                &.table-timesheet-absence,
+                td.table-timesheet-absence {
                     background-color: #00ffff;
                 }
                 &.table-timesheet-sick {
                     background-color: #00ff00;
                 }
+
+                &.table-timesheet-ot,
+                td.table-timesheet-ot {
+                    background-color: red;
+                }
             }
+        }
+    }
+
+    td {
+        padding: 4px 5px;
+        &.table-timesheet-nested {
+            padding: 0;
         }
     }
 }

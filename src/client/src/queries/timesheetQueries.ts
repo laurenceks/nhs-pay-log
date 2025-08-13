@@ -11,7 +11,7 @@ export const getTimesheetFetch = async (
     employmentId: number,
     payMonth: string
 ) => {
-    return await fetchJson<ApiTimesheet[]>(
+    return await fetchJson<ApiTimesheet>(
         `/api/v1/private/timesheet/${employmentId}/${payMonth}`
     );
 };

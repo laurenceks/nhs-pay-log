@@ -9,7 +9,7 @@ export const Route = createFileRoute(
     "/_private/_nav/_table/timesheet/$employmentId/$payMonth"
 )({
     loader: async ({ context, params }) => {
-        const timesheet: ApiTimesheet[] = (
+        const timesheet: ApiTimesheet = (
             await context.queryClient.ensureQueryData(
                 stripQueryOptionsForEnsureQuery(
                     getTimesheetQueryOptions(

@@ -5,7 +5,9 @@ import TimesheetTimeCell from "./TimesheetTimeCell";
 import TimesheetExtraCell from "./TimesheetExtraCell";
 
 const Timesheet = () => {
-    const { timesheet } = useLoaderData({
+    const {
+        timesheet: { rows, totals },
+    } = useLoaderData({
         from: "/_private/_nav/_table/timesheet/$employmentId/$payMonth",
     });
 
@@ -30,44 +32,57 @@ const Timesheet = () => {
                 </tr>
             </thead>
             <tbody>
-                {timesheet.map((timesheet) => {
+                {rows.map((row) => {
                     return (
-                        <tr key={timesheet.date}>
-                            <td>
-                                {formatDate(timesheet.date, "dd/mm/yyyy (ddd)")}
-                            </td>
+                        <tr key={row.date}>
+                            <td>{formatDate(row.date, "dd/mm/yyyy (ddd)")}</td>
                             <TimesheetNestedCell
-                                shifts={timesheet.plannedShifts}
+                                shifts={row.plannedShifts}
                                 restDay={
-                                    !timesheet.plannedShifts.length &&
-                                    !timesheet.actualShifts.length &&
-                                    !timesheet.absences.length
+                                    !row.plannedShifts.length &&
+                                    !row.actualShifts.length &&
+                                    !row.absences.length
                                 }
+                                planned
                             />
                             <TimesheetNestedCell
-                                shifts={timesheet.actualShifts}
-                                overrun={timesheet.overrun}
+                                shifts={row.actualShifts}
+                                overrun={row.overrun}
                             />
                             <TimesheetNestedCell
-                                shifts={timesheet.absences}
-                                absence={!!timesheet.absences.length}
-                                sick={timesheet.sick}
+                                shifts={row.absences}
+                                absence={!!row.absences.length}
+                                sick={row.sick}
                             />
-                            <TimesheetTimeCell
-                                value={timesheet.additionalHours}
-                            />
-                            <TimesheetTimeCell value={timesheet.timeAndHalf} />
-                            <TimesheetTimeCell value={timesheet.double} />
-                            <TimesheetTimeCell value={timesheet.toil} />
-                            <TimesheetTimeCell value={timesheet.lowerRate} />
-                            <TimesheetTimeCell value={timesheet.higherRate} />
-                            <TimesheetTimeCell value={timesheet.totalUsh} />
-                            <TimesheetExtraCell value={timesheet.snsc} />
-                            <TimesheetExtraCell value={timesheet.ooamb} />
-                            <TimesheetExtraCell value={timesheet.oowmb} />
+                            <TimesheetTimeCell value={row.additionalHours} />
+                            <TimesheetTimeCell value={row.timeAndHalf} />
+                            <TimesheetTimeCell value={row.double} />
+                            <TimesheetTimeCell value={row.toil} />
+                            <TimesheetTimeCell value={row.lowerRate} />
+                            <TimesheetTimeCell value={row.higherRate} />
+                            <TimesheetTimeCell value={row.totalUsh} />
+                            <TimesheetExtraCell value={row.snsc} />
+                            <TimesheetExtraCell value={row.ooamb} />
+                            <TimesheetExtraCell value={row.oowmb} />
                         </tr>
                     );
                 })}
+                <tr>
+                    <td></td>
+                    <TimesheetTimeCell value={totals.plannedHours} />
+                    <TimesheetTimeCell value={totals.actualHours} />
+                    <TimesheetTimeCell value={totals.absentHours} />
+                    <TimesheetTimeCell value={totals.additionalHours} />
+                    <TimesheetTimeCell value={totals.timeAndHalf} />
+                    <TimesheetTimeCell value={totals.double} />
+                    <TimesheetTimeCell value={totals.toil} />
+                    <TimesheetTimeCell value={totals.lowerRate} />
+                    <TimesheetTimeCell value={totals.higherRate} />
+                    <TimesheetTimeCell value={totals.totalUsh} />
+                    <td className="text-center">{totals.snsc || ""}</td>
+                    <td className="text-center">{totals.ooamb || ""}</td>
+                    <td className="text-center">{totals.oowmb || ""}</td>
+                </tr>
             </tbody>
         </table>
     );

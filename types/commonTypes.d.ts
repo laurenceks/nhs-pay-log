@@ -100,25 +100,42 @@ export interface TimesheetShift
 }
 
 export type ApiTimesheet = {
-    date: string;
-    plannedShifts: { label: string; ot: boolean }[];
-    actualShifts: { label: string; overrun: boolean }[];
-    absences: { label: string; toil: boolean }[];
-    additionalHours: number;
-    timeAndHalf: number;
-    double: number;
-    toil: number;
-    lowerRate: number;
-    higherRate: number;
-    totalUsh: number;
-    absentHours: number;
-    plannedHours: number;
-    actualHours: number;
-    overrun: boolean;
-    sick: boolean;
-    snsc: number;
-    ooamb: number;
-    oowmb: number;
+    rows: {
+        date: string;
+        plannedShifts: { label: string; ot: boolean }[];
+        actualShifts: { label: string; overrun: boolean }[];
+        absences: { label: string; toil: boolean }[];
+        additionalHours: number;
+        timeAndHalf: number;
+        double: number;
+        toil: number;
+        lowerRate: number;
+        higherRate: number;
+        totalUsh: number;
+        absentHours: number;
+        plannedHours: number;
+        actualHours: number;
+        overrun: boolean;
+        sick: boolean;
+        snsc: number;
+        ooamb: number;
+        oowmb: number;
+    }[];
+    totals: {
+        additionalHours: number;
+        timeAndHalf: number;
+        double: number;
+        toil: number;
+        lowerRate: number;
+        higherRate: number;
+        totalUsh: number;
+        absentHours: number;
+        plannedHours: number;
+        actualHours: number;
+        snsc: number;
+        ooamb: number;
+        oowmb: number;
+    };
 };
 
 interface ShiftStringToNumberKeys {

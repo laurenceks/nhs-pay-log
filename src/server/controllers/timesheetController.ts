@@ -43,6 +43,8 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 higherRate: 0,
                 totalUsh: 0,
                 absentHours: 0,
+                plannedHours: 0,
+                actualHours: 0,
                 snsc: 0,
                 ooamb: 0,
                 oowmb: 0,
@@ -83,7 +85,9 @@ export const getTimesheet = async (req: Request, res: Response) => {
                         data[j].type === "Absent (TOIL relief)",
                 });
             }
-            rows[i].additionalHours += data[j].flat;
+            rows[i].additionalHours += data[j].additional_hours;
+            rows[i].plannedHours += data[j].planned_hours;
+            rows[i].actualHours += data[j].actual_hours;
             rows[i].timeAndHalf += data[j].time_and_half;
             rows[i].double += data[j].double;
             rows[i].toil += data[j].toil;

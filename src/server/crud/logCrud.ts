@@ -73,9 +73,8 @@ export const readLogWithNoAlternativeEmploymentByUserId = async (
 
 export const createLogShift = async (userId: string, shift: ClientShift) => {
     return await executeWriteByPlaceholders(
-        "INSERT INTO `log` (`user_id`,\n                   `employment_id`,\n                   `date`,\n                   `start`,\n                   `planned_end`,\n                   `actual_end`,\n                   `from`,\n                   `planned_to`,\n                   `actual_to`,\n                   `type`,\n                   `overrun_type`,\n                   `pay_id_override`,\n                   `extras_ids_string`,\n                   `pay_date`,\n                   `pay_month`,\n                   `flowers_pay_month`,\n                   `pay_financial_year`,\n                   `toil`,\n                   `flat`,\n                   `lower_rate`,\n                   `time_and_half`,\n                   `higher_rate`,\n                   `double`,\n                   `absent_hours`,\n                   `overrun_hours`)\nVALUES (:userId,\n        :employment_id,\n        :date,\n        :start,\n        :planned_end,\n        :actual_end,\n        :from,\n        :planned_to,\n        :actual_to,\n        :type,\n        :overrun_type,\n        :pay_id_override,\n        :extras,\n        :pay_date,\n        :pay_month,\n        DATE_FORMAT(DATE_ADD(:pay_date, INTERVAL 1 MONTH), \'%y-%m\'),\n        :pay_financial_year,\n        :toil,\n        :flat,\n        :lower_rate,\n        :time_and_half,\n        :higher_rate,\n        :double,\n        :absent_hours,\n        :overrun_hours)",
+        "INSERT INTO `log` (`user_id`,\n                   `employment_id`,\n                   `date`,\n                   `start`,\n                   `planned_end`,\n                   `actual_end`,\n                   `from`,\n                   `planned_to`,\n                   `actual_to`,\n                   `type`,\n                   `overrun_type`,\n                   `pay_id_override`,\n                   `extras_ids_string`,\n                   `pay_date`,\n                   `pay_month`,\n                   `flowers_pay_month`,\n                   `pay_financial_year`,\n                   `toil`,\n                   `flat`,\n                   `lower_rate`,\n                   `time_and_half`,\n                   `higher_rate`,\n                   `double`)\nVALUES (:userId,\n        :employment_id,\n        :date,\n        :start,\n        :planned_end,\n        :actual_end,\n        :from,\n        :planned_to,\n        :actual_to,\n        :type,\n        :overrun_type,\n        :pay_id_override,\n        :extras,\n        :pay_date,\n        :pay_month,\n        DATE_FORMAT(DATE_ADD(:pay_date, INTERVAL 1 MONTH), \'%y-%m\'),\n        :pay_financial_year,\n        :toil,\n        :flat,\n        :lower_rate,\n        :time_and_half,\n        :higher_rate,\n        :double)",
         {
-            absent_hours: shift.absent_hours,
             actual_end: shift.actual_end,
             actual_to: shift.actual_to,
             date: shift.date,
@@ -87,7 +86,6 @@ export const createLogShift = async (userId: string, shift: ClientShift) => {
             from: shift.from,
             higher_rate: shift.higher_rate,
             lower_rate: shift.lower_rate,
-            overrun_hours: shift.overrun_hours,
             overrun_type: shift.overrun_type,
             pay_date: shift.pay_date,
             pay_financial_year: shift.pay_financial_year,
@@ -109,9 +107,8 @@ export const updateLogShiftByUserIdAndShiftId = async (
     shift: ClientShift
 ) => {
     return await executeWriteByPlaceholders(
-        "UPDATE `log`\nSET `employment_id` = :employment_id,\n    `date` = :date,\n    `start` = :start,\n    `planned_end` = :planned_end,\n    `actual_end` = :actual_end,\n    `from` = :from,\n    `planned_to` = :planned_to,\n    `actual_to` = :actual_to,\n    `type` = :type,\n    `overrun_type` = :overrun_type,\n    `pay_id_override` = :pay_id_override,\n    `pay_date` = :pay_date,\n    `pay_month` = :pay_month,\n    `flowers_pay_month` = DATE_FORMAT(DATE_ADD(:pay_date, INTERVAL 1 MONTH), \'%y-%m\'),\n    `pay_financial_year` = :pay_financial_year,\n    `extras_ids_string` = :extras,\n    `toil` = :toil,\n    `flat` = :flat,\n    `lower_rate` = :lower_rate,\n    `time_and_half` = :time_and_half,\n    `higher_rate` = :higher_rate,\n    `double` = :double,\n    `absent_hours` = :absent_hours,\n    `overrun_hours` = :overrun_hours\nWHERE `user_id` = :userId AND `id` = :id",
+        "UPDATE `log`\nSET `employment_id` = :employment_id,\n    `date` = :date,\n    `start` = :start,\n    `planned_end` = :planned_end,\n    `actual_end` = :actual_end,\n    `from` = :from,\n    `planned_to` = :planned_to,\n    `actual_to` = :actual_to,\n    `type` = :type,\n    `overrun_type` = :overrun_type,\n    `pay_id_override` = :pay_id_override,\n    `pay_date` = :pay_date,\n    `pay_month` = :pay_month,\n    `flowers_pay_month` = DATE_FORMAT(DATE_ADD(:pay_date, INTERVAL 1 MONTH), \'%y-%m\'),\n    `pay_financial_year` = :pay_financial_year,\n    `extras_ids_string` = :extras,\n    `toil` = :toil,\n    `flat` = :flat,\n    `lower_rate` = :lower_rate,\n    `time_and_half` = :time_and_half,\n    `higher_rate` = :higher_rate,\n    `double` = :double\nWHERE `user_id` = :userId AND `id` = :id",
         {
-            absent_hours: shift.absent_hours,
             actual_end: shift.actual_end,
             actual_to: shift.actual_to,
             contract_id: shift.contract_id,
@@ -124,7 +121,6 @@ export const updateLogShiftByUserIdAndShiftId = async (
             higher_rate: shift.higher_rate,
             id: shift.id,
             lower_rate: shift.lower_rate,
-            overrun_hours: shift.overrun_hours,
             overrun_type: shift.overrun_type,
             pay_date: shift.pay_date,
             pay_financial_year: shift.pay_financial_year,

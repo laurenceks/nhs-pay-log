@@ -53,7 +53,6 @@ export type AdditionalHours = {
     toil: number;
     double: number;
     absent_hours: number;
-    overrun_hours: number;
 };
 
 export type CalculatedHours = USH & AdditionalHours;
@@ -91,6 +90,10 @@ export interface TimesheetShift
     > {
     type: ShiftTypes | "Rest day";
     total_ush: number;
+    absent_hours: number;
+    additional_hours: number;
+    planned_hours: number;
+    actual_hours: number;
     snsc: number;
     ooamb: number;
     oowmb: number;
@@ -109,6 +112,8 @@ export type ApiTimesheet = {
     higherRate: number;
     totalUsh: number;
     absentHours: number;
+    plannedHours: number;
+    actualHours: number;
     overrun: boolean;
     sick: boolean;
     snsc: number;
@@ -124,9 +129,9 @@ interface ShiftStringToNumberKeys {
     shift_pay: string;
     total_ush: string;
     absent_hours: string;
-    overrun_hours: string;
 }
-interface PayStringToNumberKeys extends ShiftStringToNumberKeys {
+interface PayStringToNumberKeys
+    extends Omit<ShiftStringToNumberKeys, "absent_hours"> {
     pensionable_pay: string;
     taxable_pay: string;
     hca_pay: string;
@@ -152,6 +157,7 @@ export interface ApiPay
             | "planned_end"
             | "actual_end"
             | "id"
+            | "absent_hours"
         >,
         PayStringToNumberKeys {
     student_loan: 1 | 2 | 4 | 5 | 6 | null; //6=postgrad

@@ -105,7 +105,6 @@ export const calculateAdditionalHours = (
         double: 0,
         toil: 0,
         absent_hours: 0,
-        overrun_hours: 0,
     };
     if (type && from && actual_to && planned_to) {
         additionalHoursBreakdown.toil = calculateBankHolidayToil(
@@ -211,13 +210,12 @@ export const calculateAdditionalHours = (
                     additionalHoursBreakdown.toil += overrunHours;
                 }
             }
-
-            additionalHoursBreakdown.overrun_hours = overrunHours;
         } else if (
             type === "AL" ||
             type === "AL (relief)" ||
             type === "Absent (TOIL)" ||
-            type === "Absent (TOIL relief)"
+            type === "Absent (TOIL relief)" ||
+            type === "Sick"
         ) {
             const { fromObj, toObj } = makeToAlwaysLater(from, planned_to);
             additionalHoursBreakdown.absent_hours = calculateShiftHours(

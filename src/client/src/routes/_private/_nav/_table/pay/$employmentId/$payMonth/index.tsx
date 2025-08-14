@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PayDetailModal from "../../../../../../components/pay/PayDetailModal";
 import { Modal } from "react-bootstrap";
+import PayDetailModal from "../../../../../../../components/pay/PayDetailModal";
 
 export const Route = createFileRoute(
-    "/_private/_nav/_table/pay/$employmentId/$payMonth"
+    "/_private/_nav/_table/pay/$employmentId/$payMonth/"
 )({
     component: PayDetailModal,
     errorComponent: () => <Modal show={true}>Something went wrong</Modal>,

@@ -1,6 +1,5 @@
 import { stripQueryOptionsForEnsureQuery } from "../../../../../queries/queryUtils";
 import { createFileRoute } from "@tanstack/react-router";
-import { memo } from "react";
 import Pay from "../../../../../components/pay/Pay";
 import { ParsedApiPay } from "../../../../../../../../types/commonTypes";
 import { getPayQueryOptions } from "../../../../../queries/payQueries";
@@ -11,6 +10,7 @@ import {
     calculatePersonalAllowance,
     calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
+import { memo } from "react";
 
 export const Route = createFileRoute("/_private/_nav/_table/pay")({
     component: memo(Pay),

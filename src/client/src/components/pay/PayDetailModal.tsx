@@ -9,7 +9,7 @@ const PayDetailModal = () => {
     const navigate = useNavigate();
     const [show, setShow] = useState(true);
     const { employmentId, payMonth } = useParams({
-        from: "/_private/_nav/_table/pay/$employmentId/$payMonth",
+        from: "/_private/_nav/_table/pay/$employmentId/$payMonth/",
     });
 
     const { pay: allPay } = useLoaderData({
@@ -279,6 +279,16 @@ const PayDetailModal = () => {
                         Next
                     </Button>
                 )}
+                <Button
+                    onClick={() =>
+                        navigate({
+                            to: "/pay/$employmentId/$payMonth/payslip",
+                            params: { employmentId, payMonth },
+                        })
+                    }
+                >
+                    Payslip
+                </Button>
                 <Button onClick={() => setShow(false)} variant="success">
                     Close
                 </Button>

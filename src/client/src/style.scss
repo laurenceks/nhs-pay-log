@@ -165,6 +165,9 @@ table.table-timesheet {
                     background-color: red;
                 }
             }
+            &:last-of-type {
+                height: 30px;
+            }
         }
     }
 

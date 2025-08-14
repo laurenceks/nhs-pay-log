@@ -3,14 +3,14 @@ import { sendRes } from "../utils/sendRes";
 import { formatDate } from "../../shared/utils/formatDates";
 import {
     readTimesheetByUserIdEmploymentIdAndTimesheetMonth,
-    readTimesheetsByUserId,
+    readTimesheetListByUserId,
 } from "../crud/timesheetCrud";
 import { ApiTimesheet } from "../../../types/commonTypes";
 import { msToFormattedHours } from "../../shared/utils/conversions";
 
-export const getTimesheets = async (req: Request, res: Response) => {
+export const getTimesheetList = async (req: Request, res: Response) => {
     sendRes(res, {
-        data: await readTimesheetsByUserId(req.authenticatedUser.id),
+        data: await readTimesheetListByUserId(req.authenticatedUser.id),
     });
 };
 export const getTimesheet = async (req: Request, res: Response) => {
@@ -72,6 +72,7 @@ export const getTimesheet = async (req: Request, res: Response) => {
         if (j < data.length && data[j].date === dateString) {
             if (
                 data[j].type === "Normal" ||
+                data[j].type === "Bank" ||
                 data[j].type === "OT" ||
                 data[j].type === "TOIL"
             ) {

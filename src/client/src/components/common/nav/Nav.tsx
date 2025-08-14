@@ -7,7 +7,7 @@ const Nav = () => {
             bg="secondary"
             className="shadow gap-2 px-3 mb-1 align-items-center"
             sticky="top"
-            style={{ zIndex: 1021 }}
+            style={{ zIndex: 1021, overflowX: "auto" }}
         >
             <Link
                 to={"/"}
@@ -40,6 +40,14 @@ const Nav = () => {
                 inactiveProps={{ className: "btn-light" }}
             >
                 Settings
+            </Link>
+            <Link
+                to={"/timesheet"}
+                className="btn btn-sm"
+                activeProps={{ className: "btn-primary" }}
+                inactiveProps={{ className: "btn-light" }}
+            >
+                Timesheets
             </Link>
             <Link to={"/logout"} className="btn btn-sm btn-light">
                 Logout

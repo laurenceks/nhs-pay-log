@@ -3,36 +3,36 @@ import { fetchJson } from "./queryUtils";
 import { ApiTimesheet, TimesheetOption } from "../../../../types/commonTypes";
 import { queryClient } from "../../../shared/queryClient";
 
-export const getTimesheetsFetch = async () => {
+export const getTimesheetListFetch = async () => {
     return await fetchJson<TimesheetOption[]>("/api/v1/private/timesheet");
 };
 
 export const getTimesheetFetch = async (
     employmentId: number,
-    payMonth: string
+    timesheetMonth: string
 ) => {
     return await fetchJson<ApiTimesheet>(
-        `/api/v1/private/timesheet/${employmentId}/${payMonth}`
+        `/api/v1/private/timesheet/${employmentId}/${timesheetMonth}`
     );
 };
 
-export const invalidateTimesheetsQuery = async () =>
+export const invalidateTimesheetListQuery = async () =>
     await queryClient.invalidateQueries({
-        queryKey: ["timesheets"],
+        queryKey: ["timesheetList"],
         exact: true,
         type: "all",
     });
 
-export const getTimesheetsQueryOptions = queryOptions({
-    queryKey: ["timesheets"],
-    queryFn: getTimesheetsFetch,
+export const getTimesheetListQueryOptions = queryOptions({
+    queryKey: ["timesheetList"],
+    queryFn: getTimesheetListFetch,
 });
 
 export const getTimesheetQueryOptions = (
     employmentId: number,
-    payMonth: string
+    timesheetMonth: string
 ) =>
     queryOptions({
-        queryKey: ["timesheet", employmentId, payMonth],
-        queryFn: () => getTimesheetFetch(employmentId, payMonth),
+        queryKey: ["timesheet", employmentId, timesheetMonth],
+        queryFn: () => getTimesheetFetch(employmentId, timesheetMonth),
     });

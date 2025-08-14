@@ -1,9 +1,9 @@
 import { executeReadByPlaceholders } from "../utils/db";
-import { TimesheetShift } from "../../../types/commonTypes";
+import { TimesheetOption, TimesheetShift } from "../../../types/commonTypes";
 
-export const readTimesheetsByUserId = async (userId: string) => {
-    return await executeReadByPlaceholders<TimesheetShift>(
-        "SELECT `log`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       DATE_FORMAT(`log`.`date`, '%y-%m') AS `timesheet_month`,\n       CONCAT(DATE_FORMAT(`log`.`date`, \'%M %y\'), \' \', `employments`.`name`) AS `label`\nFROM `log`\n         LEFT JOIN `employments` ON `log`.`employment_id` = `employments`.`id`\nWHERE `log`.`user_id` = :userId\nGROUP BY `log`.`employment_id`, `timesheet_month`\nORDER BY `timesheet_month`",
+export const readTimesheetListByUserId = async (userId: string) => {
+    return await executeReadByPlaceholders<TimesheetOption>(
+        "SELECT `log`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       DATE_FORMAT(`log`.`date`, \'%y-%m\') AS `timesheet_month`,\n       CONCAT(DATE_FORMAT(`log`.`date`, \'%M %y\'), \' \', `employments`.`name`) AS `label`\nFROM `log`\n         LEFT JOIN `employments` ON `log`.`employment_id` = `employments`.`id`\nWHERE `log`.`user_id` = :userId\nGROUP BY `log`.`employment_id`, `timesheet_month`\nORDER BY `timesheet_month` DESC",
         { userId }
     );
 };

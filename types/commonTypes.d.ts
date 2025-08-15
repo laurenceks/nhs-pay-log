@@ -179,6 +179,13 @@ export interface ApiPay
         PayStringToNumberKeys {
     student_loan: 1 | 2 | 4 | 5 | 6 | null; //6=postgrad
 }
+export interface ApiPayslip {
+    amount: string;
+    due: string;
+    label: string;
+    rate: string;
+    worked: string;
+}
 
 export type ParsedApiShift = Omit<ApiShift, keyof ShiftStringToNumberKeys> & {
     [K in keyof ShiftStringToNumberKeys]: number;
@@ -193,6 +200,10 @@ export type ParsedApiPay = Omit<ApiPay, keyof PayStringToNumberKeys> & {
     deduction_pension: number;
     deductions_total: number;
     net_pay: number;
+};
+
+export type ParsedApiPayslip = Pick<ApiPayslip, "label"> & {
+    [K in keyof Omit<ApiPayslip, "label">]: number | string;
 };
 
 export interface ClientUser {

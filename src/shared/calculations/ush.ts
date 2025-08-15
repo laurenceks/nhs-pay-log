@@ -172,7 +172,7 @@ export const calculateUsh = (
             );
         }
 
-        if (totalUshRaw >= shiftLength / 2) {
+        if (totalUshRaw > shiftLength / 2) {
             // more than half the shift is USH
             if (!higherRateRaw) {
                 // only lower rate
@@ -191,10 +191,10 @@ export const calculateUsh = (
                     // update shift length to match USH length with OT hours deducted
                     shiftLength = toObj.getTime() - fromObj.getTime();
                 }
-                const segmentBreak = Math.min(lowerRateRaw, remainingBreak);
-                // take break from cheaper side
-                lowerRateRaw = shiftLength - higherRateRaw - segmentBreak;
-                higherRateRaw -= remainingBreak - segmentBreak;
+                // take break from more expensive side
+                const segmentBreak = Math.min(higherRateRaw, remainingBreak);
+                higherRateRaw = shiftLength - lowerRateRaw - segmentBreak;
+                lowerRateRaw -= remainingBreak - segmentBreak;
             }
         }
     } else if (type === "AL (relief)" || type === "Absent (TOIL relief)") {

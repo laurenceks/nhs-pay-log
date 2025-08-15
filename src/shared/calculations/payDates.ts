@@ -2,6 +2,7 @@ import { formatDate } from "../utils/formatDates";
 
 export const nextPayDate = (date: string | Date, t = 24): Date => {
     const p = typeof date === "string" ? new Date(date) : date;
+    p.setDate(1);
     p.setMonth(p.getMonth() + 1);
     p.setDate(t);
     if (p.getDay() === 0 || p.getDay() === 6) {

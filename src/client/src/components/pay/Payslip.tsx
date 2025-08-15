@@ -1,11 +1,46 @@
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { useLoaderData, useNavigate, useParams } from "@tanstack/react-router";
 import { Button } from "react-bootstrap";
+import PayslipEarnings from "./PayslipEarnings";
+import { formatDate } from "../../../../shared/utils/formatDates";
+import { toast } from "react-hot-toast";
+import PayslipDeductions from "./PayslipDeductions";
+import PayslipYearToDate from "./PayslipYearToDate";
 
 const Payslip = () => {
     const navigate = useNavigate();
     const { payslip } = useLoaderData({
         from: "/_private/_nav/_table/pay/$employmentId/$payMonth/payslip",
     });
+    const { employmentId, payMonth } = useParams({
+        from: "/_private/_nav/_table/pay/$employmentId/$payMonth/payslip",
+    });
+
+    const { pay: allPay } = useLoaderData({
+        from: "/_private/_nav/_table/pay",
+    });
+
+    const foundIndex = allPay.findIndex(
+        (x) =>
+            x.employment_id === Number(employmentId) && x.pay_month === payMonth
+    );
+
+    let formattedPayDate = payMonth;
+
+    if (/\d{2}-\d{2}/.test(payMonth)) {
+        const [y, m] = payMonth.split("-");
+        formattedPayDate = formatDate(`20${y}-${m}-01`, "mmm yyyy");
+    }
+
+    if (foundIndex === -1) {
+        toast.error(
+            `No pay for that employment ID ${employmentId} in ${formattedPayDate}`,
+            { id: `pay-${employmentId}-${payMonth}-notFound` }
+        );
+        navigate({ to: "/pay" });
+        return null;
+    }
+
+    const payDetails = allPay[foundIndex];
 
     return (
         <div
@@ -21,28 +56,32 @@ const Payslip = () => {
                     Back
                 </Button>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Wkd/earned</th>
-                        <th>Paid/due</th>
-                        <th>Rate</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {payslip.map((x) => (
-                        <tr key={x.label}>
-                            <td>{x.label}</td>
-                            <td>{x.worked}</td>
-                            <td>{x.due}</td>
-                            <td>{x.rate}</td>
-                            <td>{x.amount}</td>
+            <div className="d-flex justify-content-center align-items-center">
+                <table className="table-payslip">
+                    <tbody>
+                        <tr>
+                            <td className="table-payslip-border-bold p-0">
+                                <PayslipEarnings payslip={payslip} />
+                            </td>
+                            <td className="table-payslip-border-bold p-0">
+                                <PayslipDeductions {...payDetails} />
+                            </td>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                        <tr>
+                            <td className="p-0">
+                                <PayslipYearToDate
+                                    allPay={allPay}
+                                    payMonth={payDetails.pay_month}
+                                    financialYear={
+                                        payDetails.pay_financial_year
+                                    }
+                                    employmentId={payDetails.employment_id}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

@@ -10,8 +10,8 @@ const createDbConnection = async (options: Partial<ConnectionOptions> = {}) => {
     return await createConnection({ ...dbOptions, ...options });
 };
 
-const query = async (sql: string) => {
-    return (await pool.query(sql))[0];
+const query = async <T = RowDataPacket>(sql: string) => {
+    return (await pool.query(sql))[0] as T[];
 };
 
 const executeReadByArray = async <T = RowDataPacket>(

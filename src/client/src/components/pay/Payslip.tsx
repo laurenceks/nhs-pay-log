@@ -5,6 +5,7 @@ import { formatDate } from "../../../../shared/utils/formatDates";
 import { toast } from "react-hot-toast";
 import PayslipDeductions from "./PayslipDeductions";
 import PayslipYearToDate from "./PayslipYearToDate";
+import { useEffect } from "react";
 
 const Payslip = () => {
     const navigate = useNavigate();
@@ -42,9 +43,13 @@ const Payslip = () => {
 
     const payDetails = allPay[foundIndex];
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div
-            className="position-absolute top-0 start-0 w-100 minh-100 bg-white p-3 d-flex flex-column gap-3"
+            className="w-100 minh-100 bg-white p-3 d-flex flex-column gap-3"
             style={{ zIndex: 1021 }}
         >
             <div>

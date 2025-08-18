@@ -30,6 +30,7 @@ export const formatDate = (
         | "dd/mm/yyyy"
         | "dd/mm/yyyy (ddd)"
         | "d mmm"
+        | "dd mmm yy"
         | "mmm yyyy"
         | "yy-mm"
         | "yyyy-mm-dd"
@@ -78,6 +79,12 @@ export const formatDate = (
                 return jsDate.toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
+                });
+            case "dd mmm yy":
+                return jsDate.toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "2-digit",
                 });
             case "dd/mm/yy":
                 return jsDate.toLocaleDateString("en-GB", {

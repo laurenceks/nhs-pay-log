@@ -49,9 +49,9 @@ const PayslipYearToDate = ({
         }
     );
     return (
-        <table className="table-payslip-ytd">
+        <table className="b-b b-r b-l bb">
             <thead>
-                <tr>
+                <tr className="shade b-b">
                     <th colSpan={2}>
                         Year To Date Balances (This Employment Only)
                     </th>
@@ -59,12 +59,12 @@ const PayslipYearToDate = ({
             </thead>
             <tbody>
                 <tr>
-                    <td className="p-0">
-                        <table className="w-100">
+                    <td>
+                        <table className="b-r">
                             <tbody>
                                 <tr>
-                                    <td className="p-0">
-                                        <table className="table-payslip-ytd-two-col">
+                                    <td>
+                                        <table className="label-val b-b">
                                             <tbody>
                                                 <tr>
                                                     <td>GROSS PAY</td>
@@ -84,11 +84,11 @@ const PayslipYearToDate = ({
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className="p-0">
-                                        <table className="table-payslip-ytd-two-col">
+                                    <td>
+                                        <table className="label-val b-b">
                                             <tbody>
                                                 <tr>
-                                                    <td className="p-0">
+                                                    <td>
                                                         <table className="table-payslip-ytd-two-col auto">
                                                             <tbody>
                                                                 <tr>
@@ -116,8 +116,8 @@ const PayslipYearToDate = ({
                                                             </tbody>
                                                         </table>
                                                     </td>
-                                                    <td className="p-0">
-                                                        <table className="table-payslip-ytd-two-col auto">
+                                                    <td>
+                                                        <table className="label-val">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
@@ -140,8 +140,8 @@ const PayslipYearToDate = ({
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className="p-0">
-                                        <table className="table-payslip-ytd-two-col">
+                                    <td>
+                                        <table className="label-val">
                                             <tbody>
                                                 <tr>
                                                     <td>PENSIONABLE PAY</td>
@@ -163,8 +163,8 @@ const PayslipYearToDate = ({
                             </tbody>
                         </table>
                     </td>
-                    <td className="p-0">
-                        <table className="table-payslip-ytd-two-col auto">
+                    <td>
+                        <table className="label-val">
                             <tbody>
                                 <tr>
                                     <td>TAXABLE PAY</td>

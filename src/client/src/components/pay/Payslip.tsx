@@ -1,11 +1,12 @@
 import { useLoaderData, useNavigate, useParams } from "@tanstack/react-router";
 import { Button } from "react-bootstrap";
-import PayslipEarnings from "./PayslipEarnings";
 import { formatDate } from "../../../../shared/utils/formatDates";
 import { toast } from "react-hot-toast";
+import { useEffect } from "react";
+import PayslipEarnings from "./PayslipEarnings";
 import PayslipDeductions from "./PayslipDeductions";
 import PayslipYearToDate from "./PayslipYearToDate";
-import { useEffect } from "react";
+import PayslipPeriodSummary from "./PayslipPeriodSummary";
 
 const Payslip = () => {
     const navigate = useNavigate();
@@ -48,44 +49,49 @@ const Payslip = () => {
     }, []);
 
     return (
-        <div
-            className="w-100 minh-100 bg-white p-3 d-flex flex-column gap-3"
-            style={{ zIndex: 1021 }}
-        >
-            <div>
-                <Button
-                    size="sm"
-                    onClick={() => navigate({ to: ".." })}
-                    variant="light"
-                >
-                    Back
-                </Button>
-            </div>
-            <div className="d-flex justify-content-center align-items-center">
-                <table className="table-payslip">
-                    <tbody>
-                        <tr>
-                            <td className="table-payslip-border-bold p-0">
-                                <PayslipEarnings payslip={payslip} />
-                            </td>
-                            <td className="table-payslip-border-bold p-0">
-                                <PayslipDeductions {...payDetails} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="p-0">
-                                <PayslipYearToDate
-                                    allPay={allPay}
-                                    payMonth={payDetails.pay_month}
-                                    financialYear={
-                                        payDetails.pay_financial_year
-                                    }
-                                    employmentId={payDetails.employment_id}
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div className="p-3 minh-100 mh-100">
+            <div className="payslip-container h-100">
+                <div>
+                    <Button
+                        size="sm"
+                        onClick={() => navigate({ to: ".." })}
+                        variant="light"
+                    >
+                        {" "}
+                        Back{" "}
+                    </Button>
+                </div>
+                <div className="">
+                    <div className="payslip-grid">
+                        <div>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Details</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <PayslipEarnings payslip={payslip} />{" "}
+                            <PayslipDeductions {...payDetails} />
+                        </div>
+                        <div>
+                            <PayslipYearToDate
+                                allPay={allPay}
+                                payMonth={payDetails.pay_month}
+                                financialYear={payDetails.pay_financial_year}
+                                employmentId={payDetails.employment_id}
+                            />
+                            <PayslipPeriodSummary {...payDetails} />
+                        </div>
+                        <div>{/*Empty*/}</div>
+                        <div className="b bb">
+                            <div className="b-b bb">Messages from Employer</div>
+                            <div>Hello, world!</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

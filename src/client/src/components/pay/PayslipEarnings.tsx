@@ -2,12 +2,17 @@ import { ParsedApiPayslip } from "../../../../../types/commonTypes";
 
 const PayslipEarnings = ({ payslip }: { payslip: ParsedApiPayslip[] }) => {
     return (
-        <table className="table-payslip-earnings-deductions">
+        <table className="b bb list">
             <thead>
-                <tr className="table-payslip-earnings-deductions-title">
-                    <td>PAY AND ALLOWANCES (- = MINUS AMOUNT)</td>
+                <tr>
+                    <td
+                        colSpan={5}
+                        className="t-sm fw-bold text-uppercase fw-bold"
+                    >
+                        PAY AND ALLOWANCES (- = MINUS AMOUNT)
+                    </td>
                 </tr>
-                <tr className="table-payslip-earnings-deductions-title">
+                <tr className="table-payslip-earnings-deductions-title-row">
                     <th>Description</th>
                     <th>Wkd/earned</th>
                     <th>Paid/due</th>

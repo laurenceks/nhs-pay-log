@@ -1,6 +1,10 @@
 import { stripQueryOptionsForEnsureQuery } from "../../../../../queries/queryUtils";
-import { createFileRoute } from "@tanstack/react-router";
-import Pay from "../../../../../components/pay/Pay";
+import {
+    createFileRoute,
+    Outlet,
+    useLocation,
+    useRouterState,
+} from "@tanstack/react-router";
 import { ParsedApiPay } from "../../../../../../../../types/commonTypes";
 import { getPayQueryOptions } from "../../../../../queries/payQueries";
 import { TaxYear } from "@saving-tool/hmrc-income-tax/lib/types";
@@ -10,10 +14,20 @@ import {
     calculatePersonalAllowance,
     calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
-import { memo } from "react";
+import Pay from "../../../../../components/pay/Pay";
 
 export const Route = createFileRoute("/_private/_nav/_table/pay")({
-    component: memo(Pay),
+    component: () => {
+        const location = useLocation();
+        const isLoading = useRouterState({
+            select: (s) => s.isLoading,
+        });
+        if (location.pathname.endsWith("payslip") && !isLoading) {
+            return <Outlet />;
+        } else {
+            return <Pay />;
+        }
+    },
     loader: async ({ context }) => {
         const pay: ParsedApiPay[] =
             (

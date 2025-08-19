@@ -7,6 +7,7 @@ import PayslipEarnings from "./PayslipEarnings";
 import PayslipDeductions from "./PayslipDeductions";
 import PayslipYearToDate from "./PayslipYearToDate";
 import PayslipPeriodSummary from "./PayslipPeriodSummary";
+import PayslipDetails from "./PayslipDetails";
 
 const Payslip = () => {
     const navigate = useNavigate();
@@ -63,13 +64,7 @@ const Payslip = () => {
                 <div className="d-flex flex-column flex-grow-1">
                     <div className="payslip-grid">
                         <div>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td>Details</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <PayslipDetails />
                         </div>
                         <div className="b-l b-r b-t bb">
                             <PayslipEarnings payslip={payslip} />

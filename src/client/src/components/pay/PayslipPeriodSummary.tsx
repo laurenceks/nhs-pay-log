@@ -36,7 +36,13 @@ const PayslipPeriodSummary = ({
                                 </tr>
                                 <tr>
                                     <td>TAX PERIOD</td>
-                                    <td>1</td>
+                                    <td>
+                                        {((new Date(pay_date).getMonth() -
+                                            3 +
+                                            12) %
+                                            12) +
+                                            1}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>FREQUENCY</td>
@@ -93,8 +99,8 @@ const PayslipPeriodSummary = ({
                                     <td>{roundTo(deductions_total, 2)}</td>
                                 </tr>
                                 <tr className="b-l">
-                                    <td className="t-xl">NET PAY</td>
-                                    <td className="t-xl">
+                                    <td className="t-lg">NET PAY</td>
+                                    <td className="t-lg">
                                         {roundTo(net_pay, 2)}
                                     </td>
                                 </tr>

@@ -49,7 +49,7 @@ const PayslipYearToDate = ({
         }
     );
     return (
-        <table className="b-r b-l bb">
+        <table className="b-l b-r bb">
             <thead>
                 <tr className="shade b-b">
                     <th colSpan={2}>

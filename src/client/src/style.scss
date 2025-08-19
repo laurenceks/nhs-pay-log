@@ -180,50 +180,67 @@ table.table-timesheet {
 }
 
 div.payslip-container {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
 }
 
 div.payslip-grid {
+    $baseUnit: 0.2625cqw;
+
     display: grid;
+    flex-grow: 1;
+    flex-shrink: 1;
     grid-template-rows: 12.23354314% 38.86783121% 14.00547886% 1.825256073% 33.06789072%;
-    color: black;
+    margin: auto;
+    width: auto;
+    max-height: 100%;
+    color: #000000;
     font-family: Arial, sans-serif;
+    container-name: payslip-container;
+    container-type: inline-size;
     aspect-ratio: 210 / 297;
 
+    @media screen and (orientation: portrait) {
+        //allow shrinking
+        flex-grow: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
     .b {
-        border: 1pt solid black;
+        border: 1 * $baseUnit solid black;
         &.bb {
-            border-width: 2pt;
+            border-width: 2 * $baseUnit;
         }
     }
 
     .b-t {
-        border-top: 1pt solid black;
+        border-top: 1 * $baseUnit solid black;
         &.bb {
-            border-top-width: 2pt;
+            border-top-width: 2 * $baseUnit;
         }
     }
     .b-b {
-        border-bottom: 1pt solid black;
+        border-bottom: 1 * $baseUnit solid black;
         &.bb {
-            border-bottom-width: 2pt;
+            border-bottom-width: 2 * $baseUnit;
         }
     }
     .b-l {
-        border-left: 1pt solid black;
+        border-left: 1 * $baseUnit solid black;
         &.bb {
-            border-left-width: 2pt;
+            border-left-width: 2 * $baseUnit;
         }
     }
     .b-r {
-        border-right: 1pt solid black;
+        border-right: 1 * $baseUnit solid black;
         &.bb {
-            border-right-width: 2pt;
+            border-right-width: 2 * $baseUnit;
         }
     }
-    aspect-ratio: 210 / 297;
 
     > div {
         overflow: hidden;
@@ -264,15 +281,15 @@ div.payslip-grid {
     td,
     div {
         padding: 0;
-        font-size: 7pt;
+        font-size: 7 * $baseUnit;
         &.t-sm {
-            font-size: 5pt;
+            font-size: 5 * $baseUnit;
         }
         &.t-lg {
-            font-size: 8pt;
+            font-size: 7 * $baseUnit;
         }
         &.t-xl {
-            font-size: 10pt;
+            font-size: 10 * $baseUnit;
         }
         &.shade {
             background-color: #f2f2f2;

@@ -49,19 +49,18 @@ const Payslip = () => {
     }, []);
 
     return (
-        <div className="p-3 minh-100 mh-100">
-            <div className="payslip-container h-100">
+        <div className="p-3 minh-100 mh-100 flex-grow-1 d-flex flex-column">
+            <div className="d-flex flex-column gap-3 flex-grow-1">
                 <div>
                     <Button
                         size="sm"
                         onClick={() => navigate({ to: ".." })}
                         variant="light"
                     >
-                        {" "}
-                        Back{" "}
+                        Back
                     </Button>
                 </div>
-                <div className="">
+                <div className="d-flex flex-column flex-grow-1">
                     <div className="payslip-grid">
                         <div>
                             <table>
@@ -73,7 +72,7 @@ const Payslip = () => {
                             </table>
                         </div>
                         <div>
-                            <PayslipEarnings payslip={payslip} />{" "}
+                            <PayslipEarnings payslip={payslip} />
                             <PayslipDeductions {...payDetails} />
                         </div>
                         <div>

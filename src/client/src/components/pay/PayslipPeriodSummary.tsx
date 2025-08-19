@@ -18,9 +18,8 @@ const PayslipPeriodSummary = ({
     deduction_pension: number;
     deductions_total: number;
 }) => {
-    console.log(pay_date.slice(2, 4), pay_date.slice(5, 7));
     return (
-        <table className="b-l b-r b-b bb">
+        <table className="b-l b-r bb">
             <thead>
                 <tr className="shade b-b">
                     <th colSpan={2}>This Period Summary</th>

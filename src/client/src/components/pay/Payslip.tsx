@@ -71,11 +71,11 @@ const Payslip = () => {
                                 </tbody>
                             </table>
                         </div>
-                        <div>
+                        <div className="b-l b-r b-t bb">
                             <PayslipEarnings payslip={payslip} />
                             <PayslipDeductions {...payDetails} />
                         </div>
-                        <div>
+                        <div className="b-t b-b bb">
                             <PayslipYearToDate
                                 allPay={allPay}
                                 payMonth={payDetails.pay_month}

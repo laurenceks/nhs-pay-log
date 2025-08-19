@@ -14,7 +14,7 @@ const PayslipDeductions = ({
     pension_perc: number;
 }) => {
     return (
-        <table className="b-t b-r b-b bb list">
+        <table className="b-l list">
             <thead>
                 <tr>
                     <td

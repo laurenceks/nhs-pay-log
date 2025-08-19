@@ -2,7 +2,7 @@ import { ParsedApiPayslip } from "../../../../../types/commonTypes";
 
 const PayslipEarnings = ({ payslip }: { payslip: ParsedApiPayslip[] }) => {
     return (
-        <table className="b bb list">
+        <table className="b-r list">
             <thead>
                 <tr>
                     <td

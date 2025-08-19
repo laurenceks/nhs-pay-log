@@ -1,6 +1,6 @@
 import { roundTo } from "round-to";
 
-const PayslipEarnings = ({
+const PayslipDeductions = ({
     deduction_ni,
     deduction_paye,
     deduction_student_loan,
@@ -56,4 +56,4 @@ const PayslipEarnings = ({
     );
 };
 
-export default PayslipEarnings;
+export default PayslipDeductions;

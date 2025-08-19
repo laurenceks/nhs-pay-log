@@ -69,7 +69,7 @@ const App = () => {
                 }}
             />
             <QueryClientProvider client={queryClient}>
-                <div className="mw-100 w-100 minh-100">
+                <div className="mw-100 w-100 minh-100 d-flex flex-column">
                     <RouterProvider
                         router={router}
                         context={{

@@ -310,15 +310,23 @@ div.payslip-grid {
                 border-right: none;
             }
         }
+        td,
+        th {
+            &:not(:has(> table)) {
+                padding: $baseUnit;
+            }
+        }
 
         &.list {
             td {
                 @extend .b-l;
+                padding-right: 5 * $baseUnit;
                 height: fit-content;
                 vertical-align: top;
                 text-align: right;
                 &:first-of-type {
                     border-left: none;
+                    padding-left: 1.5 * $baseUnit;
                     text-align: left;
                 }
             }

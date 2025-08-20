@@ -36,3 +36,15 @@ export const convertToGbp = (val: number) =>
         currency: "GBP",
         style: "currency",
     }).format(val);
+
+export const convertToPayslipFigure = (
+    val: string | number,
+    precision = 2
+): string => {
+    if (isNaN(Number(val))) {
+        return val as string;
+    } else {
+        const n = Number(val);
+        return n ? roundTo(n, precision).toFixed(precision) : "";
+    }
+};

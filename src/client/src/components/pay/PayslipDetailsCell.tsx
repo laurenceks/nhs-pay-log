@@ -4,7 +4,7 @@ const PayslipDetailsCell = ({
     centreValue = false,
 }: {
     title: string;
-    value: string;
+    value: string | number;
     centreValue?: boolean;
 }) => {
     return (

@@ -1,6 +1,15 @@
 import PayslipDetailsCell from "./PayslipDetailsCell";
+import { roundTo } from "round-to";
 
-const PayslipDetails = () => {
+const PayslipDetails = ({
+    basic_pay,
+    weekly_hours_perc,
+    personal_allowance,
+}: {
+    basic_pay: number;
+    weekly_hours_perc: number;
+    personal_allowance: number;
+}) => {
     return (
         <div className="b-l b-t b-r bb h-100 d-flex flex-column">
             <div className="h-100 mh-100">
@@ -43,7 +52,10 @@ const PayslipDetails = () => {
                     <div className="b-l">
                         <PayslipDetailsCell
                             title="Sal/wage"
-                            value="445698"
+                            value={roundTo(
+                                (basic_pay / weekly_hours_perc) * 12,
+                                2
+                            ).toFixed(2)}
                             centreValue
                         />
                         <PayslipDetailsCell
@@ -58,7 +70,7 @@ const PayslipDetails = () => {
                         />
                         <PayslipDetailsCell
                             title="PT sal/wage"
-                            value="258945"
+                            value={roundTo(basic_pay * 12, 2).toFixed(2)}
                             centreValue
                         />
                     </div>
@@ -74,7 +86,7 @@ const PayslipDetails = () => {
                         />
                         <PayslipDetailsCell
                             title="Tax code"
-                            value="1257l CUMUL"
+                            value={`${personal_allowance / 10}L CUMUL`}
                             centreValue
                         />
                         <PayslipDetailsCell

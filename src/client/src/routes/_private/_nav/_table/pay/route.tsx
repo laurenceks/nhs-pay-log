@@ -113,6 +113,7 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                     deduction_pension,
                     deductions_total,
                     net_pay: gross_pay - deductions_total,
+                    weekly_hours_perc: Number(x.weekly_hours_perc),
                 };
             }) || [];
 

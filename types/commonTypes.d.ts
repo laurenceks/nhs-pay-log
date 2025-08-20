@@ -158,6 +158,7 @@ interface PayStringToNumberKeys
     flowers_pay: string;
     pension_perc: string;
     personal_allowance: string;
+    weekly_hours_perc: string;
 }
 
 export interface ApiShift
@@ -200,6 +201,7 @@ export type ParsedApiPay = Omit<ApiPay, keyof PayStringToNumberKeys> & {
     deduction_pension: number;
     deductions_total: number;
     net_pay: number;
+    weekly_hours_perc: number;
 };
 
 export type ParsedApiPayslip = Pick<ApiPayslip, "label"> & {

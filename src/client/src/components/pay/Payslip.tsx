@@ -49,6 +49,8 @@ const Payslip = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    console.log(payDetails);
+
     return (
         <div className="p-3 minh-100">
             <div className="d-flex flex-column gap-3">
@@ -64,7 +66,9 @@ const Payslip = () => {
                 <div className="w-100">
                     <div className="payslip-grid mx-auto">
                         <div>
-                            <PayslipDetails />
+                            <PayslipDetails
+                                {...{ ...payDetails, ...payslip }}
+                            />
                         </div>
                         <div className="b-l b-r b-t bb">
                             <PayslipEarnings payslip={payslip} />

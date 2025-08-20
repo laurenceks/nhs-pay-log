@@ -1,16 +1,20 @@
 const PayslipDetailsCell = ({
     title,
     value,
+    centreValue = false,
 }: {
     title: string;
     value: string;
+    centreValue?: boolean;
 }) => {
     return (
-        <div className="payslip-details-cell shade d-flex flex-column b-r">
+        <div className="payslip-details-cell shade b-r">
             <p className="fw-bold t-sm text-center text-uppercase m-0">
                 {title}
             </p>
-            <p className="t-">{value}</p>
+            <p className={`t-xl ${centreValue ? "text-center" : ""}`}>
+                {value}
+            </p>
         </div>
     );
 };

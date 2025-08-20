@@ -2,8 +2,8 @@ import PayslipDetailsCell from "./PayslipDetailsCell";
 
 const PayslipDetails = () => {
     return (
-        <div className="b-l b-t b-r bb h-100">
-            <div className="b-b bb h-100 mh-100">
+        <div className="b-l b-t b-r bb h-100 d-flex flex-column">
+            <div className="h-100 mh-100">
                 <div className="payslip-details-row b-b">
                     <PayslipDetailsCell
                         title="Assignment number"
@@ -18,7 +18,7 @@ const PayslipDetails = () => {
                         value="Chertsey Ambulance Station"
                     />
                 </div>
-                <div className="payslip-details-row b-b">
+                <div className="payslip-details-row">
                     <PayslipDetailsCell
                         title="Department"
                         value="Chertsey Dispatc"
@@ -32,48 +32,55 @@ const PayslipDetails = () => {
                         value="Non Review Body Band 6"
                     />
                 </div>
-                <div className="payslip-details-row">
-                    <div className="b-r">
+                <div className="payslip-details-row b-t bb">
+                    <div className="b-r d-flex justify-content-center align-items-center p-1 shade mh-100">
                         <img
                             alt="NHS Pay Log logo"
                             src="/logo.svg"
-                            className="object-fit-contain mw-100 mh-100"
+                            className="object-fit-contain mw-100 mh-100 d-flex flex-shrink-1"
                         />
                     </div>
-                    <div>
+                    <div className="b-l">
                         <PayslipDetailsCell
-                            title="Job Title"
-                            value="Ambulance Paramedic"
+                            title="Sal/wage"
+                            value="445698"
+                            centreValue
                         />
                         <PayslipDetailsCell
-                            title="Payscale"
-                            value="Non Review Body Band 6"
+                            title="Inc. Date"
+                            value="08 JAN 2026"
+                            centreValue
                         />
                         <PayslipDetailsCell
-                            title="Payscale"
-                            value="Non Review Body Band 6"
+                            title="Standard hrs."
+                            value="23"
+                            centreValue
                         />
                         <PayslipDetailsCell
-                            title="Payscale"
-                            value="Non Review Body Band 6"
+                            title="PT sal/wage"
+                            value="258945"
+                            centreValue
                         />
                     </div>
-                    <div>
+                    <div className="b-t b-l">
                         <PayslipDetailsCell
-                            title="Job Title"
-                            value="Ambulance Paramedic"
+                            title="Tax office name"
+                            value="West Kent Area"
                         />
                         <PayslipDetailsCell
-                            title="Payscale"
-                            value="Non Review Body Band 6"
+                            title="Tax office ref"
+                            value="123/A4B5"
+                            centreValue
                         />
                         <PayslipDetailsCell
-                            title="Payscale"
-                            value="Non Review Body Band 6"
+                            title="Tax code"
+                            value="1257l CUMUL"
+                            centreValue
                         />
                         <PayslipDetailsCell
-                            title="Payscale"
-                            value="Non Review Body Band 6"
+                            title="NI Number"
+                            value="AB123456C"
+                            centreValue
                         />
                     </div>
                 </div>

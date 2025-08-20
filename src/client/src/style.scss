@@ -248,6 +248,7 @@ div.payslip-grid {
                 &:nth-of-type(3) {
                     grid-template-rows: 1fr 1fr;
                     grid-template-columns: 18.48797933637989% 1fr;
+                    max-height: 50%;
                     > div {
                         &:nth-of-type(1) {
                             grid-row: 1/-1;
@@ -256,7 +257,8 @@ div.payslip-grid {
                             }
                         }
                         &:nth-of-type(2) {
-                            display: flex;
+                            display: grid;
+                            grid-template-columns: repeat(4, 1fr);
                         }
                         &:nth-of-type(3) {
                             display: grid;
@@ -276,12 +278,12 @@ div.payslip-grid {
         &:nth-of-type(2) {
             //pay and deductions
             display: grid;
-            grid-template-columns: 50% 50%;
+            grid-template-columns: 57.6196701768329% 1fr;
         }
         &:nth-of-type(3) {
             //summaries
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 57.6196701768329% 1fr;
             > table {
                 &:first-of-type {
                     border-right-width: $baseUnit;
@@ -318,15 +320,15 @@ div.payslip-grid {
     p {
         margin: 0;
         padding: 0;
-        font-size: 7 * $baseUnit;
+        font-size: 6.5 * $baseUnit;
         &.t-sm {
             font-size: 5 * $baseUnit;
         }
         &.t-lg {
-            font-size: 7 * $baseUnit;
+            font-size: 6.25 * $baseUnit;
         }
         &.t-xl {
-            font-size: 10 * $baseUnit;
+            font-size: 7.5 * $baseUnit;
         }
         &.shade {
             background-color: #f2f2f2;

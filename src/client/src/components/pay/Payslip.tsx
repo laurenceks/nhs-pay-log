@@ -50,8 +50,8 @@ const Payslip = () => {
     }, []);
 
     return (
-        <div className="p-3 minh-100 mh-100 flex-grow-1 d-flex flex-column">
-            <div className="d-flex flex-column gap-3 flex-grow-1">
+        <div className="p-3 minh-100">
+            <div className="d-flex flex-column gap-3">
                 <div>
                     <Button
                         size="sm"
@@ -61,8 +61,8 @@ const Payslip = () => {
                         Back
                     </Button>
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <div className="payslip-grid">
+                <div className="w-100">
+                    <div className="payslip-grid mx-auto">
                         <div>
                             <PayslipDetails />
                         </div>

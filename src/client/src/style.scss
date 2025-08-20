@@ -187,16 +187,10 @@ div.payslip-container {
 }
 
 div.payslip-grid {
-    $baseUnit: 0.2625cqw;
+    $baseUnit: 0.198688655cqw;
     display: grid;
-
-    flex-grow: 1;
-    flex-shrink: 1;
     grid-template-rows: 12.23354314% 38.86783121% 14.00547886% 1.825256073% 33.06789072%;
-    margin: auto;
-    width: auto;
-    max-height: 100%;
-    line-height: 1ch;
+    max-width: 258.813mm;
     color: #000000;
     font-family: Arial, sans-serif;
     container-name: payslip-container;
@@ -251,7 +245,6 @@ div.payslip-grid {
             div.payslip-details-row {
                 display: grid;
                 grid-template-columns: 18.48797933637989% 1fr 1fr;
-                line-height: 1.5ch;
                 &:nth-of-type(3) {
                     grid-template-rows: 1fr 1fr;
                     grid-template-columns: 18.48797933637989% 1fr;
@@ -333,7 +326,7 @@ div.payslip-grid {
             font-size: 7 * $baseUnit;
         }
         &.t-xl {
-            font-size: 9 * $baseUnit;
+            font-size: 10 * $baseUnit;
         }
         &.shade {
             background-color: #f2f2f2;
@@ -368,7 +361,6 @@ div.payslip-grid {
                 height: fit-content;
                 vertical-align: top;
                 text-align: right;
-                line-height: 2ch;
                 &:first-of-type {
                     border-left: none;
                     padding-left: 1.5 * $baseUnit;

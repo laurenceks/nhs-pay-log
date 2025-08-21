@@ -1,7 +1,7 @@
 import { Outlet } from "@tanstack/react-router";
 import { ReactNode } from "react";
 
-const LoginWrapper = ({ children }: { children: ReactNode }) => {
+const LoginWrapper = ({ children }: { children?: ReactNode }) => {
     return (
         <div className="w-100 d-flex justify-content-center minh-100">
             <div style={{ maxWidth: "15rem" }}>

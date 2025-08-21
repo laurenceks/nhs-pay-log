@@ -174,6 +174,12 @@ const Register = () => {
                 <Link to={"/login"} className="small">
                     Back to login
                 </Link>
+                <p className="small m-0">
+                    By registering you agree to the{" "}
+                    <Link to={"/legal"}>
+                        Privacy Policy and Terms and Conditions
+                    </Link>
+                </p>
             </Form>
         </div>
     );

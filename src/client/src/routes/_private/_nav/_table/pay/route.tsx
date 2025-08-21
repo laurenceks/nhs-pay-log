@@ -37,6 +37,7 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
             ).data?.map((x) => {
                 const personal_allowance = Number(x.personal_allowance);
                 const taxable_pay = Number(x.taxable_pay);
+                const ni_able_pay = Number(x.ni_able_pay);
                 const pensionable_pay = Number(x.pensionable_pay);
                 const pension_perc = Number(x.pension_perc);
                 const gross_pay = Number(x.gross_pay);
@@ -66,7 +67,7 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                 const deduction_ni =
                     calculateEmployeeNationalInsurance({
                         taxYear,
-                        taxableAnnualIncome,
+                        taxableAnnualIncome: ni_able_pay * 12,
                     }) / 12;
 
                 let deduction_student_loan = 0;
@@ -103,6 +104,7 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                     gross_pay,
                     pensionable_pay,
                     taxable_pay,
+                    ni_able_pay,
                     flowers_hours: Number(x.flowers_hours),
                     flowers_pay: Number(x.flowers_pay),
                     pension_perc,

@@ -151,6 +151,7 @@ interface PayStringToNumberKeys
     extends Omit<ShiftStringToNumberKeys, "absent_hours"> {
     pensionable_pay: string;
     taxable_pay: string;
+    ni_able_pay: string;
     hca_pay: string;
     basic_pay: string;
     gross_pay: string;

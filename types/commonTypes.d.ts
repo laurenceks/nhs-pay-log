@@ -213,9 +213,10 @@ export interface ApiHours extends AdditionalHours, USH {
     absent_hours: number;
     actual_hours: number;
     extra_hours: number;
-    normal_hours: string;
-    overrun_hours: string;
+    normal_hours: number;
+    overrun_hours: number;
     planned_hours: number;
+    weekly_hours_diff: number;
     week_commencing: string;
 }
 

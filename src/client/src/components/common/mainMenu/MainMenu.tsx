@@ -39,6 +39,14 @@ const MainMenu = () => {
                         Timesheets
                     </MainMenuButton>
                     <MainMenuButton
+                        to={"/hours"}
+                        buttonVariant="dark"
+                        tooltipVariant="dark"
+                        tooltipText="See weekly hours"
+                    >
+                        Hours
+                    </MainMenuButton>
+                    <MainMenuButton
                         to={"/settings"}
                         buttonVariant="light"
                         tooltipVariant="dark"

@@ -212,12 +212,15 @@ export type ParsedApiPayslip = Pick<ApiPayslip, "label"> & {
 export interface ApiHours extends AdditionalHours, USH {
     absent_hours: number;
     actual_hours: number;
+    core_hours: number;
     extra_hours: number;
     normal_hours: number;
     overrun_hours: number;
     planned_hours: number;
-    weekly_hours_diff: number;
     week_commencing: string;
+    weekly_hours: number;
+    weekly_hours_diff: number;
+    worked_hours: number;
 }
 
 export interface ClientUser {

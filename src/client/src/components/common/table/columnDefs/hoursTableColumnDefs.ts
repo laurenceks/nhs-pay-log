@@ -6,6 +6,7 @@ import {
 } from "../../../../../../../types/commonTypes";
 import { formatDate } from "../../../../../../shared/utils/formatDates";
 import HoursDifferenceCell from "../../../hours/HoursDifferenceCell";
+import { roundTo } from "round-to";
 
 export const hoursTableColumnsDef: ColumnDef<ApiHours>[] = [
     {
@@ -22,13 +23,81 @@ export const hoursTableColumnsDef: ColumnDef<ApiHours>[] = [
         header: "Planned",
         accessorKey: "planned_hours",
         filterFn: "inNumberRange",
-        meta: { iconType: "numeric", aggregationTypes: "all" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
     },
     {
-        header: "Actual",
-        accessorKey: "actual_hours",
+        header: "Overrun",
+        accessorKey: "overrun_hours",
         filterFn: "inNumberRange",
-        meta: { iconType: "numeric", aggregationTypes: "all" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
+    },
+    {
+        header: "Worked",
+        accessorKey: "worked_hours",
+        filterFn: "inNumberRange",
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
+    },
+    {
+        header: "Normal",
+        accessorKey: "normal_hours",
+        filterFn: "inNumberRange",
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
+    },
+    {
+        header: "Absent",
+        accessorKey: "absent_hours",
+        filterFn: "inNumberRange",
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
+    },
+    {
+        header: "Core",
+        accessorKey: "core_hours",
+        filterFn: "inNumberRange",
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
+    },
+    {
+        header: "Extra",
+        accessorKey: "extra_hours",
+        filterFn: "inNumberRange",
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
+    },
+    {
+        header: "Required",
+        accessorKey: "weekly_hours",
+        filterFn: "inNumberRange",
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
     },
     {
         header: "+/-",
@@ -46,22 +115,14 @@ export const hoursTableColumnsDef: ColumnDef<ApiHours>[] = [
         },
     },
     {
-        header: "Overrun",
-        accessorKey: "overrun_hours",
+        header: "Total",
+        accessorKey: "actual_hours",
         filterFn: "inNumberRange",
-        meta: { iconType: "numeric", aggregationTypes: "all" },
-    },
-    {
-        header: "Extra hours",
-        accessorKey: "extra_hours",
-        filterFn: "inNumberRange",
-        meta: { iconType: "numeric", aggregationTypes: "all" },
-    },
-    {
-        header: "Absent hours",
-        accessorKey: "absent_hours",
-        filterFn: "inNumberRange",
-        meta: { iconType: "numeric", aggregationTypes: "all" },
+        meta: {
+            iconType: "numeric",
+            aggregationTypes: "all",
+            aggregationDisplayFn: (val: number) => roundTo(val, 3),
+        },
     },
 ];
 

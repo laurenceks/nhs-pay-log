@@ -19,7 +19,7 @@ import {
 
 export const calculateCumulativeAdditionalHours = (
     from: Date,
-    id: number,
+    id: string | number,
     log: ClientShift[] | ParsedApiShift[] = [],
     employment_id: number
 ) => {
@@ -70,7 +70,8 @@ const calculateBankHolidayToil = (
         if (fromIsBankHoliday && toIsBankHoliday) {
             return calculateShiftHours(fromObj, toObj);
         } else if (fromIsBankHoliday) {
-            return calculateShiftLength(fromObj, fromObj.setHours(24, 0, 0, 0));
+            //from time until midnight
+            return calculateShiftLength(fromObj, toObj.setHours(0, 0, 0, 0));
         } else {
             //midnight until to time
             return calculateShiftLength(fromObj.setHours(24, 0, 0, 0), toObj);
@@ -172,7 +173,6 @@ export const calculateAdditionalHours = (
                         cumulativeAdditionalHours >=
                     weeklyOtThresholdHours
                 ) {
-                    //TODO test night shifts
                     if (fromIsBankHoliday || toIsBankHoliday) {
                         if (fromIsBankHoliday && toIsBankHoliday) {
                             additionalHoursBreakdown.double = Math.max(
@@ -185,7 +185,7 @@ export const calculateAdditionalHours = (
                             additionalHoursBreakdown.double =
                                 calculateShiftLength(
                                     fromObj,
-                                    fromObj.setHours(24, 0, 0, 0)
+                                    toObj.setHours(0, 0, 0, 0)
                                 );
                         } else {
                             //midnight until to time

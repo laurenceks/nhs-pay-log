@@ -10,13 +10,14 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
     }
     const fromTime = from.getTime();
     const toObj = makeToAlwaysLater(from, to).toObj;
-    const toTime = toObj.getTime();
+    const toTime = to.getTime();
     const fromDay = from.getDay();
-    const toDay = toObj.getDay();
+    const toDay = to.getDay();
 
     if (
         (fromDay === 0 && toDay === 0) ||
-        (isBankHoliday(from) && isBankHoliday(to))
+        (isBankHoliday(from) && isBankHoliday(to)) ||
+        (fromDay === 0 && isBankHoliday(to))
     ) {
         // only Sunday or BH
         return 0;
@@ -31,7 +32,7 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
 
     if ((fromDay === 6 && toDay === 0) || isBankHoliday(to)) {
         // Saturday into Sunday or into a bank holiday
-        return to.setHours(0, 0, 0, 0) - fromTime;
+        return toObj.setHours(0, 0, 0, 0) - fromTime;
     }
 
     if (
@@ -94,15 +95,15 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
 
     const fromTime = from.getTime();
     const toObj = makeToAlwaysLater(from, to).toObj;
-    const toTime = toObj.getTime();
+    const toTime = to.getTime();
     const fromDay = from.getDay();
-    const toDay = toObj.getDay();
+    const toDay = to.getDay();
 
     if (
         fromDay !== 0 &&
         toDay !== 0 &&
         !isBankHoliday(from) &&
-        !isBankHoliday(toObj)
+        !isBankHoliday(to)
     ) {
         // neither Sunday nor BH
         return 0;
@@ -110,18 +111,21 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
 
     if (
         (fromDay === 0 && toDay === 0) ||
-        (isBankHoliday(from) && isBankHoliday(toObj))
+        (isBankHoliday(from) && isBankHoliday(to)) ||
+        (fromDay === 0 && isBankHoliday(to)) ||
+        (isBankHoliday(from) && toDay === 0)
     ) {
         // all Sunday or BH
         return toTime - fromTime;
     }
 
     const to0000 = toObj.setHours(0, 0, 0, 0);
-    if (fromDay === 6 || (!isBankHoliday(from) && isBankHoliday(toObj))) {
+
+    if (fromDay === 6 || (!isBankHoliday(from) && isBankHoliday(to))) {
         // Saturday into Sunday or non-BH into BH
         return toTime - to0000;
     }
-    if (fromDay === 0 || (isBankHoliday(from) && !isBankHoliday(toObj))) {
+    if (fromDay === 0 || (isBankHoliday(from) && !isBankHoliday(to))) {
         // Sunday into Monday or BH into non-BH
         return to0000 - fromTime;
     }

@@ -1,5 +1,6 @@
-import { convertToDate, convertToNumber } from "../utils/conversions";
+import { convertToNumber } from "../utils/conversions";
 import bankHolidays from "../../../tests/data/bankHolidays";
+import { formatDate } from "../utils/formatDates";
 
 export const calculateShiftLength = (
     from: Date | string | number,
@@ -16,7 +17,7 @@ export const calculateShiftHours = (
 };
 
 export const isBankHoliday = (date: Date | string) => {
-    const lookupDate = convertToDate(date).toISOString().slice(0, 10);
+    const lookupDate = formatDate(date, "sorting");
     return bankHolidays["england-and-wales"].events.some(
         (bh) => bh.date === lookupDate
     );

@@ -41,7 +41,7 @@ export const calculateCumulativeAdditionalHours = (
         ) {
             if (additionalHoursShiftTypes.includes(val.type)) {
                 return acc + calculateShiftHours(valFrom, valTo);
-            } else {
+            } else if (val.overrun_type === "OT") {
                 return (
                     acc +
                     calculateShiftHours(
@@ -66,6 +66,7 @@ const calculateBankHolidayToil = (
     const { fromObj, toObj } = makeToAlwaysLater(from, plannedTo);
     const fromIsBankHoliday = isBankHoliday(fromObj);
     const toIsBankHoliday = isBankHoliday(toObj);
+    //TODO - if earning flat hours (i.e. under weekly threshold), then you still earn TOIL up to threshold like flat hours
     if (type === "Normal" && (fromIsBankHoliday || toIsBankHoliday)) {
         if (fromIsBankHoliday && toIsBankHoliday) {
             return calculateShiftHours(fromObj, toObj);

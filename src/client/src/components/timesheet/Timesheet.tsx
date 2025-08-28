@@ -74,8 +74,8 @@ const Timesheet = () => {
                     })}
                     <tr>
                         <td></td>
-                        <TimesheetTimeCell value={totals.plannedHours} />
-                        <TimesheetTimeCell value={totals.actualHours} />
+                        <TimesheetTimeCell value={totals.plannedShift} />
+                        <TimesheetTimeCell value={totals.actualShift} />
                         <TimesheetTimeCell value={totals.absentHours} />
                         <TimesheetTimeCell value={totals.additionalHours} />
                         <TimesheetTimeCell value={totals.timeAndHalf} />

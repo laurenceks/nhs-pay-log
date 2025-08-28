@@ -92,8 +92,8 @@ export interface TimesheetShift
     total_ush: number;
     absent_hours: number;
     additional_hours: number;
-    planned_hours: number;
-    actual_hours: number;
+    planned_shift: number;
+    actual_shift: number;
     snsc: number;
     ooamb: number;
     oowmb: number;
@@ -113,8 +113,8 @@ export type ApiTimesheet = {
         higherRate: number;
         totalUsh: number;
         absentHours: number;
-        plannedHours: number;
-        actualHours: number;
+        plannedShift: number;
+        actualShift: number;
         overrun: boolean;
         sick: boolean;
         snsc: number;
@@ -130,8 +130,8 @@ export type ApiTimesheet = {
         higherRate: number;
         totalUsh: number;
         absentHours: number;
-        plannedHours: number;
-        actualHours: number;
+        plannedShift: number;
+        actualShift: number;
         snsc: number;
         ooamb: number;
         oowmb: number;

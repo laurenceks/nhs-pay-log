@@ -29,14 +29,14 @@ export const getTimesheet = async (req: Request, res: Response) => {
         rows: [],
         totals: {
             absentHours: 0,
-            actualHours: 0,
+            actualShift: 0,
             additionalHours: 0,
             double: 0,
             higherRate: 0,
             lowerRate: 0,
             ooamb: 0,
             oowmb: 0,
-            plannedHours: 0,
+            plannedShift: 0,
             snsc: 0,
             timeAndHalf: 0,
             toil: 0,
@@ -60,8 +60,8 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 higherRate: 0,
                 totalUsh: 0,
                 absentHours: 0,
-                plannedHours: 0,
-                actualHours: 0,
+                plannedShift: 0,
+                actualShift: 0,
                 snsc: 0,
                 ooamb: 0,
                 oowmb: 0,
@@ -103,9 +103,9 @@ export const getTimesheet = async (req: Request, res: Response) => {
                         data[j].type === "Absent (TOIL relief)",
                 });
             }
-            timesheet.rows[i].additionalHours += data[j].additional_hours;
-            timesheet.rows[i].plannedHours += data[j].planned_hours;
-            timesheet.rows[i].actualHours += data[j].actual_hours;
+            timesheet.rows[i].additionalHours += data[j].flat;
+            timesheet.rows[i].plannedShift += data[j].planned_shift;
+            timesheet.rows[i].actualShift += data[j].actual_shift;
             timesheet.rows[i].timeAndHalf += data[j].time_and_half;
             timesheet.rows[i].double += data[j].double;
             timesheet.rows[i].toil += data[j].toil;
@@ -122,9 +122,9 @@ export const getTimesheet = async (req: Request, res: Response) => {
             timesheet.rows[i].sick =
                 timesheet.rows[i].sick || data[j].type === "Sick";
 
-            timesheet.totals.additionalHours += data[j].additional_hours;
-            timesheet.totals.plannedHours += data[j].planned_hours;
-            timesheet.totals.actualHours += data[j].actual_hours;
+            timesheet.totals.additionalHours += data[j].flat;
+            timesheet.totals.plannedShift += data[j].planned_shift;
+            timesheet.totals.actualShift += data[j].actual_shift;
             timesheet.totals.timeAndHalf += data[j].time_and_half;
             timesheet.totals.double += data[j].double;
             timesheet.totals.toil += data[j].toil;

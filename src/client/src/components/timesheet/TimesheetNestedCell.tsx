@@ -21,7 +21,7 @@ const TimesheetNestedCell = ({
     const nullLabel = restDay ? "Rest day" : "";
     return (
         <td
-            className={`text-center ${shifts.length > 1 ? "table-timesheet-nested" : ""} ${restDay ? "table-timesheet-rest-day" : ""} ${overrun ? "table-timesheet-overrun" : ""} ${absence ? "table-timesheet-absence" : ""} ${sick ? "table-timesheet-sick" : ""}`}
+            className={`text-center ${shifts.length > 1 ? " table-timesheet-nested" : planned && !!shifts?.length && "ot" in shifts[0] && shifts[0].ot ? "table-timesheet-ot" : ""}${restDay ? " table-timesheet-rest-day" : ""}${overrun ? " table-timesheet-overrun" : ""}${absence ? " table-timesheet-absence" : ""}${sick ? " table-timesheet-sick" : ""}`}
         >
             {shifts.length ? (
                 shifts.length > 1 ? (

@@ -61,13 +61,15 @@ export const calculateCumulativeAdditionalHours = (
 const calculateBankHolidayToil = (
     type: ShiftTypes,
     from: string,
-    plannedTo: string
+    to: string,
+    fromIsBankHoliday: boolean,
+    toIsBankHoliday: boolean
 ) => {
-    const { fromObj, toObj } = makeToAlwaysLater(from, plannedTo);
-    const fromIsBankHoliday = isBankHoliday(fromObj);
-    const toIsBankHoliday = isBankHoliday(toObj);
-    //TODO - if earning flat hours (i.e. under weekly threshold), then you still earn TOIL up to threshold like flat hours
-    if (type === "Normal" && (fromIsBankHoliday || toIsBankHoliday)) {
+    const { fromObj, toObj } = makeToAlwaysLater(from, to);
+    if (
+        ["Normal", "OT", "TOIL"].includes(type) &&
+        (fromIsBankHoliday || toIsBankHoliday)
+    ) {
         if (fromIsBankHoliday && toIsBankHoliday) {
             return calculateShiftHours(fromObj, toObj);
         } else if (fromIsBankHoliday) {
@@ -111,11 +113,6 @@ export const calculateAdditionalHours = (
         absent_hours: 0,
     };
     if (type && from && actual_to && planned_to) {
-        additionalHoursBreakdown.toil = calculateBankHolidayToil(
-            type,
-            from,
-            planned_to
-        );
         const isAdditionalHoursShift = additionalHoursShiftTypes.includes(type);
         const { fromObj, toObj } = makeToAlwaysLater(
             isAdditionalHoursShift ? from : planned_to,
@@ -160,6 +157,18 @@ export const calculateAdditionalHours = (
                 (weekly_hours && weekly_hours !== 0
                     ? decimalHoursToMs(weekly_hours)
                     : 1.35e8); //37.5hrs fallback
+
+            additionalHoursBreakdown.toil += Math.min(
+                weeklyOtThresholdHours,
+                calculateBankHolidayToil(
+                    type,
+                    from,
+                    overrun_type === "OT" ? actual_to : planned_to,
+                    fromIsBankHoliday,
+                    toIsBankHoliday
+                )
+            );
+
             if (type === "OT" || type === "Normal") {
                 additionalHoursBreakdown.flat = Math.max(
                     0,
@@ -213,12 +222,21 @@ export const calculateAdditionalHours = (
 
             if (type === "TOIL" || overrun_type === "TOIL") {
                 if (type === "TOIL") {
-                    additionalHoursBreakdown.toil += paidAdditionalHours;
+                    additionalHoursBreakdown.toil +=
+                        paidAdditionalHours - overrunHours;
                 }
                 if (overrun_type === "TOIL") {
                     additionalHoursBreakdown.toil += overrunHours;
                 }
             }
+        } else if (type === "Normal") {
+            additionalHoursBreakdown.toil += calculateBankHolidayToil(
+                type,
+                from,
+                planned_to,
+                fromIsBankHoliday,
+                toIsBankHoliday
+            );
         }
     }
 

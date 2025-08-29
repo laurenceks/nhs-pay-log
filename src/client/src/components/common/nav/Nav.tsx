@@ -34,20 +34,28 @@ const Nav = () => {
                 Pay
             </Link>
             <Link
-                to={"/settings"}
-                className="btn btn-sm"
-                activeProps={{ className: "btn-primary" }}
-                inactiveProps={{ className: "btn-light" }}
-            >
-                Settings
-            </Link>
-            <Link
                 to={"/timesheet"}
                 className="btn btn-sm"
                 activeProps={{ className: "btn-primary" }}
                 inactiveProps={{ className: "btn-light" }}
             >
                 Timesheets
+            </Link>
+            <Link
+                to={"/hours"}
+                className="btn btn-sm"
+                activeProps={{ className: "btn-primary" }}
+                inactiveProps={{ className: "btn-light" }}
+            >
+                Hours
+            </Link>
+            <Link
+                to={"/settings"}
+                className="btn btn-sm"
+                activeProps={{ className: "btn-primary" }}
+                inactiveProps={{ className: "btn-light" }}
+            >
+                Settings
             </Link>
             <Link to={"/logout"} className="btn btn-sm btn-light">
                 Logout

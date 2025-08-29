@@ -1,7 +1,7 @@
-import { makeToAlwaysLater } from "../utils/conversions";
 import { isBankHoliday } from "./shiftLengths";
-import { ClientShift, ShiftTypes } from "../../../types/commonTypes";
+import { ShiftTypes, USH } from "../../../types/commonTypes";
 import { addDaysToTimestamp, formatDate } from "../utils/formatDates";
+import { Section2LogEntry } from "./section2";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
     // returns in ms the total time within the lower rate windows
@@ -9,7 +9,7 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
         return 0;
     }
     const fromTime = from.getTime();
-    const toObj = makeToAlwaysLater(from, to).toObj;
+    const toObj = new Date(to);
     const toTime = to.getTime();
     const fromDay = from.getDay();
     const toDay = to.getDay();
@@ -94,7 +94,7 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
     }
 
     const fromTime = from.getTime();
-    const toObj = makeToAlwaysLater(from, to).toObj;
+    const toObj = new Date(to);
     const toTime = to.getTime();
     const fromDay = from.getDay();
     const toDay = to.getDay();
@@ -136,18 +136,18 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
 const ushTypes: ShiftTypes[] = ["Normal", "OT", "AL", "Absent (TOIL)", "Bank"];
 
 export const calculateUsh = (
-    from: Date | string,
-    to: Date | string,
+    from: Date,
+    to: Date,
     type: ShiftTypes = "Normal",
     hoursOverThresholdMs = 0,
-    weeklyHoursMs = 37.5,
-    log: ClientShift[] = []
-) => {
+    weeklyHoursMs = 1.35e8, //37.5hrs
+    log: Section2LogEntry[] = []
+): USH => {
     let lowerRateRaw = 0;
     let higherRateRaw = 0;
     if (from && to && ushTypes.includes(type)) {
-        //TODO is making sure timestamps are always later still necessary now that they are set using the reducer which makes sure already?
-        const { fromObj, toObj } = makeToAlwaysLater(from, to);
+        const fromObj = new Date(from);
+        const toObj = new Date(to);
 
         lowerRateRaw = calculateRawLowerRate(
             new Date(fromObj),

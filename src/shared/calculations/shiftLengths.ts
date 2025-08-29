@@ -16,7 +16,7 @@ export const calculateShiftHours = (
     return shiftLength > 21600000 ? shiftLength - 1800000 : shiftLength;
 };
 
-export const isBankHoliday = (date: Date | string) => {
+export const isBankHoliday = (date: Date) => {
     const lookupDate = formatDate(date, "sorting");
     return bankHolidays["england-and-wales"].events.some(
         (bh) => bh.date === lookupDate

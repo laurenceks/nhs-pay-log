@@ -1,6 +1,7 @@
 import { roundTo } from "round-to";
 
 export const msToDecimalHours = (timeInMs: number) => timeInMs / 3600000;
+
 export const msToTableFormat = (timeInMs: number) =>
     roundTo(msToDecimalHours(timeInMs), 3);
 
@@ -14,7 +15,10 @@ export const msToFormattedHours = (timeInMs: number) => {
 export const decimalHoursToMs = (timeInHrs: number) =>
     roundTo(timeInHrs * 3600000, 0);
 
-export const makeToAlwaysLater = (from: Date | string, to: Date | string) => {
+export const makeToAlwaysLater = (
+    from: Date | string | number,
+    to: Date | string | number
+) => {
     const fromObj = new Date(from);
     const toObj = new Date(to);
     const fromTime = fromObj.getTime();

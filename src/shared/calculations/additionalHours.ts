@@ -1,43 +1,37 @@
-import { decimalHoursToMs, makeToAlwaysLater } from "../utils/conversions";
+import { makeToAlwaysLater } from "../utils/conversions";
 import {
     calculateShiftHours,
     calculateShiftLength,
     isBankHoliday,
 } from "./shiftLengths";
-import {
-    AdditionalHours,
-    ClientShift,
-    Contract,
-    ParsedApiShift,
-    ShiftEdit,
-    ShiftTypes,
-} from "../../../types/commonTypes";
+import { AdditionalHours, ShiftTypes } from "../../../types/commonTypes";
 import {
     absentShiftTypes,
     additionalHoursShiftTypes,
 } from "../utils/shiftTypes";
+import { Section2LogEntry } from "./section2";
 
 export const calculateCumulativeAdditionalHours = (
     from: Date,
-    id: string | number,
-    log: ClientShift[] | ParsedApiShift[] = [],
-    employment_id: number
+    log: Section2LogEntry[] = [],
+    id?: string | number,
+    employment_id?: string | number
 ) => {
     const prevMonday = new Date(from);
     prevMonday.setHours(0, 0, 0, 0);
     prevMonday.setDate(prevMonday.getDate() - ((prevMonday.getDay() + 6) % 7));
 
     return log.reduce((acc, val) => {
-        const valFrom = new Date(`${val.date} ${val.start}`);
-        const valTo = makeToAlwaysLater(
-            valFrom,
-            `${val.date} ${val.actual_end}`
-        ).toObj;
+        const valFrom = new Date(val.from);
+        const valTo = makeToAlwaysLater(valFrom, val.actual_to).toObj;
         if (
             valFrom >= prevMonday &&
             valFrom < from &&
-            id !== val.id &&
-            employment_id === val.employment_id
+            ((!!id && !!val.id && id !== val.id) || (!id && !val.id)) &&
+            ((!!employment_id &&
+                !!val.employment_id &&
+                employment_id === val.employment_id) ||
+                (!employment_id && !val.employment_id))
         ) {
             if (additionalHoursShiftTypes.includes(val.type)) {
                 return acc + calculateShiftHours(valFrom, valTo);
@@ -45,10 +39,7 @@ export const calculateCumulativeAdditionalHours = (
                 return (
                     acc +
                     calculateShiftHours(
-                        makeToAlwaysLater(
-                            valFrom,
-                            `${val.date} ${val.planned_end}`
-                        ).toObj,
+                        makeToAlwaysLater(valFrom, val.planned_to).toObj,
                         valTo
                     )
                 );
@@ -60,24 +51,29 @@ export const calculateCumulativeAdditionalHours = (
 
 const calculateBankHolidayToil = (
     type: ShiftTypes,
-    from: string,
-    to: string,
+    from: Date,
+    to: Date,
     fromIsBankHoliday: boolean,
     toIsBankHoliday: boolean
 ) => {
-    const { fromObj, toObj } = makeToAlwaysLater(from, to);
     if (
         ["Normal", "OT", "TOIL"].includes(type) &&
         (fromIsBankHoliday || toIsBankHoliday)
     ) {
         if (fromIsBankHoliday && toIsBankHoliday) {
-            return calculateShiftHours(fromObj, toObj);
+            return calculateShiftHours(from, to);
         } else if (fromIsBankHoliday) {
             //from time until midnight
-            return calculateShiftLength(fromObj, toObj.setHours(0, 0, 0, 0));
+            return calculateShiftLength(
+                from,
+                new Date(to).setHours(0, 0, 0, 0)
+            );
         } else {
             //midnight until to time
-            return calculateShiftLength(fromObj.setHours(24, 0, 0, 0), toObj);
+            return calculateShiftLength(
+                new Date(from).setHours(24, 0, 0, 0),
+                to
+            );
         }
     }
     return 0;
@@ -85,25 +81,25 @@ const calculateBankHolidayToil = (
 
 export const calculateAdditionalHours = (
     {
-        from,
-        actual_to,
-        planned_to,
-        overrun_type,
-        type,
         id,
+        from,
+        planned_to,
+        actual_to,
         employment_id,
-        weekly_hours,
+        type,
+        overrun_type,
+        weeklyHoursMs,
     }: {
-        from: string;
-        actual_to: string;
-        employment_id: number;
-        planned_to: string;
-        overrun_type: string;
+        id?: string | number;
+        from: Date;
+        planned_to: Date;
+        actual_to: Date;
+        employment_id?: string | number;
         type: ShiftTypes;
-        id: ShiftEdit["id"];
-        weekly_hours: Contract["weekly_hours"];
+        overrun_type: string;
+        weeklyHoursMs: number;
     },
-    log: ClientShift[] | ParsedApiShift[]
+    log: Section2LogEntry[]
 ) => {
     const additionalHoursBreakdown: AdditionalHours = {
         flat: 0,
@@ -127,8 +123,8 @@ export const calculateAdditionalHours = (
                 ? 0
                 : calculateCumulativeAdditionalHours(
                       fromObj,
-                      id,
                       log,
+                      id,
                       employment_id
                   );
         const paidAdditionalHours = isAdditionalHoursShift
@@ -154,10 +150,7 @@ export const calculateAdditionalHours = (
         } else if (paidAdditionalHours || overrunHours) {
             const weeklyOtThresholdHours =
                 1.35e8 -
-                (weekly_hours && weekly_hours !== 0
-                    ? decimalHoursToMs(weekly_hours)
-                    : 1.35e8); //37.5hrs fallback
-
+                (weeklyHoursMs && weeklyHoursMs !== 0 ? weeklyHoursMs : 1.35e8); //37.5hrs fallback but allowing for 0
             additionalHoursBreakdown.toil += Math.min(
                 weeklyOtThresholdHours,
                 calculateBankHolidayToil(

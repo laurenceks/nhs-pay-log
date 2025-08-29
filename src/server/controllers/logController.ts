@@ -25,7 +25,16 @@ const updateAffectedShifts = async (
         employmentId
     );
     for (const shift of affectedShifts) {
-        const additionalHours = calculateAdditionalHours(shift, affectedShifts);
+        const additionalHours = calculateAdditionalHours(
+            {
+                ...shift,
+                from: new Date(shift.from),
+                planned_to: new Date(shift.planned_to),
+                actual_to: new Date(shift.actual_to),
+                weeklyHoursMs: decimalHoursToMs(shift.weekly_hours),
+            },
+            affectedShifts
+        );
         const log =
             shift.type === "AL (relief)" ||
             shift.type === "Absent (TOIL relief)"
@@ -40,10 +49,10 @@ const updateAffectedShifts = async (
             ...shift,
             ...{
                 ...calculateUsh(
-                    shift.from,
+                    new Date(shift.from),
                     shift.overrun_type === "OT"
-                        ? shift.actual_to
-                        : shift.planned_to,
+                        ? new Date(shift.actual_to)
+                        : new Date(shift.planned_to),
                     shift.type,
                     additionalHours.time_and_half + additionalHours.double,
                     decimalHoursToMs(shift.weekly_hours),

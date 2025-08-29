@@ -7,8 +7,6 @@ import {
     useReducer,
     useState,
 } from "react";
-import { calculateUsh } from "../../../../shared/calculations/ush";
-import { calculateAdditionalHours } from "../../../../shared/calculations/additionalHours";
 import ShiftEditModalCalculation from "./ShiftEditModalCalculation";
 import logShiftReducer from "../../reducers/logShiftReducer";
 import { useLoaderData } from "@tanstack/react-router";
@@ -34,8 +32,9 @@ import { ApiResponse } from "../../../../../types/responseTypes";
 import { logShiftValidationSchema } from "../../../../shared/validationSchemas/logShiftValidationSchema";
 import { overrunTypeList, typeList } from "../../../../shared/lists";
 import ShiftEditModalListOptions from "./ShiftEditModalListOptions";
-import { decimalHoursToMs } from "../../../../shared/utils/conversions";
 import { absentShiftTypes } from "../../../../shared/utils/shiftTypes";
+import { calculateSection2 } from "../../../../shared/calculations/section2";
+import { decimalHoursToMs } from "../../../../shared/utils/conversions";
 
 const ShiftEditModal = ({
     setToastMessage,
@@ -154,19 +153,12 @@ const ShiftEditModal = ({
 
     useEffect(() => {
         if (editState) {
-            const additionalHours = calculateAdditionalHours(editState, log);
             setUshState({
-                ...calculateUsh(
-                    editState.from,
-                    editState.overrun_type === "OT"
-                        ? editState.actual_to
-                        : editState.planned_to,
-                    editState.type,
-                    additionalHours.time_and_half + additionalHours.double,
-                    decimalHoursToMs(editState.weekly_hours),
-                    log
-                ),
-                ...additionalHours,
+                ...calculateSection2({
+                    ...editState,
+                    log,
+                    weeklyHoursMs: decimalHoursToMs(editState.weekly_hours),
+                }),
             });
         } else {
             setUshState({

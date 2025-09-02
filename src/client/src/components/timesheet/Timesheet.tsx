@@ -30,6 +30,7 @@ const Timesheet = () => {
                         <th>S/N shift change</th>
                         <th>Meal break out of area</th>
                         <th>Meal break out of window</th>
+                        <th>Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +70,7 @@ const Timesheet = () => {
                                 <TimesheetExtraCell value={row.snsc} />
                                 <TimesheetExtraCell value={row.ooamb} />
                                 <TimesheetExtraCell value={row.oowmb} />
+                                <td>{row.notes}</td>
                             </tr>
                         );
                     })}
@@ -87,6 +89,7 @@ const Timesheet = () => {
                         <td className="text-center">{totals.snsc || ""}</td>
                         <td className="text-center">{totals.ooamb || ""}</td>
                         <td className="text-center">{totals.oowmb || ""}</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>

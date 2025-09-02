@@ -67,6 +67,7 @@ export const getTimesheet = async (req: Request, res: Response) => {
                 oowmb: 0,
                 overrun: false,
                 sick: false,
+                notes: "",
             };
         }
         if (j < data.length && data[j].date === dateString) {
@@ -116,6 +117,7 @@ export const getTimesheet = async (req: Request, res: Response) => {
             timesheet.rows[i].oowmb += data[j].oowmb;
             timesheet.rows[i].ooamb += data[j].ooamb;
             timesheet.rows[i].snsc += data[j].snsc;
+            timesheet.rows[i].notes += data[j].notes;
             timesheet.rows[i].overrun =
                 timesheet.rows[i].overrun ||
                 data[j].planned_end !== data[j].actual_end;

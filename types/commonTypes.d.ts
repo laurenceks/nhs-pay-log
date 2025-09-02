@@ -121,6 +121,7 @@ export type ApiTimesheet = {
         snsc: number;
         ooamb: number;
         oowmb: number;
+        notes: string;
     }[];
     totals: {
         additionalHours: number;

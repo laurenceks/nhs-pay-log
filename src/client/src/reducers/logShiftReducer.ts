@@ -24,7 +24,8 @@ export type LogShiftReducerOptions =
               | "plannedEnd"
               | "plannedEndBlur"
               | "actualEnd"
-              | "payIdOverride";
+              | "payIdOverride"
+              | "notes";
           payload: string;
       }
     | {
@@ -238,6 +239,12 @@ const logShiftReducer = (
             return {
                 ...prevState,
                 overrun_type: payload,
+            };
+        }
+        case "notes": {
+            return {
+                ...prevState,
+                notes: payload,
             };
         }
         case "payIdOverride": {

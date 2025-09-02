@@ -327,6 +327,18 @@ const ShiftEditModal = ({
                                 </Form.Group>
                             )}
                         </div>
+                        <div className="w-100 pe-4 me-3">
+                            <Form.Group controlId="editNotes">
+                                <Form.Label>Notes</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    maxLength={255}
+                                    data-field={"notes"}
+                                    onChange={changeHandler}
+                                    value={editState.notes}
+                                ></Form.Control>
+                            </Form.Group>
+                        </div>
                         <div className="d-flex flex-wrap gap-3 w-100">
                             <Form.Group controlId="editExtras">
                                 <Form.Label>Extras</Form.Label>

@@ -30,14 +30,15 @@ export interface ShiftEdit {
     date: string;
     employment_id: Employment["id"];
     employment_name: Employment["name"];
-    selectedExtras?: ShiftExtra[];
     extras_ids_string: string;
     from: string;
     id: number;
+    notes: string;
     overrun_type: Overruns;
     pay_id_override: string | null;
     planned_end: string;
     planned_to: string;
+    selectedExtras?: ShiftExtra[];
     start: string;
     type: ShiftTypes;
 }

@@ -23,6 +23,7 @@ export interface Section2LogEntry extends Section2 {
     overrun_type?: Overruns;
     planned_to: string;
     type: ShiftTypes;
+    break_override?: number | null;
 }
 
 export const calculateSection2 = ({
@@ -34,6 +35,7 @@ export const calculateSection2 = ({
     id = undefined,
     employment_id = undefined,
     weeklyHoursMs = 135000000,
+    breakOverrideMs = null,
     log = [],
 }: {
     from: Date | string | number;
@@ -44,6 +46,7 @@ export const calculateSection2 = ({
     id?: string | number;
     employment_id?: string | number;
     weeklyHoursMs?: number;
+    breakOverrideMs?: number | null;
     log?: Section2LogEntry[];
 }): Section2 => {
     if (
@@ -79,6 +82,7 @@ export const calculateSection2 = ({
             id,
             employment_id,
             weeklyHoursMs: weeklyHoursMs,
+            breakOverrideMs,
         },
         log
     );
@@ -89,6 +93,7 @@ export const calculateSection2 = ({
         type,
         additionalHours.time_and_half + additionalHours.double,
         weeklyHoursMs,
+        breakOverrideMs,
         log
     );
     return { ...additionalHours, ...ush };

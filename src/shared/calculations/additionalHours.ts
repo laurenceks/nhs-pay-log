@@ -34,13 +34,17 @@ export const calculateCumulativeAdditionalHours = (
                 (!employment_id && !val.employment_id))
         ) {
             if (additionalHoursShiftTypes.includes(val.type)) {
-                return acc + calculateShiftHours(valFrom, valTo);
+                return (
+                    acc +
+                    calculateShiftHours(valFrom, valTo, val.break_override)
+                );
             } else if (val.overrun_type === "OT") {
                 return (
                     acc +
                     calculateShiftHours(
                         makeToAlwaysLater(valFrom, val.planned_to).toObj,
-                        valTo
+                        valTo,
+                        val.break_override
                     )
                 );
             }
@@ -89,6 +93,7 @@ export const calculateAdditionalHours = (
         type,
         overrun_type,
         weeklyHoursMs,
+        breakOverrideMs = null,
     }: {
         id?: string | number;
         from: Date;
@@ -98,6 +103,7 @@ export const calculateAdditionalHours = (
         type: ShiftTypes;
         overrun_type: string;
         weeklyHoursMs: number;
+        breakOverrideMs?: number | null;
     },
     log: Section2LogEntry[]
 ) => {
@@ -128,7 +134,7 @@ export const calculateAdditionalHours = (
                       employment_id
                   );
         const paidAdditionalHours = isAdditionalHoursShift
-            ? calculateShiftHours(fromObj, toObj)
+            ? calculateShiftHours(fromObj, toObj, breakOverrideMs)
             : calculateShiftLength(fromObj, toObj);
 
         const { fromObj: overrunFrom, toObj: overrunTo } = makeToAlwaysLater(
@@ -145,7 +151,8 @@ export const calculateAdditionalHours = (
             const { fromObj, toObj } = makeToAlwaysLater(from, planned_to);
             additionalHoursBreakdown.absent_hours = calculateShiftHours(
                 fromObj,
-                toObj
+                toObj,
+                breakOverrideMs
             );
         } else if (paidAdditionalHours || overrunHours) {
             const weeklyOtThresholdHours =

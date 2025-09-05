@@ -10,10 +10,14 @@ export const calculateShiftLength = (
 };
 export const calculateShiftHours = (
     from: Date | string | number,
-    to: Date | string | number
+    to: Date | string | number,
+    breakOverrideMs: number | null = null
 ) => {
     const shiftLength = calculateShiftLength(from, to);
-    return shiftLength > 21600000 ? shiftLength - 1800000 : shiftLength;
+    if (breakOverrideMs === null || breakOverrideMs === undefined) {
+        return shiftLength > 21600000 ? shiftLength - 1800000 : shiftLength;
+    }
+    return Math.max(shiftLength - breakOverrideMs);
 };
 
 export const isBankHoliday = (date: Date) => {

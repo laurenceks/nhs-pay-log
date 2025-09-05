@@ -141,6 +141,7 @@ export const calculateUsh = (
     type: ShiftTypes = "Normal",
     hoursOverThresholdMs = 0,
     weeklyHoursMs = 1.35e8, //37.5hrs
+    breakOverrideMs: number | null = null,
     log: Section2LogEntry[] = []
 ): USH => {
     let lowerRateRaw = 0;
@@ -161,7 +162,12 @@ export const calculateUsh = (
         const totalUshRaw = lowerRateRaw + higherRateRaw;
         let shiftLength = toObj.getTime() - fromObj.getTime();
 
-        const remainingBreak = shiftLength > 21600000 ? 1800000 : 0;
+        const remainingBreak =
+            breakOverrideMs === null || breakOverrideMs === undefined
+                ? shiftLength > 21600000
+                    ? 1800000
+                    : 0
+                : breakOverrideMs;
 
         if (hoursOverThresholdMs) {
             //recalculate USH based on new end

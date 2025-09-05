@@ -32,6 +32,7 @@ const updateAffectedShifts = async (
                 planned_to: new Date(shift.planned_to),
                 actual_to: new Date(shift.actual_to),
                 weeklyHoursMs: decimalHoursToMs(shift.weekly_hours),
+                breakOverrideMs: shift.break_override,
             },
             affectedShifts
         );
@@ -56,6 +57,7 @@ const updateAffectedShifts = async (
                     shift.type,
                     additionalHours.time_and_half + additionalHours.double,
                     decimalHoursToMs(shift.weekly_hours),
+                    shift.break_override,
                     log
                 ),
                 ...additionalHours,

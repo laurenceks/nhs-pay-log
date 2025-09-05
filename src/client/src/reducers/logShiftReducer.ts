@@ -25,6 +25,7 @@ export type LogShiftReducerOptions =
               | "plannedEndBlur"
               | "actualEnd"
               | "payIdOverride"
+              | "breakOverride"
               | "notes";
           payload: string;
       }
@@ -251,6 +252,16 @@ const logShiftReducer = (
             return {
                 ...prevState,
                 pay_id_override: payload || null,
+            };
+        }
+        case "breakOverride": {
+            const [hours, minutes] = payload.split(":").map(Number);
+            const breakInMs = (hours * 60 + minutes) * 60000;
+            return {
+                ...prevState,
+                break_override_string: payload || null,
+                break_override:
+                    isNaN(breakInMs) || breakInMs < 0 ? null : breakInMs,
             };
         }
         case "addExtra": {

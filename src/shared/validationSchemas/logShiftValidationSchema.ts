@@ -26,6 +26,8 @@ export const logShiftValidationSchema = z
         start: shiftTimeValidationSchema("Start"),
         actual_end: shiftTimeValidationSchema("Actual end"),
         planned_end: shiftTimeValidationSchema("Planned end"),
+        break_override_string:
+            shiftTimeValidationSchema("Break override").nullable(),
         contract_id: rowIdValidationSchema("Contract ID", false),
         employment_id: rowIdValidationSchema("Employment ID", false),
         extras_ids_string: z
@@ -46,6 +48,10 @@ export const logShiftValidationSchema = z
             .regex(/band_\d[a-d]?_\d/, "Invalid pay override ID")
             .nullable(),
         pay_month: shiftPayMonthValidationSchema("Pay month"),
+        break_override: z
+            .int("Break override must be a valid integer")
+            .min(0, "Break override must be more than or equal to 0")
+            .nullable(),
         notes: z
             .string("Notes must be valid text")
             .max(255, "Notes must be less than 255 characters"),

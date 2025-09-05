@@ -228,6 +228,18 @@ const ShiftEditModal = ({
                                     onChange={changeHandler}
                                 />
                             </Form.Group>
+                            <Form.Group controlId="editBreakOverride">
+                                <Form.Label>Break overide</Form.Label>
+                                <Form.Control
+                                    type="time"
+                                    placeholder=""
+                                    value={
+                                        editState?.break_override_string || ""
+                                    }
+                                    data-field={"breakOverride"}
+                                    onChange={changeHandler}
+                                />
+                            </Form.Group>
                         </div>
                         <div className="d-flex flex-wrap gap-3">
                             <Form.Group controlId="editEmployment">

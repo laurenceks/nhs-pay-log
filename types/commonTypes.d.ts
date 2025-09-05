@@ -26,6 +26,8 @@ export type ShiftExtra = {
 export interface ShiftEdit {
     actual_end: string;
     actual_to: string;
+    break_override_string: string | null;
+    break_override: number | null;
     contract_id: Contract["id"];
     date: string;
     employment_id: Employment["id"];

@@ -116,6 +116,8 @@ export const calculateAdditionalHours = (
     };
     if (type && from && actual_to && planned_to) {
         const isAdditionalHoursShift = additionalHoursShiftTypes.includes(type);
+
+        //TODO this will deduct a break if overrun makes shift more than six hours - should only be if planned shift > 6
         const { fromObj, toObj } = makeToAlwaysLater(
             isAdditionalHoursShift ? from : planned_to,
             overrun_type === "OT" ? actual_to : planned_to

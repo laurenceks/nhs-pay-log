@@ -142,7 +142,9 @@ export const calculateUsh = (
     hoursOverThresholdMs = 0,
     weeklyHoursMs = 1.35e8, //37.5hrs
     breakOverrideMs: number | null = null,
-    log: Section2LogEntry[] = []
+    log: Section2LogEntry[] = [],
+    halfIsAllUsh: boolean = false,
+    breakInHigherRate: boolean = true
 ): USH => {
     let lowerRateRaw = 0;
     let higherRateRaw = 0;
@@ -182,7 +184,10 @@ export const calculateUsh = (
             );
         }
 
-        if (totalUshRaw > shiftLength / 2) {
+        if (
+            totalUshRaw > shiftLength / 2 ||
+            (halfIsAllUsh && totalUshRaw >= shiftLength / 2)
+        ) {
             // more than half the shift is USH
             if (!higherRateRaw) {
                 // only lower rate
@@ -201,10 +206,20 @@ export const calculateUsh = (
                     // update shift length to match USH length with OT hours deducted
                     shiftLength = toObj.getTime() - fromObj.getTime();
                 }
-                // take break from more expensive side
-                const segmentBreak = Math.min(higherRateRaw, remainingBreak);
-                higherRateRaw = shiftLength - lowerRateRaw - segmentBreak;
-                lowerRateRaw -= remainingBreak - segmentBreak;
+                if (breakInHigherRate) {
+                    // take break from more expensive side
+                    const segmentBreak = Math.min(
+                        higherRateRaw,
+                        remainingBreak
+                    );
+                    higherRateRaw = shiftLength - lowerRateRaw - segmentBreak;
+                    lowerRateRaw -= remainingBreak - segmentBreak;
+                } else {
+                    // take break from less expensive side
+                    const segmentBreak = Math.min(lowerRateRaw, remainingBreak);
+                    lowerRateRaw = shiftLength - higherRateRaw - segmentBreak;
+                    higherRateRaw -= remainingBreak - segmentBreak;
+                }
             }
         }
     } else if (type === "AL (relief)" || type === "Absent (TOIL relief)") {

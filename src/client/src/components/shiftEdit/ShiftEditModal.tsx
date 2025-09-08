@@ -154,12 +154,14 @@ const ShiftEditModal = ({
     useEffect(() => {
         if (editState) {
             setUshState({
-                ...calculateSection2({
-                    ...editState,
-                    log,
-                    weeklyHoursMs: decimalHoursToMs(editState.weekly_hours),
-                    breakOverrideMs: editState.break_override,
-                }),
+                ...calculateSection2(
+                    {
+                        ...editState,
+                        log,
+                        breakOverrideMs: editState.break_override,
+                    },
+                    { weeklyHoursMs: decimalHoursToMs(editState.weekly_hours) }
+                ),
             });
         } else {
             setUshState({

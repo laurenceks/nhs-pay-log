@@ -26,33 +26,42 @@ export interface Section2LogEntry extends Section2 {
     break_override?: number | null;
 }
 
-export const calculateSection2 = ({
-    from,
-    planned_to,
-    actual_to,
-    type = "Normal",
-    overrun_type = "OT",
-    id = undefined,
-    employment_id = undefined,
-    weeklyHoursMs = 135000000,
-    breakOverrideMs = null,
-    log = [],
-}: {
-    from: Date | string | number;
-    planned_to: Date | string | number;
-    actual_to: Date | string | number;
-    type?: ShiftTypes;
-    overrun_type?: Overruns;
-    id?: string | number;
-    employment_id?: string | number;
-    weeklyHoursMs?: number;
-    breakOverrideMs?: number | null;
-    log?: Section2LogEntry[];
-}): Section2 => {
+export const calculateSection2 = (
+    {
+        from,
+        planned_to,
+        actual_to,
+        type = "Normal",
+        overrun_type = "OT",
+        id = undefined,
+        employment_id = undefined,
+        breakOverrideMs = null,
+        log = [],
+    }: {
+        from: Date | string | number;
+        planned_to: Date | string | number;
+        actual_to?: Date | string | number;
+        type?: ShiftTypes;
+        overrun_type?: Overruns;
+        id?: string | number;
+        employment_id?: string | number;
+        breakOverrideMs?: number | null;
+        log?: Section2LogEntry[];
+    },
+    {
+        weeklyHoursMs = 135000000, //37.5
+        halfIsAllUsh = false,
+        breakInHigherRate = true,
+    }: {
+        weeklyHoursMs?: number;
+        halfIsAllUsh?: boolean;
+        breakInHigherRate?: boolean;
+    }
+): Section2 => {
     if (
         !validateTimestamp(from) ||
         !validateTimestamp(planned_to) ||
-        !validateTimestamp(actual_to)
+        (!!actual_to && !validateTimestamp(actual_to))
     ) {
         console.warn(
             "Invalid datetime passed - function will return 0 for all fields. Datetimes must be a Date object, unix time or a string in yyyy-mm-dd or ISO format."
@@ -71,7 +80,9 @@ export const calculateSection2 = ({
         from,
         planned_to
     );
-    const { toObj: actualToObj } = makeToAlwaysLater(plannedToObj, actual_to);
+    const actualToObj = actual_to
+        ? makeToAlwaysLater(plannedToObj, actual_to).toObj
+        : new Date(plannedToObj);
     const additionalHours = calculateAdditionalHours(
         {
             from: fromObj,
@@ -94,7 +105,9 @@ export const calculateSection2 = ({
         additionalHours.time_and_half + additionalHours.double,
         weeklyHoursMs,
         breakOverrideMs,
-        log
+        log,
+        halfIsAllUsh,
+        breakInHigherRate
     );
     return { ...additionalHours, ...ush };
 };

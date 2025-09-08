@@ -47,6 +47,8 @@ export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
             return {
                 actual_end: "",
                 actual_to: "",
+                break_override: null,
+                break_override_string: null,
                 date: today,
                 pay_date: formatDate(today, "yyyy-mm-dd"),
                 pay_month: formatDate(today, "yy-mm"),

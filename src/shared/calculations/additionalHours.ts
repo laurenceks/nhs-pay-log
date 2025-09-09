@@ -4,7 +4,11 @@ import {
     calculateShiftLength,
     isBankHoliday,
 } from "./shiftLengths";
-import { AdditionalHours, ShiftTypes } from "../../../types/commonTypes";
+import {
+    AdditionalHours,
+    Overruns,
+    ShiftTypes,
+} from "../../../types/commonTypes";
 import {
     absentShiftTypes,
     additionalHoursShiftTypes,
@@ -101,7 +105,7 @@ export const calculateAdditionalHours = (
         actual_to: Date;
         employment_id?: string | number;
         type: ShiftTypes;
-        overrun_type: string;
+        overrun_type: Overruns;
         weeklyHoursMs: number;
         breakOverrideMs?: number | null;
     },
@@ -117,14 +121,12 @@ export const calculateAdditionalHours = (
     if (type && from && actual_to && planned_to) {
         const isAdditionalHoursShift = additionalHoursShiftTypes.includes(type);
 
-        //TODO this will deduct a break if overrun makes shift more than six hours - should only be if planned shift > 6
-        const { fromObj, toObj } = makeToAlwaysLater(
-            isAdditionalHoursShift ? from : planned_to,
-            overrun_type === "OT" ? actual_to : planned_to
-        );
+        const fromObj = new Date(from);
+        const plannedToObj = new Date(planned_to);
+        const actualToObj = new Date(actual_to);
 
         const fromIsBankHoliday = isBankHoliday(fromObj);
-        const toIsBankHoliday = isBankHoliday(toObj);
+        const toIsBankHoliday = isBankHoliday(actualToObj);
 
         const cumulativeAdditionalHours =
             type === "Bank"
@@ -135,36 +137,34 @@ export const calculateAdditionalHours = (
                       id,
                       employment_id
                   );
-        const paidAdditionalHours = isAdditionalHoursShift
-            ? calculateShiftHours(fromObj, toObj, breakOverrideMs)
-            : calculateShiftLength(fromObj, toObj);
-
-        const { fromObj: overrunFrom, toObj: overrunTo } = makeToAlwaysLater(
-            planned_to,
-            actual_to
-        );
+        const plannedAdditionalHours = isAdditionalHoursShift
+            ? calculateShiftHours(fromObj, planned_to, breakOverrideMs)
+            : 0;
 
         const overrunHours =
-            overrunFrom === overrunTo
+            plannedToObj === actualToObj
                 ? 0
-                : calculateShiftLength(planned_to, overrunTo);
+                : calculateShiftLength(plannedToObj, actualToObj);
+
+        const paidAdditionalHours =
+            plannedAdditionalHours + (overrun_type === "OT" ? overrunHours : 0);
 
         if (absentShiftTypes.includes(type)) {
-            const { fromObj, toObj } = makeToAlwaysLater(from, planned_to);
             additionalHoursBreakdown.absent_hours = calculateShiftHours(
                 fromObj,
-                toObj,
+                plannedToObj,
                 breakOverrideMs
             );
-        } else if (paidAdditionalHours || overrunHours) {
+        } else if (paidAdditionalHours) {
             const weeklyOtThresholdHours =
                 1.35e8 -
                 (weeklyHoursMs && weeklyHoursMs !== 0 ? weeklyHoursMs : 1.35e8); //37.5hrs fallback but allowing for 0
+
             additionalHoursBreakdown.toil += Math.min(
                 weeklyOtThresholdHours,
                 calculateBankHolidayToil(
                     type,
-                    from,
+                    fromObj,
                     overrun_type === "OT" ? actual_to : planned_to,
                     fromIsBankHoliday,
                     toIsBankHoliday
@@ -180,9 +180,7 @@ export const calculateAdditionalHours = (
                     )
                 );
                 if (
-                    paidAdditionalHours +
-                        overrunHours +
-                        cumulativeAdditionalHours >=
+                    paidAdditionalHours + cumulativeAdditionalHours >=
                     weeklyOtThresholdHours
                 ) {
                     if (fromIsBankHoliday || toIsBankHoliday) {
@@ -197,14 +195,19 @@ export const calculateAdditionalHours = (
                             additionalHoursBreakdown.double =
                                 calculateShiftLength(
                                     fromObj,
-                                    toObj.setHours(0, 0, 0, 0)
+                                    (overrun_type === "OT"
+                                        ? actualToObj
+                                        : plannedToObj
+                                    ).setHours(0, 0, 0, 0)
                                 );
                         } else {
                             //midnight until to time
                             additionalHoursBreakdown.double =
                                 calculateShiftLength(
                                     fromObj.setHours(24, 0, 0, 0),
-                                    toObj
+                                    overrun_type === "OT"
+                                        ? actualToObj
+                                        : plannedToObj
                                 );
                         }
                     }
@@ -224,8 +227,7 @@ export const calculateAdditionalHours = (
 
             if (type === "TOIL" || overrun_type === "TOIL") {
                 if (type === "TOIL") {
-                    additionalHoursBreakdown.toil +=
-                        paidAdditionalHours - overrunHours;
+                    additionalHoursBreakdown.toil += plannedAdditionalHours;
                 }
                 if (overrun_type === "TOIL") {
                     additionalHoursBreakdown.toil += overrunHours;

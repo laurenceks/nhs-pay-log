@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+    numberBooleanSchema,
     rowIdValidationSchema,
     shiftDateValidationSchema,
 } from "./commonValidationSchemas";
@@ -36,6 +37,10 @@ const commonEmploymentValidationSchema = (contracts?: Contract[]) =>
                             to: shiftDateValidationSchema("from").nullable(),
                             employment_id:
                                 rowIdValidationSchema("Employment ID"),
+                            half_is_all_ush:
+                                numberBooleanSchema("Half is all USH"),
+                            break_from_higher:
+                                numberBooleanSchema("Break from higher"),
                         })
                         .refine((val) => {
                             if (val.from && val.to) {

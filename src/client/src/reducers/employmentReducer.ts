@@ -35,6 +35,8 @@ const defaultContract = (
     hca_perc: 0,
     hca_group_id: null,
     id: Date.now(),
+    half_is_all_ush: true,
+    break_from_higher: false,
 });
 
 export type EmploymentReducerOptions =
@@ -71,7 +73,8 @@ export type EmploymentReducerOptions =
                   | string
                   | number
                   | Contract["student_loan"]
-                  | Contract["hca_group_id"];
+                  | Contract["hca_group_id"]
+                  | boolean;
           };
       }
     | {
@@ -526,7 +529,9 @@ const employmentReducer = (
         case "weekly_hours":
         case "pension_perc":
         case "personal_allowance":
-        case "student_loan": {
+        case "student_loan":
+        case "half_is_all_ush":
+        case "break_from_higher": {
             const currentIndex = prevState.findIndex(
                 (x) => x.id === payload.currentContractId
             );

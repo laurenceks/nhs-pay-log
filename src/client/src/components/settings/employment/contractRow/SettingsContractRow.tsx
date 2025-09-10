@@ -70,6 +70,8 @@ const SettingsContractRow = ({
                     </span>
                 )}
             </td>
+            <td>{contract.half_is_all_ush ? "Yes" : "No"}</td>
+            <td>{contract.break_from_higher ? "Yes" : "No"}</td>
             {isEditing && <td />}
         </tr>
     );

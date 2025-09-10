@@ -253,6 +253,8 @@ export type Contract = {
     employment_name: Employment["name"];
     pay_group_id: Employment["pay_group_id"];
     hca_group_id: 1 | 2 | 3 | null;
+    half_is_all_ush: 0 | 1 | boolean;
+    break_from_higher: 0 | 1 | boolean;
 };
 
 export type EmploymentEdit = {

@@ -57,3 +57,11 @@ export const rowIdValidationSchema = (
         .int(msg)
         .min(allowZero ? 0 : 1, msg);
 };
+
+export const numberBooleanSchema = (fieldName: string = "Field") => {
+    const msg = `${fieldName} must be a valid boolean value`;
+    return z.union([
+        z.coerce.number(msg).int(msg).min(0, msg).max(1),
+        z.boolean(msg),
+    ]);
+};

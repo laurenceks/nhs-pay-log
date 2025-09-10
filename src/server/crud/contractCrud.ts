@@ -16,10 +16,12 @@ export const createContract = async (
     studentLoan: Contract["student_loan"],
     personalAllowance: Contract["personal_allowance"],
     from: Contract["from"] = null,
-    to: Contract["to"] = null
+    to: Contract["to"] = null,
+    halfIsAllUsh: 0 | 1 | boolean = 1,
+    breakFromHigher: 0 | 1 | boolean = 0
 ) => {
     return await executeWriteByPlaceholders(
-        "INSERT INTO `contracts` (`user_id`, `employment_id`, `from`, `to`, `pay_group_id`, `hca_group_id`, `weekly_hours`, `pension_perc`, `student_loan`, `personal_allowance`) VALUES (:userId, :employmentId, :from, :to, :payGroupId, :hcaGroupId, :weeklyHours, :pensionPerc, :studentLoan, :personalAllowance)",
+        "INSERT INTO `contracts` (`user_id`,\n                         `employment_id`,\n                         `from`,\n                         `to`,\n                         `pay_group_id`,\n                         `hca_group_id`,\n                         `weekly_hours`,\n                         `pension_perc`,\n                         `student_loan`,\n                         `personal_allowance`,\n                         `half_is_all_ush`,\n                         `break_from_higher`)\nVALUES (:userId,\n        :employmentId,\n        :from,\n        :to,\n        :payGroupId,\n        :hcaGroupId,\n        :weeklyHours,\n        :pensionPerc,\n        :studentLoan,\n        :personalAllowance,\n        :halfIsAllUsh,\n        :breakFromHigher)",
         {
             userId,
             employmentId,
@@ -31,13 +33,15 @@ export const createContract = async (
             pensionPerc,
             studentLoan,
             personalAllowance,
+            halfIsAllUsh: Number(halfIsAllUsh),
+            breakFromHigher: Number(breakFromHigher),
         }
     );
 };
 
 export const readContractsByUserId = async (userId: string) => {
     return await executeReadByArray<Contract>(
-        "SELECT `contracts`.`id`,\n       `contracts`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       `contracts`.`from`,\n       `contracts`.`to`,\n       `weekly_hours`,\n       `pay_group_id`,\n       `pension_perc`,\n       `personal_allowance`,\n       `student_loan`,\n       `hca_group_id`\nFROM `contracts`\n         INNER JOIN `employments` ON `employments`.`id` = `contracts`.`employment_id` AND\n                                    `employments`.`user_id` = `contracts`.`user_id`\nWHERE `contracts`.`user_id` = ?\nORDER BY `contracts`.`from`, `contracts`.`to`, `employment_name`",
+        "SELECT `contracts`.`id`,\n       `contracts`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       `contracts`.`from`,\n       `contracts`.`to`,\n       `weekly_hours`,\n       `pay_group_id`,\n       `pension_perc`,\n       `personal_allowance`,\n       `student_loan`,\n       `hca_group_id`,\n       `half_is_all_ush`,\n       `break_from_higher`\nFROM `contracts`\n         INNER JOIN `employments` ON `employments`.`id` = `contracts`.`employment_id` AND\n                                    `employments`.`user_id` = `contracts`.`user_id`\nWHERE `contracts`.`user_id` = ?\nORDER BY `contracts`.`from`, `contracts`.`to`, `employment_name`",
         [userId]
     );
 };
@@ -46,7 +50,7 @@ export const readContractsByUserIdAndEmploymentId = async (
     employmentId: string | number
 ) => {
     return await executeReadByPlaceholders<Contract>(
-        "SELECT `contracts`.`id`,\n       `contracts`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       `contracts`.`from`,\n       `contracts`.`to`,\n       `weekly_hours`,\n       `pay_group_id`,\n       `pension_perc`,\n       `personal_allowance`,\n       `student_loan`,\n       `hca_group_id`\nFROM `contracts`\n         INNER JOIN `employments` ON `employments`.`id` = `contracts`.`employment_id` AND\n                                     `employments`.`user_id` = `contracts`.`user_id`\nWHERE `contracts`.`user_id` = :userId AND `contracts`.`employment_id` = :employmentId\nORDER BY `contracts`.`from`, `contracts`.`to`, `employment_name`",
+        "SELECT `contracts`.`id`,\n       `contracts`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       `contracts`.`from`,\n       `contracts`.`to`,\n       `weekly_hours`,\n       `pay_group_id`,\n       `pension_perc`,\n       `personal_allowance`,\n       `student_loan`,\n       `hca_group_id`,\n       `half_is_all_ush`,\n       `break_from_higher`\nFROM `contracts`\n         INNER JOIN `employments` ON `employments`.`id` = `contracts`.`employment_id` AND\n                                     `employments`.`user_id` = `contracts`.`user_id`\nWHERE `contracts`.`user_id` = :userId AND `contracts`.`employment_id` = :employmentId\nORDER BY `contracts`.`from`, `contracts`.`to`, `employment_name`",
         { userId, employmentId }
     );
 };
@@ -55,7 +59,7 @@ export const readContractsByUserIdAndNotEmploymentId = async (
     employmentId: string | number
 ) => {
     return await executeReadByPlaceholders<Contract>(
-        "SELECT `contracts`.`id`,\n       `contracts`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       `contracts`.`from`,\n       `contracts`.`to`,\n       `weekly_hours`,\n       `pay_group_id`,\n       `pension_perc`,\n       `personal_allowance`,\n       `student_loan`,\n       `hca_group_id`\nFROM `contracts`\n         INNER JOIN `employments` ON `employments`.`id` = `contracts`.`employment_id` AND\n                                     `employments`.`user_id` = `contracts`.`user_id`\nWHERE `contracts`.`user_id` = :userId AND `contracts`.`employment_id` != :employmentId\nORDER BY `contracts`.`from`, `contracts`.`to`, `employment_name`",
+        "SELECT `contracts`.`id`,\n       `contracts`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       `contracts`.`from`,\n       `contracts`.`to`,\n       `weekly_hours`,\n       `pay_group_id`,\n       `pension_perc`,\n       `personal_allowance`,\n       `student_loan`,\n       `hca_group_id`,\n       `half_is_all_ush`,\n       `break_from_higher`\nFROM `contracts`\n         INNER JOIN `employments` ON `employments`.`id` = `contracts`.`employment_id` AND\n                                     `employments`.`user_id` = `contracts`.`user_id`\nWHERE `contracts`.`user_id` = :userId AND `contracts`.`employment_id` != :employmentId\nORDER BY `contracts`.`from`, `contracts`.`to`, `employment_name`",
         { userId, employmentId }
     );
 };

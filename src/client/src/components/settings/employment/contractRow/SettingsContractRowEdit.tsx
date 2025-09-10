@@ -41,7 +41,10 @@ const SettingsContractRowEdit = ({
             action: e.currentTarget.dataset
                 .field as EmploymentReducerContractKeys,
             payload: {
-                newValue: e.currentTarget.value,
+                newValue:
+                    e.currentTarget.type === "checkbox"
+                        ? e.currentTarget.checked
+                        : e.currentTarget.value,
                 currentContractId: contract.id,
             },
         });
@@ -208,6 +211,22 @@ const SettingsContractRowEdit = ({
                     <option value={"5"}>5</option>
                     <option value={"6"}>Postgrad</option>
                 </Form.Select>
+            </td>
+            <td style={{ verticalAlign: "middle" }}>
+                <Form.Switch
+                    data-field={"half_is_all_ush"}
+                    checked={!!contract.half_is_all_ush}
+                    onChange={changeHandler}
+                    label={contract.half_is_all_ush ? "Yes" : "No"}
+                ></Form.Switch>
+            </td>
+            <td style={{ verticalAlign: "middle" }}>
+                <Form.Switch
+                    data-field={"break_from_higher"}
+                    checked={!!contract.break_from_higher}
+                    onChange={changeHandler}
+                    label={contract.break_from_higher ? "Yes" : "No"}
+                ></Form.Switch>
             </td>
             <td style={{ verticalAlign: "middle" }}>
                 <div className="d-flex column-gap-1 align-items-center">

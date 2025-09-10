@@ -102,7 +102,9 @@ export const patchEmployment = async (req: Request, res: Response) => {
                     contract.student_loan,
                     contract.personal_allowance,
                     contract.from,
-                    contract.to
+                    contract.to,
+                    contract.half_is_all_ush ? 1 : 0,
+                    contract.break_from_higher ? 1 : 0
                 );
             }
             sendRes(res, {

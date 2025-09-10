@@ -17,8 +17,8 @@ export const createContract = async (
     personalAllowance: Contract["personal_allowance"],
     from: Contract["from"] = null,
     to: Contract["to"] = null,
-    halfIsAllUsh: 0 | 1 | boolean = 1,
-    breakFromHigher: 0 | 1 | boolean = 0
+    halfIsAllUsh: 0 | 1 = 1,
+    breakFromHigher: 0 | 1 = 0
 ) => {
     return await executeWriteByPlaceholders(
         "INSERT INTO `contracts` (`user_id`,\n                         `employment_id`,\n                         `from`,\n                         `to`,\n                         `pay_group_id`,\n                         `hca_group_id`,\n                         `weekly_hours`,\n                         `pension_perc`,\n                         `student_loan`,\n                         `personal_allowance`,\n                         `half_is_all_ush`,\n                         `break_from_higher`)\nVALUES (:userId,\n        :employmentId,\n        :from,\n        :to,\n        :payGroupId,\n        :hcaGroupId,\n        :weeklyHours,\n        :pensionPerc,\n        :studentLoan,\n        :personalAllowance,\n        :halfIsAllUsh,\n        :breakFromHigher)",
@@ -33,8 +33,8 @@ export const createContract = async (
             pensionPerc,
             studentLoan,
             personalAllowance,
-            halfIsAllUsh: Number(halfIsAllUsh),
-            breakFromHigher: Number(breakFromHigher),
+            halfIsAllUsh,
+            breakFromHigher,
         }
     );
 };

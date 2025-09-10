@@ -74,6 +74,12 @@ export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
                 type: "Normal",
                 pay_id_override: null,
                 weekly_hours: onlyContract?.weekly_hours || 37.5,
+                half_is_all_ush: onlyContract
+                    ? onlyContract?.half_is_all_ush
+                    : true,
+                break_from_higher: onlyContract
+                    ? onlyContract?.break_from_higher
+                    : false,
                 absent_hours: 0,
                 notes: "",
             };

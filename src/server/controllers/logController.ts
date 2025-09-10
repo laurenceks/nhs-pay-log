@@ -45,7 +45,7 @@ const updateAffectedShifts = async (
                       employmentId
                   )
                 : [];
-        //TODO lookup contract and relay break and majority ush options - ADD TO JOIN WHEN RETRIEVING LOG (same as weekly hours)
+
         await updateLogShiftByUserIdAndShiftId(userId, {
             ...shift,
             ...{
@@ -58,7 +58,9 @@ const updateAffectedShifts = async (
                     additionalHours.time_and_half + additionalHours.double,
                     decimalHoursToMs(shift.weekly_hours),
                     shift.break_override,
-                    log
+                    log,
+                    !!shift.half_is_all_ush,
+                    !!shift.break_from_higher
                 ),
                 ...additionalHours,
             },

@@ -160,7 +160,11 @@ const ShiftEditModal = ({
                         log,
                         breakOverrideMs: editState.break_override,
                     },
-                    { weeklyHoursMs: decimalHoursToMs(editState.weekly_hours) }
+                    {
+                        weeklyHoursMs: decimalHoursToMs(editState.weekly_hours),
+                        halfIsAllUsh: !!editState.half_is_all_ush,
+                        breakInHigherRate: !!editState.break_from_higher,
+                    }
                 ),
             });
         } else {

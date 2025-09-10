@@ -228,6 +228,8 @@ const logShiftReducer = (
                 contract_id: payload?.id || 0,
                 employment_id: payload?.employment_id || 0,
                 weekly_hours: payload?.weekly_hours || 37.5,
+                half_is_all_ush: payload ? payload.half_is_all_ush : 1,
+                break_from_higher: payload ? payload.break_from_higher : 0,
             };
         }
         case "type": {

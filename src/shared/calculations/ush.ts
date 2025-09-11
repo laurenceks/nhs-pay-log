@@ -212,8 +212,14 @@ export const calculateUsh = (
                         higherRateRaw,
                         remainingBreak
                     );
-                    higherRateRaw = shiftLength - lowerRateRaw - segmentBreak;
-                    lowerRateRaw -= remainingBreak - segmentBreak;
+
+                    //higher rate can never be increased beyond its raw value
+                    higherRateRaw = Math.min(
+                        higherRateRaw - segmentBreak,
+                        shiftLength - lowerRateRaw - segmentBreak
+                    );
+
+                    lowerRateRaw = shiftLength - higherRateRaw - remainingBreak;
                 } else {
                     // take break from less expensive side
                     const segmentBreak = Math.min(lowerRateRaw, remainingBreak);

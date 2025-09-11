@@ -35,13 +35,16 @@ const SettingsContractRowEdit = ({
     );
 
     const changeHandler = (
-        e: ChangeEvent<HTMLInputElement> & ChangeEvent<HTMLSelectElement>
+        e: ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >
     ) => {
         setEmploymentContracts({
             action: e.currentTarget.dataset
                 .field as EmploymentReducerContractKeys,
             payload: {
                 newValue:
+                    e.currentTarget instanceof HTMLInputElement &&
                     e.currentTarget.type === "checkbox"
                         ? e.currentTarget.checked
                         : e.currentTarget.value,

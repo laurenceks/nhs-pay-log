@@ -100,14 +100,16 @@ export const calculateSection2 = (
 
     const ush = calculateUsh(
         fromObj,
-        overrun_type === "OT" ? actualToObj : plannedToObj,
+        plannedToObj,
         type,
         additionalHours.time_and_half + additionalHours.double,
         weeklyHoursMs,
         breakOverrideMs,
         log,
         halfIsAllUsh,
-        breakInHigherRate
+        breakInHigherRate,
+        overrun_type,
+        actualToObj
     );
     return { ...additionalHours, ...ush };
 };

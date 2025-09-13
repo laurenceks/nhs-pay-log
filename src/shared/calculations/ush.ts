@@ -1,5 +1,5 @@
 import { isBankHoliday } from "./shiftLengths";
-import { ShiftTypes, USH } from "../../../types/commonTypes";
+import { Overruns, ShiftTypes, USH } from "../../../types/commonTypes";
 import { addDaysToTimestamp, formatDate } from "../utils/formatDates";
 import { Section2LogEntry } from "./section2";
 
@@ -8,16 +8,17 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
     if (!from || !to) {
         return 0;
     }
-    const fromTime = from.getTime();
+    const fromObj = new Date(from);
     const toObj = new Date(to);
-    const toTime = to.getTime();
-    const fromDay = from.getDay();
-    const toDay = to.getDay();
+    const fromTime = fromObj.getTime();
+    const toTime = toObj.getTime();
+    const fromDay = fromObj.getDay();
+    const toDay = toObj.getDay();
 
     if (
         (fromDay === 0 && toDay === 0) ||
-        (isBankHoliday(from) && isBankHoliday(to)) ||
-        (fromDay === 0 && isBankHoliday(to))
+        (isBankHoliday(fromObj) && isBankHoliday(toObj)) ||
+        (fromDay === 0 && isBankHoliday(toObj))
     ) {
         // only Sunday or BH
         return 0;
@@ -30,14 +31,14 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
 
     let lowerRateHours = 0;
 
-    if ((fromDay === 6 && toDay === 0) || isBankHoliday(to)) {
+    if ((fromDay === 6 && toDay === 0) || isBankHoliday(toObj)) {
         // Saturday into Sunday or into a bank holiday
         return toObj.setHours(0, 0, 0, 0) - fromTime;
     }
 
     if (
         (fromDay === 0 && toDay === 1) ||
-        (isBankHoliday(from) && !isBankHoliday(to) && toDay > 0)
+        (isBankHoliday(fromObj) && !isBankHoliday(toObj) && toDay > 0)
     ) {
         // Sunday into Monday or BH into non BH
         return (
@@ -46,20 +47,20 @@ export const calculateRawLowerRate = (from: Date, to: Date) => {
         );
     }
 
-    const from2000 = from.setHours(20, 0, 0, 0);
+    const from2000 = fromObj.setHours(20, 0, 0, 0);
 
     if (fromDay === 5 && toDay === 6) {
         // Friday into Saturday
         lowerRateHours = toTime - Math.max(from2000, fromTime);
     } else {
-        const from0600 = from.setHours(6, 0, 0, 0);
+        const from0600 = fromObj.setHours(6, 0, 0, 0);
 
         if (fromTime < from0600) {
             // start before 0600
             lowerRateHours += Math.min(from0600, toTime) - fromTime;
         }
 
-        const from2400 = from.setHours(24, 0, 0, 0);
+        const from2400 = fromObj.setHours(24, 0, 0, 0);
 
         if (
             (fromTime <= from2000 && toTime > from2000) ||
@@ -92,18 +93,18 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
     if (!from || !to) {
         return 0;
     }
-
-    const fromTime = from.getTime();
+    const fromObj = new Date(from);
     const toObj = new Date(to);
-    const toTime = to.getTime();
-    const fromDay = from.getDay();
-    const toDay = to.getDay();
+    const fromTime = fromObj.getTime();
+    const toTime = toObj.getTime();
+    const fromDay = fromObj.getDay();
+    const toDay = toObj.getDay();
 
     if (
         fromDay !== 0 &&
         toDay !== 0 &&
-        !isBankHoliday(from) &&
-        !isBankHoliday(to)
+        !isBankHoliday(fromObj) &&
+        !isBankHoliday(toObj)
     ) {
         // neither Sunday nor BH
         return 0;
@@ -111,9 +112,9 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
 
     if (
         (fromDay === 0 && toDay === 0) ||
-        (isBankHoliday(from) && isBankHoliday(to)) ||
-        (fromDay === 0 && isBankHoliday(to)) ||
-        (isBankHoliday(from) && toDay === 0)
+        (isBankHoliday(fromObj) && isBankHoliday(toObj)) ||
+        (fromDay === 0 && isBankHoliday(toObj)) ||
+        (isBankHoliday(fromObj) && toDay === 0)
     ) {
         // all Sunday or BH
         return toTime - fromTime;
@@ -121,11 +122,11 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
 
     const to0000 = toObj.setHours(0, 0, 0, 0);
 
-    if (fromDay === 6 || (!isBankHoliday(from) && isBankHoliday(to))) {
+    if (fromDay === 6 || (!isBankHoliday(fromObj) && isBankHoliday(toObj))) {
         // Saturday into Sunday or non-BH into BH
         return toTime - to0000;
     }
-    if (fromDay === 0 || (isBankHoliday(from) && !isBankHoliday(to))) {
+    if (fromDay === 0 || (isBankHoliday(fromObj) && !isBankHoliday(toObj))) {
         // Sunday into Monday or BH into non-BH
         return to0000 - fromTime;
     }
@@ -137,94 +138,137 @@ const ushTypes: ShiftTypes[] = ["Normal", "OT", "AL", "Absent (TOIL)", "Bank"];
 
 export const calculateUsh = (
     from: Date,
-    to: Date,
+    plannedTo: Date,
     type: ShiftTypes = "Normal",
     hoursOverThresholdMs = 0,
     weeklyHoursMs = 1.35e8, //37.5hrs
     breakOverrideMs: number | null = null,
     log: Section2LogEntry[] = [],
     halfIsAllUsh: boolean = false,
-    breakInHigherRate: boolean = true
+    breakInHigherRate: boolean = true,
+    overrunType: Overruns = "OT",
+    actualTo: Date | null = null
 ): USH => {
-    let lowerRateRaw = 0;
-    let higherRateRaw = 0;
-    if (from && to && ushTypes.includes(type)) {
+    let plannedLowerRaw = 0;
+    let plannedHigherRaw = 0;
+    let overrunLower = 0;
+    let overrunHigher = 0;
+    if (from && plannedTo && ushTypes.includes(type)) {
         const fromObj = new Date(from);
-        const toObj = new Date(to);
+        const plannedToObj = new Date(plannedTo);
+        const actualToObj = actualTo ? new Date(actualTo) : null;
 
-        lowerRateRaw = calculateRawLowerRate(
-            new Date(fromObj),
-            new Date(toObj)
-        );
-        higherRateRaw = calculateRawHigherRate(
-            new Date(fromObj),
-            new Date(toObj)
-        );
+        plannedLowerRaw = calculateRawLowerRate(fromObj, plannedToObj);
+        plannedHigherRaw = calculateRawHigherRate(fromObj, plannedToObj);
 
-        const totalUshRaw = lowerRateRaw + higherRateRaw;
-        let shiftLength = toObj.getTime() - fromObj.getTime();
+        const paidOverrunLength =
+            actualToObj && overrunType === "OT"
+                ? actualToObj.getTime() - plannedToObj.getTime()
+                : 0;
+
+        if (paidOverrunLength && actualToObj && overrunType === "OT") {
+            overrunLower = calculateRawLowerRate(plannedToObj, actualToObj);
+            overrunHigher = calculateRawHigherRate(plannedToObj, actualToObj);
+        }
+
+        let plannedLength = plannedToObj.getTime() - fromObj.getTime();
 
         const remainingBreak =
             breakOverrideMs === null || breakOverrideMs === undefined
-                ? shiftLength > 21600000
+                ? plannedLength > 21600000
                     ? 1800000
                     : 0
                 : breakOverrideMs;
 
         if (hoursOverThresholdMs) {
             //recalculate USH based on new end
-            toObj.setTime(toObj.getTime() + hoursOverThresholdMs * -1);
-            lowerRateRaw = calculateRawLowerRate(
-                new Date(fromObj),
-                new Date(toObj)
+            //TODO here - need to account for OT overrun somehow --> DONE??
+            plannedToObj.setTime(
+                Math.min(
+                    plannedToObj.getTime(),
+                    Math.max(
+                        fromObj.getTime(),
+                        plannedToObj.getTime() +
+                            paidOverrunLength -
+                            remainingBreak -
+                            hoursOverThresholdMs
+                    )
+                )
             );
-            higherRateRaw = calculateRawHigherRate(
-                new Date(fromObj),
-                new Date(toObj)
-            );
+            plannedLowerRaw = calculateRawLowerRate(fromObj, plannedToObj);
+            plannedHigherRaw = calculateRawHigherRate(fromObj, plannedToObj);
+
+            if ((overrunLower || overrunHigher) && actualToObj) {
+                const originalPlannedTo = new Date(plannedTo);
+                actualToObj.setTime(
+                    Math.max(
+                        actualToObj.getTime() - hoursOverThresholdMs,
+                        originalPlannedTo.getTime()
+                    )
+                );
+                overrunLower = calculateRawLowerRate(
+                    originalPlannedTo,
+                    actualToObj
+                );
+                overrunHigher = calculateRawHigherRate(
+                    originalPlannedTo,
+                    actualToObj
+                );
+            }
         }
 
+        const totalPlannedUshRaw = plannedLowerRaw + plannedHigherRaw;
+
         if (
-            totalUshRaw > shiftLength / 2 ||
-            (halfIsAllUsh && totalUshRaw >= shiftLength / 2)
+            totalPlannedUshRaw > plannedLength / 2 ||
+            (halfIsAllUsh && totalPlannedUshRaw >= plannedLength / 2)
         ) {
             // more than half the shift is USH
-            if (!higherRateRaw) {
+            if (!plannedHigherRaw) {
                 // only lower rate
-                lowerRateRaw = Math.max(
+                plannedLowerRaw = Math.max(
                     0,
-                    shiftLength - remainingBreak - hoursOverThresholdMs
+                    plannedLength -
+                        remainingBreak -
+                        Math.max(hoursOverThresholdMs - paidOverrunLength, 0)
                 );
-            } else if (!lowerRateRaw) {
+            } else if (!plannedLowerRaw) {
                 // only higher rate
-                higherRateRaw = Math.max(
+                plannedHigherRaw = Math.max(
                     0,
-                    shiftLength - remainingBreak - hoursOverThresholdMs
+                    plannedLength -
+                        remainingBreak -
+                        Math.max(hoursOverThresholdMs - paidOverrunLength, 0)
                 );
             } else {
                 if (hoursOverThresholdMs) {
                     // update shift length to match USH length with OT hours deducted
-                    shiftLength = toObj.getTime() - fromObj.getTime();
+                    plannedLength = plannedToObj.getTime() - fromObj.getTime();
                 }
                 if (breakInHigherRate) {
                     // take break from more expensive side
                     const segmentBreak = Math.min(
-                        higherRateRaw,
+                        plannedHigherRaw,
                         remainingBreak
                     );
 
                     //higher rate can never be increased beyond its raw value
-                    higherRateRaw = Math.min(
-                        higherRateRaw - segmentBreak,
-                        shiftLength - lowerRateRaw - segmentBreak
+                    plannedHigherRaw = Math.min(
+                        plannedHigherRaw - segmentBreak,
+                        plannedLength - plannedLowerRaw - segmentBreak
                     );
 
-                    lowerRateRaw = shiftLength - higherRateRaw - remainingBreak;
+                    plannedLowerRaw =
+                        plannedLength - plannedHigherRaw - remainingBreak;
                 } else {
                     // take break from less expensive side
-                    const segmentBreak = Math.min(lowerRateRaw, remainingBreak);
-                    lowerRateRaw = shiftLength - higherRateRaw - segmentBreak;
-                    higherRateRaw -= remainingBreak - segmentBreak;
+                    const segmentBreak = Math.min(
+                        plannedLowerRaw,
+                        remainingBreak
+                    );
+                    plannedLowerRaw =
+                        plannedLength - plannedHigherRaw - segmentBreak;
+                    plannedHigherRaw -= remainingBreak - segmentBreak;
                 }
             }
         }
@@ -249,17 +293,18 @@ export const calculateUsh = (
             totalUsh.lower = totalUsh.lower + shift.lower_rate;
             totalUsh.higher = totalUsh.higher + shift.higher_rate;
         }
-        const shiftLength = new Date(to).getTime() - new Date(from).getTime();
-        lowerRateRaw = Math.round(
+        const shiftLength =
+            new Date(plannedTo).getTime() - new Date(from).getTime();
+        plannedLowerRaw = Math.round(
             (totalUsh.lower / (weeklyHoursMs * 13)) * shiftLength
         );
-        higherRateRaw = Math.round(
+        plannedHigherRaw = Math.round(
             (totalUsh.higher / (weeklyHoursMs * 13)) * shiftLength
         );
     }
 
     return {
-        lower_rate: Math.max(0, lowerRateRaw),
-        higher_rate: Math.max(0, higherRateRaw),
+        lower_rate: Math.max(0, plannedLowerRaw + overrunLower),
+        higher_rate: Math.max(0, plannedHigherRaw + overrunHigher),
     };
 };

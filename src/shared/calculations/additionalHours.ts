@@ -156,9 +156,7 @@ export const calculateAdditionalHours = (
                 breakOverrideMs
             );
         } else if (paidAdditionalHours) {
-            const weeklyOtThresholdHours =
-                1.35e8 -
-                (weeklyHoursMs && weeklyHoursMs !== 0 ? weeklyHoursMs : 1.35e8); //37.5hrs fallback but allowing for 0
+            const weeklyOtThresholdHours = 1.35e8 - (weeklyHoursMs ?? 1.35e8); //37.5hrs fallback but allowing for 0
 
             additionalHoursBreakdown.toil += Math.min(
                 weeklyOtThresholdHours,
@@ -225,13 +223,8 @@ export const calculateAdditionalHours = (
                 );
             }
 
-            if (type === "TOIL" || overrun_type === "TOIL") {
-                if (type === "TOIL") {
-                    additionalHoursBreakdown.toil += plannedAdditionalHours;
-                }
-                if (overrun_type === "TOIL") {
-                    additionalHoursBreakdown.toil += overrunHours;
-                }
+            if (type === "TOIL") {
+                additionalHoursBreakdown.toil += plannedAdditionalHours;
             }
         } else if (type === "Normal") {
             additionalHoursBreakdown.toil += calculateBankHolidayToil(
@@ -241,6 +234,13 @@ export const calculateAdditionalHours = (
                 fromIsBankHoliday,
                 toIsBankHoliday
             );
+        }
+
+        if (
+            ["Normal", ...additionalHoursShiftTypes].includes(type) &&
+            overrun_type === "TOIL"
+        ) {
+            additionalHoursBreakdown.toil += overrunHours;
         }
     }
 

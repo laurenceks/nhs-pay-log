@@ -19,6 +19,7 @@ const updateAffectedShifts = async (
     from: string,
     employmentId: string
 ) => {
+    //TODO - needs to also select shifts from previously selected employment if its changing
     const affectedShifts = await readAffectedLogByUserIdAndShiftId(
         userId,
         from,
@@ -60,7 +61,9 @@ const updateAffectedShifts = async (
                     shift.break_override,
                     log,
                     !!shift.half_is_all_ush,
-                    !!shift.break_from_higher
+                    !!shift.break_from_higher,
+                    shift.overrun_type,
+                    new Date(shift.actual_to)
                 ),
                 ...additionalHours,
             },
@@ -95,6 +98,7 @@ export const getLogShift = async (req: Request, res: Response) => {
     if (data) {
         sendRes(res, { data: data });
     } else {
+        //TODO make this a proper 404
         sendErrorRes(res);
     }
 };
@@ -115,8 +119,7 @@ export const postLogShift = async (req: Request, res: Response) => {
         } else {
             sendErrorRes(res);
         }
-    } catch (e) {
-        console.log(e);
+    } catch (_e) {
         sendErrorRes(res);
     }
 };
@@ -134,8 +137,7 @@ export const patchLogShift = async (req: Request, res: Response) => {
         await deleteLogExtraByShiftId(req.params.shiftId);
         await updateLogExtras(req.params.shiftId, req.body.extras_ids_string);
         sendRes(res);
-    } catch (e) {
-        console.log(e);
+    } catch (_e) {
         sendErrorRes(res);
     }
 };
@@ -157,8 +159,7 @@ export const deleteLogShift = async (req: Request, res: Response) => {
             );
         }
         sendRes(res);
-    } catch (e) {
-        console.log(e);
+    } catch (_e) {
         sendErrorRes(res);
     }
 };

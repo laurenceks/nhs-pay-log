@@ -71,7 +71,7 @@ export const lookupPayByContract = ({
     if (payGroupId) {
         return (
             queryClient.getQueryData(["payBands"]) as ApiResponse<PayBandTable>
-        ).data?.find((x) => {
+        )?.data?.find((x) => {
             return withinDateRange<PayBand>(d, x) && payGroupId === x.group_id;
         });
     }

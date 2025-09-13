@@ -4,7 +4,7 @@ const sendPasswordResetEmail = async (userEmail: string) => {
     const url = `http${process.env.NODE_ENV === "development" ? "" : "s"}://${process.env.DOMAIN}/forgot`;
     await transporter.sendMail({
         to: userEmail,
-        from: `"NHS Pay Log <no-reply@${process.env.DOMAIN}`,
+        from: `NHS Pay Log <no-reply@${process.env.DOMAIN}>`,
         subject: "You password has been changed",
         text: `Your password has been changed. If you did not do this, change it immediately.
 

@@ -6,7 +6,7 @@ const sendVerificationEmail = async (userId: string, userEmail: string) => {
 
     await transporter.sendMail({
         to: userEmail,
-        from: `"NHS Pay Log <no-reply@${process.env.DOMAIN}`,
+        from: `NHS Pay Log <no-reply@${process.env.DOMAIN}>`,
         subject: "Verify your email address",
         text: `Copy and past the link into your browser to get started
 

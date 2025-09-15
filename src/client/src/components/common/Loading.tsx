@@ -1,4 +1,4 @@
-const Loading = ({ text }: { text?: boolean }) => {
+const Loading = ({ text }: { text?: string }) => {
     return (
         <div>
             <div className="loading-container py-5">
@@ -8,7 +8,7 @@ const Loading = ({ text }: { text?: boolean }) => {
                     </div>
                 </div>
             </div>
-            {text && <p className="text-center mt-2 text-muted">{text}</p>}
+            {!!text && <p className="text-center mt-2 text-muted">{text}</p>}
         </div>
     );
 };

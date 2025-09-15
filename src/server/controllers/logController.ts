@@ -19,7 +19,7 @@ import { calculateSection2 } from "../../shared/calculations/section2";
 const updateAffectedShifts = async (
     userId: string,
     from: string,
-    employmentId: string
+    employmentId: string | number
 ) => {
     //TODO - needs to also select shifts from previously selected employment if its changing
     const affectedShifts = await readAffectedLogByUserIdAndShiftId(
@@ -149,9 +149,19 @@ export const postLogShift = async (req: Request, res: Response) => {
 };
 export const patchLogShift = async (req: Request, res: Response) => {
     try {
+        const [{ employment_id: oldEmploymentId }] =
+            await readLogShiftByUserIdAndShiftId(
+                req.authenticatedUser.id,
+                req.params.shiftId
+            );
         await updateLogShiftByUserIdAndShiftId(
             req.authenticatedUser.id,
             req.body
+        );
+        await updateAffectedShifts(
+            req.authenticatedUser.id,
+            req.body.from,
+            oldEmploymentId
         );
         await updateAffectedShifts(
             req.authenticatedUser.id,

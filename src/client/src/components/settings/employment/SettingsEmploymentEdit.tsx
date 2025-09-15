@@ -13,6 +13,7 @@ import { ApiResponse } from "../../../../../../types/responseTypes";
 import SettingsEmploymentThead from "./common/SettingsEmploymentThead";
 import SettingsEmploymentDeleteButton from "./common/SettingsEmploymentDeleteButton";
 import SettingsContractRow from "./contractRow/SettingsContractRow";
+import PendingModal from "../../common/pendingModal/PendingModal";
 
 const SettingsEmploymentEdit = ({
     employment,
@@ -161,6 +162,10 @@ const SettingsEmploymentEdit = ({
                     />
                 </>
             </div>
+            <PendingModal
+                show={patchPending}
+                employmentName={employment.name}
+            />
         </>
     );
 };

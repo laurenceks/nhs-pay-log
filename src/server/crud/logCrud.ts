@@ -11,6 +11,15 @@ export const readLogByUserId = async (userId: string) => {
         { userId: userId }
     );
 };
+export const readLogByUserIdAndEmploymentId = async (
+    userId: string,
+    employmentId: string | number
+) => {
+    return await executeReadByPlaceholders<ApiShift>(
+        "SELECT `log`.*,\n       `contracts`.`id` AS `contract_id`,\n       `contracts`.`weekly_hours`,\n       `contracts`.`half_is_all_ush`,\n       `contracts`.`break_from_higher`\nFROM `log`\n         LEFT JOIN `employments` ON `employments`.`id` = `log`.`employment_id`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nWHERE `log`.`user_id` = :userId AND `log`.`employment_id` = :employmentId\nORDER BY `log`.`from`",
+        { userId, employmentId }
+    );
+};
 export const readLogShiftByUserIdAndShiftId = async (
     userId: string,
     shiftId: string

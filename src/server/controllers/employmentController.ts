@@ -21,6 +21,7 @@ import {
 } from "../crud/logCrud";
 import allowFirstFromAndLastTo from "../../shared/utils/allowFirstFromAndLastTo";
 import { formatDate } from "../../shared/utils/formatDates";
+import { recalculateLogByEmploymentId } from "./logController";
 
 export const getEmployments = async (req: Request, res: Response) => {
     try {
@@ -107,6 +108,10 @@ export const patchEmployment = async (req: Request, res: Response) => {
                     contract.break_from_higher ? 1 : 0
                 );
             }
+            await recalculateLogByEmploymentId(
+                req.authenticatedUser.id,
+                req.params.employmentId
+            );
             sendRes(res, {
                 title: "Employment saved",
                 message: `${req.body.name} saved`,

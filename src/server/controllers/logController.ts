@@ -5,6 +5,7 @@ import {
     deleteLogShiftByUserIdAndShiftId,
     readAffectedLogByUserIdAndShiftId,
     readLogByUserId,
+    readLogByUserIdAndEmploymentId,
     readLogShiftByUserIdAndShiftId,
     readUshAverageLogByUserIdAndEmploymentId,
     updateLogShiftByUserIdAndShiftId,
@@ -13,6 +14,7 @@ import { calculateUsh } from "../../shared/calculations/ush";
 import { calculateAdditionalHours } from "../../shared/calculations/additionalHours";
 import { createLogExtra, deleteLogExtraByShiftId } from "../crud/logExtraCrud";
 import { decimalHoursToMs } from "../../shared/utils/conversions";
+import { calculateSection2 } from "../../shared/calculations/section2";
 
 const updateAffectedShifts = async (
     userId: string,
@@ -67,6 +69,28 @@ const updateAffectedShifts = async (
                 ),
                 ...additionalHours,
             },
+        });
+    }
+};
+export const recalculateLogByEmploymentId = async (
+    userId: string,
+    employmentId: string
+) => {
+    const employmentShifts = await readLogByUserIdAndEmploymentId(
+        userId,
+        employmentId
+    );
+    for (const shift of employmentShifts) {
+        await updateLogShiftByUserIdAndShiftId(userId, {
+            ...shift,
+            ...calculateSection2(
+                { ...shift, log: employmentShifts },
+                {
+                    weeklyHoursMs: decimalHoursToMs(shift.weekly_hours),
+                    breakInHigherRate: !!shift.break_from_higher,
+                    halfIsAllUsh: !!shift.half_is_all_ush,
+                }
+            ),
         });
     }
 };

@@ -25,9 +25,11 @@ const MainMenuButton = ({
                 </Tooltip>
             }
         >
-            <Link to={to} className={`btn btn-${buttonVariant}`}>
-                {children}
-            </Link>
+            <div className="w-100">
+                <Link to={to} className={`w-100 btn btn-${buttonVariant}`}>
+                    {children}
+                </Link>
+            </div>
         </OverlayTrigger>
     );
 };

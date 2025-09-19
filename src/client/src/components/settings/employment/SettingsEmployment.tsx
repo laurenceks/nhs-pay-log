@@ -3,9 +3,13 @@ import { Dispatch, SetStateAction, useReducer, useState } from "react";
 import { Employment } from "../../../../../../types/lookupTypes";
 import employmentReducer from "../../../reducers/employmentReducer";
 import { useMutation } from "@tanstack/react-query";
-import { deleteEmploymentMutationOptions } from "../../../queries/employmentQueries";
+import {
+    deleteEmploymentMutationOptions,
+    patchEmploymentMutationOptions,
+} from "../../../queries/employmentQueries";
 import SettingsEmploymentEdit from "./SettingsEmploymentEdit";
 import SettingsEmploymentStatic from "./SettingsEmploymentStatic";
+import PendingModal from "../../common/pendingModal/PendingModal";
 
 const SettingsEmployment = ({
     employment,
@@ -28,11 +32,20 @@ const SettingsEmployment = ({
         filteredContracts
     );
 
+    const [name, setName] = useState(employment.name);
+
     const { mutateAsync: deleteMutate, isPending: deletePending } = useMutation(
         {
             ...deleteEmploymentMutationOptions(employment.id),
         }
     );
+    const { mutateAsync: patchMutate, isPending: patchPending } = useMutation({
+        ...patchEmploymentMutationOptions({
+            ...employment,
+            name,
+            contracts: employmentContracts,
+        }),
+    });
 
     return (
         <div className="py-3">
@@ -44,6 +57,10 @@ const SettingsEmployment = ({
                     setEmploymentContracts={setEmploymentContracts}
                     setContractEditId={setContractEditId}
                     contractEditId={contractEditId}
+                    name={name}
+                    setName={setName}
+                    patchMutate={patchMutate}
+                    patchPending={patchPending}
                     employmentContracts={employmentContracts}
                     deletePending={deletePending}
                     deleteMutate={deleteMutate}
@@ -61,6 +78,11 @@ const SettingsEmployment = ({
                     deletePending={deletePending}
                 />
             )}
+            <PendingModal
+                show={patchPending}
+                employmentName={name}
+                employmentId={employment.id}
+            />
         </div>
     );
 };

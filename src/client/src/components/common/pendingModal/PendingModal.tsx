@@ -1,16 +1,28 @@
 import { Modal } from "react-bootstrap";
 import IconWrap from "../IconWrap";
 import { IoSync } from "react-icons/io5";
+import { toast } from "react-hot-toast";
 
 const SettingsChangeLoadingModal = ({
     show,
     employmentName,
+    employmentId,
 }: {
     show: boolean;
     employmentName?: string;
+    employmentId?: string | number;
 }) => {
     return (
-        <Modal show={show} fullscreen={"sm-down"}>
+        <Modal
+            show={show}
+            fullscreen={"sm-down"}
+            onExited={() => {
+                console.log("done saving");
+                toast.success(`${employmentName} updated`, {
+                    id: `employment-${employmentId || 0}-updated`,
+                });
+            }}
+        >
             <Modal.Header className="bg-warning text-dark">
                 <Modal.Title>Applying changes</Modal.Title>
             </Modal.Header>

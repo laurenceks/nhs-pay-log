@@ -1,19 +1,17 @@
 import { Button, Form, Table } from "react-bootstrap";
 import { Contract } from "../../../../../../types/commonTypes";
-import { ActionDispatch, Dispatch, SetStateAction, useState } from "react";
+import { ActionDispatch, Dispatch, SetStateAction } from "react";
 import { Employment } from "../../../../../../types/lookupTypes";
 import { EmploymentReducerOptions } from "../../../reducers/employmentReducer";
 import SettingsContractRowEdit from "./contractRow/SettingsContractRowEdit";
 import { z } from "zod";
 import { clientEmploymentValidationSchema } from "../../../../../shared/validationSchemas/employmentValidationSchema";
 import { toast } from "react-hot-toast";
-import { UseMutateAsyncFunction, useMutation } from "@tanstack/react-query";
-import { patchEmploymentMutationOptions } from "../../../queries/employmentQueries";
+import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import { ApiResponse } from "../../../../../../types/responseTypes";
 import SettingsEmploymentThead from "./common/SettingsEmploymentThead";
 import SettingsEmploymentDeleteButton from "./common/SettingsEmploymentDeleteButton";
 import SettingsContractRow from "./contractRow/SettingsContractRow";
-import PendingModal from "../../common/pendingModal/PendingModal";
 
 const SettingsEmploymentEdit = ({
     employment,
@@ -21,9 +19,13 @@ const SettingsEmploymentEdit = ({
     setEmploymentContracts,
     deleteMutate,
     deletePending,
+    patchMutate,
+    patchPending,
     setEmploymentEditId,
     contractEditId,
     setContractEditId,
+    name,
+    setName,
     isOnlyEmployment,
     filteredContracts,
 }: {
@@ -33,24 +35,19 @@ const SettingsEmploymentEdit = ({
     setEmploymentContracts: ActionDispatch<[EmploymentReducerOptions]>;
     deleteMutate: UseMutateAsyncFunction;
     deletePending: boolean;
+    patchMutate: UseMutateAsyncFunction;
+    patchPending: boolean;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
     contractEditId: Contract["id"] | null;
     setContractEditId: Dispatch<SetStateAction<Contract["id"] | null>>;
+    name: string;
+    setName: Dispatch<SetStateAction<string>>;
     isOnlyEmployment: boolean;
 }) => {
-    const [name, setName] = useState(employment.name);
-
     const validationResult = z.safeParse(clientEmploymentValidationSchema, {
         ...employment,
         name,
         contracts: employmentContracts || [],
-    });
-    const { mutateAsync: patchMutate, isPending: patchPending } = useMutation({
-        ...patchEmploymentMutationOptions({
-            ...employment,
-            name,
-            contracts: employmentContracts,
-        }),
     });
 
     if (validationResult.error?.issues.length) {
@@ -109,9 +106,6 @@ const SettingsEmploymentEdit = ({
                                 await patchMutate();
                                 setContractEditId(null);
                                 setEmploymentEditId(null);
-                                toast.success(`${name} updated`, {
-                                    id: `employment-${employment.id}-updated`,
-                                });
                             } catch (e) {
                                 toast.error(
                                     (e as ApiResponse).message ||
@@ -162,10 +156,6 @@ const SettingsEmploymentEdit = ({
                     />
                 </>
             </div>
-            <PendingModal
-                show={patchPending}
-                employmentName={employment.name}
-            />
         </>
     );
 };

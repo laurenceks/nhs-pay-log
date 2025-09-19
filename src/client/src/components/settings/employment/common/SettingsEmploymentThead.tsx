@@ -14,8 +14,9 @@ const SettingsEmploymentThead = ({
             <th scope="col">Personal allowance</th>
             <th scope="col">Student loan</th>
             <th scope="col">Half is all USH</th>
+            <th scope="col">Break from higher</th>
             <th scope="col" colSpan={spanLast ? 2 : 1}>
-                Break from higher
+                Leave on relief USH
             </th>
         </tr>
     </thead>

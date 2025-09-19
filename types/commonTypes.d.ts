@@ -1,6 +1,7 @@
 import { Employment, LookupTable } from "./lookupTypes";
 import { filterFns } from "@tanstack/table-core/src/filterFns";
 import { Variant } from "react-bootstrap/types";
+import { LeaveReliefUsh } from "../src/shared/calculations/section2";
 
 export type Overruns = "OT" | "TOIL";
 
@@ -257,6 +258,7 @@ export type Contract = {
     hca_group_id: 1 | 2 | 3 | null;
     half_is_all_ush: 0 | 1 | boolean;
     break_from_higher: 0 | 1 | boolean;
+    leave_relief_ush_type: LeaveReliefUsh;
 };
 
 export type EmploymentEdit = {

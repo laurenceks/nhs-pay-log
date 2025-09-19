@@ -12,6 +12,7 @@ import allowFirstFromAndLastTo from "../../../../../../shared/utils/allowFirstFr
 import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
 import SettingsContractRowEditButton from "./SettingsContractRowEditButton";
 import InputClearButton from "../../../common/InputClearButton";
+import { ushTypeMap } from "./SettingsContractRow";
 
 const SettingsContractRowEdit = ({
     contract,
@@ -230,6 +231,20 @@ const SettingsContractRowEdit = ({
                     onChange={changeHandler}
                     label={contract.break_from_higher ? "Yes" : "No"}
                 ></Form.Switch>
+            </td>
+            <td>
+                <Form.Select
+                    size="sm"
+                    data-field={"leave_relief_ush_type"}
+                    value={contract.leave_relief_ush_type || ""}
+                    onChange={changeHandler}
+                >
+                    {Object.entries(ushTypeMap).map(([key, label]) => (
+                        <option key={key} value={key}>
+                            {label}
+                        </option>
+                    ))}
+                </Form.Select>
             </td>
             <td style={{ verticalAlign: "middle" }}>
                 <div className="d-flex column-gap-1 align-items-center">

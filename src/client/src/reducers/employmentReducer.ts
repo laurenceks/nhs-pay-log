@@ -37,6 +37,7 @@ const defaultContract = (
     id: Date.now(),
     half_is_all_ush: true,
     break_from_higher: false,
+    leave_relief_ush_type: "best",
 });
 
 export type EmploymentReducerOptions =
@@ -531,7 +532,8 @@ const employmentReducer = (
         case "personal_allowance":
         case "student_loan":
         case "half_is_all_ush":
-        case "break_from_higher": {
+        case "break_from_higher":
+        case "leave_relief_ush_type": {
             const currentIndex = prevState.findIndex(
                 (x) => x.id === payload.currentContractId
             );

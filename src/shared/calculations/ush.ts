@@ -1,7 +1,7 @@
 import { isBankHoliday } from "./shiftLengths";
 import { Overruns, ShiftTypes, USH } from "../../../types/commonTypes";
 import { addDaysToTimestamp, formatDate } from "../utils/formatDates";
-import { LeaveReliefUSHOption, Section2LogEntry } from "./section2";
+import { LeaveReliefUsh, Section2LogEntry } from "./section2";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
     // returns in ms the total time within the lower rate windows
@@ -188,7 +188,7 @@ export const calculateUsh = (
     breakInHigherRate: boolean = true,
     overrunType: Overruns = "OT",
     actualTo: Date | null = null,
-    reliefLeaveType: LeaveReliefUSHOption = "best"
+    reliefLeaveType: LeaveReliefUsh = "best"
 ): USH => {
     let plannedLowerRaw = 0;
     let plannedHigherRaw = 0;

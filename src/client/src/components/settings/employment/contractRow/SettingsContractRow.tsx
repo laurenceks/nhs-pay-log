@@ -3,11 +3,20 @@ import { Contract } from "../../../../../../../types/commonTypes";
 import { filterOptionsByDate } from "../../../../../../shared/utils/lookup";
 import { formatDate } from "../../../../../../shared/utils/formatDates";
 import { convertToGbp } from "../../../../../../shared/utils/conversions";
+import { LeaveReliefUsh } from "../../../../../../shared/calculations/section2";
 
 const hcaMap = {
     1: "Inner London",
     2: "outer London",
     3: "Fringe",
+};
+
+export const ushTypeMap: { [key in LeaveReliefUsh]: string } = {
+    best: "Best of 13/52 week average",
+    average52: "52 week average",
+    average13: "13 week average",
+    flat: "Flat",
+    none: "None",
 };
 const SettingsContractRow = ({
     contract,
@@ -72,6 +81,7 @@ const SettingsContractRow = ({
             </td>
             <td>{contract.half_is_all_ush ? "Yes" : "No"}</td>
             <td>{contract.break_from_higher ? "Yes" : "No"}</td>
+            <td>{ushTypeMap[contract.leave_relief_ush_type]}</td>
             {isEditing && <td />}
         </tr>
     );

@@ -188,7 +188,7 @@ export const calculateUsh = (
     breakInHigherRate: boolean = true,
     overrunType: Overruns = "OT",
     actualTo: Date | null = null,
-    reliefLeaveType: LeaveReliefUsh = "best"
+    leaveReliefUshType: LeaveReliefUsh = "best"
 ): USH => {
     let plannedLowerRaw = 0;
     let plannedHigherRaw = 0;
@@ -314,7 +314,7 @@ export const calculateUsh = (
             }
         }
     } else if (type === "AL (relief)" || type === "Absent (TOIL relief)") {
-        switch (reliefLeaveType) {
+        switch (leaveReliefUshType) {
             case "best":
                 {
                     const {

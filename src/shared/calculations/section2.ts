@@ -43,7 +43,6 @@ export const calculateSection2 = (
         id = undefined,
         employment_id = undefined,
         breakOverrideMs = null,
-        reliefLeaveType = "best",
         log = [],
     }: {
         from: Date | string | number;
@@ -54,17 +53,18 @@ export const calculateSection2 = (
         id?: string | number;
         employment_id?: string | number;
         breakOverrideMs?: number | null;
-        reliefLeaveType?: LeaveReliefUsh;
         log?: Section2LogEntry[];
     },
     {
         weeklyHoursMs = 135000000, //37.5
         halfIsAllUsh = false,
         breakInHigherRate = true,
+        leaveReliefUshType = "best",
     }: {
         weeklyHoursMs?: number;
         halfIsAllUsh?: boolean;
         breakInHigherRate?: boolean;
+        leaveReliefUshType?: LeaveReliefUsh;
     }
 ): Section2 => {
     if (
@@ -119,7 +119,7 @@ export const calculateSection2 = (
         breakInHigherRate,
         overrun_type,
         actualToObj,
-        reliefLeaveType
+        leaveReliefUshType
     );
     return { ...additionalHours, ...ush };
 };

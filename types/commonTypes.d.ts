@@ -69,6 +69,7 @@ export interface ClientShift extends AdditionalHours, USH, ShiftEdit {
     weekly_hours: Contract["weekly_hours"];
     half_is_all_ush: Contract["half_is_all_ush"];
     break_from_higher: Contract["break_from_higher"];
+    leave_relief_ush_type: Contract["leave_relief_ush_type"];
     // incentive: number;
     // incentiveHours: number;
     // incentiveType: number;

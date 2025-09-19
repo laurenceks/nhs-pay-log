@@ -94,7 +94,10 @@ const ShiftEditModal = ({
 
     useEffect(() => {
         if (!contractValidOnDate) {
-            if (newContract?.employment_id !== editState.employment_id) {
+            if (
+                editState.employment_id &&
+                newContract?.employment_id !== editState.employment_id
+            ) {
                 toast.error(
                     "The selected employment is not valid on this date and has been replaced with the best option available",
                     { id: `logShift-${shift.id}-contractChanged` }
@@ -164,6 +167,7 @@ const ShiftEditModal = ({
                         weeklyHoursMs: decimalHoursToMs(editState.weekly_hours),
                         halfIsAllUsh: !!editState.half_is_all_ush,
                         breakInHigherRate: !!editState.break_from_higher,
+                        leaveReliefUshType: editState.leave_relief_ush_type,
                     }
                 ),
             });

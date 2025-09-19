@@ -14,7 +14,18 @@ import { calculateUsh } from "../../shared/calculations/ush";
 import { calculateAdditionalHours } from "../../shared/calculations/additionalHours";
 import { createLogExtra, deleteLogExtraByShiftId } from "../crud/logExtraCrud";
 import { decimalHoursToMs } from "../../shared/utils/conversions";
-import { calculateSection2 } from "../../shared/calculations/section2";
+import {
+    calculateSection2,
+    LeaveReliefUsh,
+} from "../../shared/calculations/section2";
+
+const leaveOnReliefUshWeeksMap: { [key in LeaveReliefUsh]: 0 | 13 | 52 } = {
+    average13: 13,
+    average52: 52,
+    best: 52,
+    flat: 0,
+    none: 0,
+};
 
 const updateAffectedShifts = async (
     userId: string,
@@ -39,13 +50,16 @@ const updateAffectedShifts = async (
             },
             affectedShifts
         );
+        const logWeeks = leaveOnReliefUshWeeksMap[shift.leave_relief_ush_type];
         const log =
-            shift.type === "AL (relief)" ||
-            shift.type === "Absent (TOIL relief)"
+            logWeeks &&
+            (shift.type === "AL (relief)" ||
+                shift.type === "Absent (TOIL relief)")
                 ? await readUshAverageLogByUserIdAndEmploymentId(
                       userId,
                       from,
-                      employmentId
+                      employmentId,
+                      logWeeks
                   )
                 : [];
 
@@ -89,6 +103,7 @@ export const recalculateLogByEmploymentId = async (
                     weeklyHoursMs: decimalHoursToMs(shift.weekly_hours),
                     breakInHigherRate: !!shift.break_from_higher,
                     halfIsAllUsh: !!shift.half_is_all_ush,
+                    leaveReliefUshType: shift.leave_relief_ush_type,
                 }
             ),
         });

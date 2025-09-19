@@ -80,6 +80,7 @@ export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
                 break_from_higher: onlyContract
                     ? onlyContract?.break_from_higher
                     : false,
+                leave_relief_ush_type: "best",
                 absent_hours: 0,
                 notes: "",
             };

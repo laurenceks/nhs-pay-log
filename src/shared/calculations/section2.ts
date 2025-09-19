@@ -26,6 +26,13 @@ export interface Section2LogEntry extends Section2 {
     break_override?: number | null;
 }
 
+export type LeaveReliefUSHOption =
+    | "best"
+    | "average13"
+    | "average52"
+    | "flat"
+    | "none";
+
 export const calculateSection2 = (
     {
         from,
@@ -36,6 +43,7 @@ export const calculateSection2 = (
         id = undefined,
         employment_id = undefined,
         breakOverrideMs = null,
+        reliefLeaveType = "best",
         log = [],
     }: {
         from: Date | string | number;
@@ -46,6 +54,7 @@ export const calculateSection2 = (
         id?: string | number;
         employment_id?: string | number;
         breakOverrideMs?: number | null;
+        reliefLeaveType?: LeaveReliefUSHOption;
         log?: Section2LogEntry[];
     },
     {
@@ -109,7 +118,8 @@ export const calculateSection2 = (
         halfIsAllUsh,
         breakInHigherRate,
         overrun_type,
-        actualToObj
+        actualToObj,
+        reliefLeaveType
     );
     return { ...additionalHours, ...ush };
 };

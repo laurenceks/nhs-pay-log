@@ -1,7 +1,7 @@
 import { isBankHoliday } from "./shiftLengths";
 import { Overruns, ShiftTypes, USH } from "../../../types/commonTypes";
 import { addDaysToTimestamp, formatDate } from "../utils/formatDates";
-import { Section2LogEntry } from "./section2";
+import { LeaveReliefUSHOption, Section2LogEntry } from "./section2";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
     // returns in ms the total time within the lower rate windows
@@ -134,6 +134,46 @@ export const calculateRawHigherRate = (from: Date, to: Date) => {
     return 0;
 };
 
+const calculateAverageUshForRelief = (
+    from: Date,
+    plannedTo: Date,
+    weeks: number,
+    weeklyHoursMs: number,
+    log: Section2LogEntry[]
+) => {
+    const averagePeriodStart = formatDate(
+        addDaysToTimestamp(from, weeks * -7),
+        "yyyy-mm-dd"
+    );
+    const fromSortingString = formatDate(from, "yyyy-mm-dd");
+    const totalUsh = { lower: 0, higher: 0 };
+    for (const shift of log) {
+        if (
+            shift.date < averagePeriodStart ||
+            shift.type === "AL (relief)" ||
+            shift.type === "Absent (TOIL relief)"
+        ) {
+            continue;
+        }
+        if (shift.date >= fromSortingString) {
+            break;
+        }
+        totalUsh.lower = totalUsh.lower + shift.lower_rate;
+        totalUsh.higher = totalUsh.higher + shift.higher_rate;
+    }
+    const shiftLength =
+        new Date(plannedTo).getTime() - new Date(from).getTime();
+
+    return {
+        plannedLowerRaw: Math.round(
+            (totalUsh.lower / (weeklyHoursMs * weeks)) * shiftLength
+        ),
+        plannedHigherRaw: Math.round(
+            (totalUsh.higher / (weeklyHoursMs * weeks)) * shiftLength
+        ),
+    };
+};
+
 const ushTypes: ShiftTypes[] = ["Normal", "OT", "AL", "Absent (TOIL)", "Bank"];
 
 export const calculateUsh = (
@@ -147,7 +187,8 @@ export const calculateUsh = (
     halfIsAllUsh: boolean = false,
     breakInHigherRate: boolean = true,
     overrunType: Overruns = "OT",
-    actualTo: Date | null = null
+    actualTo: Date | null = null,
+    reliefLeaveType: LeaveReliefUSHOption = "best"
 ): USH => {
     let plannedLowerRaw = 0;
     let plannedHigherRaw = 0;
@@ -273,34 +314,69 @@ export const calculateUsh = (
             }
         }
     } else if (type === "AL (relief)" || type === "Absent (TOIL relief)") {
-        const averagePeriodStart = formatDate(
-            addDaysToTimestamp(from, -91),
-            "yyyy-mm-dd"
-        );
-        const fromSortingString = formatDate(from, "yyyy-mm-dd");
-        const totalUsh = { lower: 0, higher: 0 };
-        for (const shift of log) {
-            if (
-                shift.date < averagePeriodStart ||
-                shift.type === "AL (relief)" ||
-                shift.type === "Absent (TOIL relief)"
-            ) {
-                continue;
-            }
-            if (shift.date >= fromSortingString) {
+        switch (reliefLeaveType) {
+            case "best":
+                {
+                    const {
+                        plannedLowerRaw: lower13,
+                        plannedHigherRaw: higher13,
+                    } = calculateAverageUshForRelief(
+                        from,
+                        plannedTo,
+                        13,
+                        weeklyHoursMs,
+                        log
+                    );
+                    const {
+                        plannedLowerRaw: lower52,
+                        plannedHigherRaw: higher52,
+                    } = calculateAverageUshForRelief(
+                        from,
+                        plannedTo,
+                        13,
+                        weeklyHoursMs,
+                        log
+                    );
+                    //TODO weight for higher?
+                    if (lower13 + higher13 > lower52 + higher52) {
+                        plannedLowerRaw = lower13;
+                        plannedHigherRaw = higher13;
+                    } else {
+                        plannedLowerRaw = lower52;
+                        plannedHigherRaw = higher52;
+                    }
+                }
                 break;
-            }
-            totalUsh.lower = totalUsh.lower + shift.lower_rate;
-            totalUsh.higher = totalUsh.higher + shift.higher_rate;
+            case "average13":
+                {
+                    ({ plannedLowerRaw, plannedHigherRaw } =
+                        calculateAverageUshForRelief(
+                            from,
+                            plannedTo,
+                            13,
+                            weeklyHoursMs,
+                            log
+                        ));
+                }
+                break;
+            case "average52":
+                {
+                    ({ plannedLowerRaw, plannedHigherRaw } =
+                        calculateAverageUshForRelief(
+                            from,
+                            plannedTo,
+                            52,
+                            weeklyHoursMs,
+                            log
+                        ));
+                }
+                break;
+            case "flat":
+                {
+                    plannedLowerRaw = 7200000; // 2hrs;
+                }
+                break;
         }
-        const shiftLength =
-            new Date(plannedTo).getTime() - new Date(from).getTime();
-        plannedLowerRaw = Math.round(
-            (totalUsh.lower / (weeklyHoursMs * 13)) * shiftLength
-        );
-        plannedHigherRaw = Math.round(
-            (totalUsh.higher / (weeklyHoursMs * 13)) * shiftLength
-        );
     }
 
     return {

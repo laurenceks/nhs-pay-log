@@ -426,7 +426,7 @@ const ShiftEditModal = ({
                                     : ushState.toil
                             }
                         />
-                        {!absentShiftTypes.includes(editState.type) && (
+                        {editState.type !== "Sick" && (
                             <>
                                 <ShiftEditModalCalculation
                                     label="Lower rate"
@@ -436,6 +436,10 @@ const ShiftEditModal = ({
                                     label="Higher rate"
                                     value={ushState.higher_rate}
                                 />
+                            </>
+                        )}
+                        {!absentShiftTypes.includes(editState.type) && (
+                            <>
                                 <ShiftEditModalCalculation
                                     label="Flat"
                                     value={ushState.flat}

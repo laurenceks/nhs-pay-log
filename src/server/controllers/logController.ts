@@ -79,7 +79,8 @@ const updateAffectedShifts = async (
                     !!shift.half_is_all_ush,
                     !!shift.break_from_higher,
                     shift.overrun_type,
-                    new Date(shift.actual_to)
+                    new Date(shift.actual_to),
+                    shift.leave_relief_ush_type
                 ),
                 ...additionalHours,
             },

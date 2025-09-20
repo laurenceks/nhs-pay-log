@@ -41,6 +41,16 @@ const commonEmploymentValidationSchema = (contracts?: Contract[]) =>
                                 numberBooleanSchema("Half is all USH"),
                             break_from_higher:
                                 numberBooleanSchema("Break from higher"),
+                            leave_relief_ush_type: z.enum(
+                                [
+                                    "best",
+                                    "average13",
+                                    "average52",
+                                    "flat",
+                                    "none",
+                                ],
+                                "Invalid leave relief USH type"
+                            ),
                         })
                         .refine((val) => {
                             if (val.from && val.to) {

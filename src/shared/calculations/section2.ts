@@ -16,14 +16,15 @@ interface Section2 {
 
 export interface Section2LogEntry extends Section2 {
     actual_to: string;
+    actual_hours: number; //ms
+    break_override?: number | null;
     date: string;
-    id?: string | number;
     employment_id?: string | number;
     from: string;
+    id?: string | number;
     overrun_type?: Overruns;
     planned_to: string;
     type: ShiftTypes;
-    break_override?: number | null;
 }
 
 export type LeaveReliefUsh =

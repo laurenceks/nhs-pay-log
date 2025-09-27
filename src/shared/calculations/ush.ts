@@ -391,7 +391,11 @@ export const calculateUsh = (
                 break;
             case "flat":
                 {
-                    plannedLowerRaw = 7200000; // 2hrs;
+                    if (from.getDay()) {
+                        plannedLowerRaw = 7200000; // 2hrs;
+                    } else {
+                        plannedHigherRaw = 7200000; // 2hrs (Sun);
+                    }
                 }
                 break;
         }

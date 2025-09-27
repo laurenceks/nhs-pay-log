@@ -25,7 +25,9 @@ const PayslipYearToDate = ({
                         previousValue.deduction_ni + currentValue.deduction_ni,
                     deduction_paye:
                         previousValue.deduction_paye +
-                        currentValue.deduction_paye,
+                        (currentValue.pay_month === payMonth
+                            ? 0
+                            : currentValue.deduction_paye),
                     taxable_pay:
                         previousValue.taxable_pay + currentValue.taxable_pay,
                     pensionable_pay:

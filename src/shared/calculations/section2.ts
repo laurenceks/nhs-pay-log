@@ -22,6 +22,7 @@ export interface Section2LogEntry extends Section2 {
     employment_id?: string | number;
     from: string;
     id?: string | number;
+    overrun_hours?: number; //ms
     overrun_type?: Overruns;
     planned_to: string;
     type: ShiftTypes;
@@ -113,14 +114,14 @@ export const calculateSection2 = (
         plannedToObj,
         type,
         additionalHours.time_and_half + additionalHours.double,
-        weeklyHoursMs,
         breakOverrideMs,
         log,
         halfIsAllUsh,
         breakInHigherRate,
         overrun_type,
         actualToObj,
-        leaveReliefUshType
+        leaveReliefUshType,
+        employment_id
     );
     return { ...additionalHours, ...ush };
 };

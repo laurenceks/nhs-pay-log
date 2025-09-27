@@ -32,7 +32,8 @@ const updateAffectedShifts = async (
     from: string,
     employmentId: string | number
 ) => {
-    //TODO - needs to also select shifts from previously selected employment if its changing
+    //TODO - needs to also select shifts from previously selected employment if its changing --> DONE?
+    //TODO - change to just use section2 master formula for consistency
     const affectedShifts = await readAffectedLogByUserIdAndShiftId(
         userId,
         from,
@@ -68,19 +69,17 @@ const updateAffectedShifts = async (
             ...{
                 ...calculateUsh(
                     new Date(shift.from),
-                    shift.overrun_type === "OT"
-                        ? new Date(shift.actual_to)
-                        : new Date(shift.planned_to),
+                    new Date(shift.planned_to),
                     shift.type,
                     additionalHours.time_and_half + additionalHours.double,
-                    decimalHoursToMs(shift.weekly_hours),
                     shift.break_override,
                     log,
                     !!shift.half_is_all_ush,
                     !!shift.break_from_higher,
                     shift.overrun_type,
                     new Date(shift.actual_to),
-                    shift.leave_relief_ush_type
+                    shift.leave_relief_ush_type,
+                    shift.employment_id
                 ),
                 ...additionalHours,
             },

@@ -76,6 +76,8 @@ export interface ClientShift
     pay_month: string;
     pay_financial_year: string;
     flowers_pay_month: string;
+    actual_hours: number; //ms
+    overrun_hours: number; //ms
     // incentive: number;
     // incentiveHours: number;
     // incentiveType: number;

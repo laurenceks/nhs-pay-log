@@ -138,20 +138,23 @@ const calculateAverageUshForRelief = (
     from: Date,
     plannedTo: Date,
     weeks: number,
-    weeklyHoursMs: number,
-    log: Section2LogEntry[]
+    log: Section2LogEntry[],
+    employmentId?: number | string
 ) => {
     const averagePeriodStart = formatDate(
         addDaysToTimestamp(from, weeks * -7),
         "yyyy-mm-dd"
     );
     const fromSortingString = formatDate(from, "yyyy-mm-dd");
-    const totalUsh = { lower: 0, higher: 0 };
+    const totalUsh = { lower: 0, higher: 0, hours: 0 };
     for (const shift of log) {
         if (
             shift.date < averagePeriodStart ||
+            shift.employment_id !== employmentId ||
             shift.type === "AL (relief)" ||
-            shift.type === "Absent (TOIL relief)"
+            shift.type === "Absent (TOIL relief)" ||
+            shift.type === "TOIL" ||
+            shift.type === "Sick"
         ) {
             continue;
         }
@@ -160,17 +163,32 @@ const calculateAverageUshForRelief = (
         }
         totalUsh.lower = totalUsh.lower + shift.lower_rate;
         totalUsh.higher = totalUsh.higher + shift.higher_rate;
+
+        //only count hours when USH was possible (i.e. under 37.5/wk threshold)
+        totalUsh.hours =
+            totalUsh.hours +
+            Math.max(
+                0,
+                shift.actual_hours -
+                    shift.time_and_half -
+                    shift.double -
+                    (shift.overrun_type === "TOIL"
+                        ? shift.overrun_hours || 0
+                        : 0)
+            );
     }
     const shiftLength =
         new Date(plannedTo).getTime() - new Date(from).getTime();
 
     return {
-        plannedLowerRaw: Math.round(
-            (totalUsh.lower / (weeklyHoursMs * weeks)) * shiftLength
-        ),
-        plannedHigherRaw: Math.round(
-            (totalUsh.higher / (weeklyHoursMs * weeks)) * shiftLength
-        ),
+        plannedLowerRaw:
+            totalUsh.hours === 0
+                ? 0
+                : Math.round((totalUsh.lower / totalUsh.hours) * shiftLength),
+        plannedHigherRaw:
+            totalUsh.hours === 0
+                ? 0
+                : Math.round((totalUsh.higher / totalUsh.hours) * shiftLength),
     };
 };
 
@@ -181,14 +199,14 @@ export const calculateUsh = (
     plannedTo: Date,
     type: ShiftTypes = "Normal",
     hoursOverThresholdMs = 0,
-    weeklyHoursMs = 1.35e8, //37.5hrs
     breakOverrideMs: number | null = null,
     log: Section2LogEntry[] = [],
     halfIsAllUsh: boolean = false,
     breakInHigherRate: boolean = true,
     overrunType: Overruns = "OT",
     actualTo: Date | null = null,
-    leaveReliefUshType: LeaveReliefUsh = "best"
+    leaveReliefUshType: LeaveReliefUsh = "best",
+    employment_id?: string | number
 ): USH => {
     let plannedLowerRaw = 0;
     let plannedHigherRaw = 0;
@@ -324,8 +342,8 @@ export const calculateUsh = (
                         from,
                         plannedTo,
                         13,
-                        weeklyHoursMs,
-                        log
+                        log,
+                        employment_id
                     );
                     const {
                         plannedLowerRaw: lower52,
@@ -334,8 +352,8 @@ export const calculateUsh = (
                         from,
                         plannedTo,
                         13,
-                        weeklyHoursMs,
-                        log
+                        log,
+                        employment_id
                     );
                     //TODO weight for higher?
                     if (lower13 + higher13 > lower52 + higher52) {
@@ -354,8 +372,8 @@ export const calculateUsh = (
                             from,
                             plannedTo,
                             13,
-                            weeklyHoursMs,
-                            log
+                            log,
+                            employment_id
                         ));
                 }
                 break;
@@ -366,8 +384,8 @@ export const calculateUsh = (
                             from,
                             plannedTo,
                             52,
-                            weeklyHoursMs,
-                            log
+                            log,
+                            employment_id
                         ));
                 }
                 break;

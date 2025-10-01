@@ -15,6 +15,11 @@ import {
     calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
 import Pay from "../../../../../components/pay/Pay";
+import { MonthNumber } from "../../../../../../../shared/calculations/monthlyPaye";
+
+type CumulativePayMap = {
+    [key: string | number]: { [key: string]: number };
+};
 
 export const Route = createFileRoute("/_private/_nav/_table/pay")({
     component: () => {
@@ -29,6 +34,9 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
         }
     },
     loader: async ({ context }) => {
+        const cumulativeTaxableIncomes: CumulativePayMap = {};
+        const cumulativeTaxPaid: CumulativePayMap = {};
+
         const pay: ParsedApiPay[] =
             (
                 await context.queryClient.ensureQueryData(
@@ -42,27 +50,81 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                 const pension_perc = Number(x.pension_perc);
                 const gross_pay = Number(x.gross_pay);
 
+                if (
+                    !cumulativeTaxableIncomes[x.employment_id]?.[
+                        x.pay_financial_year
+                    ]
+                ) {
+                    cumulativeTaxableIncomes[x.employment_id] = {
+                        [x.pay_financial_year]: 0,
+                    };
+                    cumulativeTaxPaid[x.employment_id] = {
+                        [x.pay_financial_year]: 0,
+                    };
+                }
+
+                cumulativeTaxableIncomes[x.employment_id][
+                    x.pay_financial_year
+                ] += taxable_pay;
+
                 const taxYear =
                     `20${x.pay_financial_year.replace("-", "/")}` as TaxYear;
-                const taxableAnnualIncome = taxable_pay * 12;
+                const monthNumber = (((Number(x.pay_date.split("-")[1]) + 8) %
+                    12) +
+                    1) as MonthNumber;
                 const personalAllowance = Math.max(
                     Math.min(
-                        calculatePersonalAllowance({
-                            taxYear,
-                            taxableAnnualIncome,
-                        }),
+                        x.cumulative
+                            ? calculatePersonalAllowance({
+                                  taxYear,
+                                  taxableAnnualIncome:
+                                      cumulativeTaxableIncomes[x.employment_id][
+                                          x.pay_financial_year
+                                      ] *
+                                      (12 / monthNumber),
+                              })
+                            : calculatePersonalAllowance({
+                                  taxYear,
+                                  taxableAnnualIncome: taxable_pay * 12,
+                              }),
                         personal_allowance
                     ),
                     0
                 );
 
-                let { total: deduction_paye } = calculateIncomeTax({
-                    taxYear,
-                    personalAllowance,
-                    taxableAnnualIncome,
-                });
+                let { total: deduction_paye } = x.cumulative
+                    ? calculateIncomeTax({
+                          taxYear,
+                          country: "England/NI/Wales",
+                          cumulativePaye: {
+                              cumulativeGrossIncome:
+                                  cumulativeTaxableIncomes[x.employment_id][
+                                      x.pay_financial_year
+                                  ],
+                              cumulativeTaxPaid:
+                                  cumulativeTaxPaid[x.employment_id][
+                                      x.pay_financial_year
+                                  ],
+                              monthNumber:
+                                  ((Number(x.pay_date.split("-")[1]) + 8) %
+                                      12) +
+                                  1,
+                          },
+                          personalAllowance,
+                      })
+                    : calculateIncomeTax({
+                          taxYear,
+                          taxableAnnualIncome: taxable_pay * 12,
+                          country: "England/NI/Wales",
+                          personalAllowance,
+                      });
 
-                deduction_paye = deduction_paye / 12;
+                if (!x.cumulative) {
+                    deduction_paye = deduction_paye / 12;
+                }
+
+                cumulativeTaxPaid[x.employment_id][x.pay_financial_year] +=
+                    deduction_paye;
 
                 const deduction_ni =
                     calculateEmployeeNationalInsurance({
@@ -76,7 +138,7 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                     deduction_student_loan =
                         calculateStudentLoanRepayments({
                             taxYear,
-                            taxableAnnualIncome,
+                            taxableAnnualIncome: taxable_pay * 12,
                             studentLoanPlanNo:
                                 x.student_loan === 6
                                     ? "postgrad"

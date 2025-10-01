@@ -196,6 +196,7 @@ export interface ApiPay
         >,
         PayStringToNumberKeys {
     student_loan: 1 | 2 | 4 | 5 | 6 | null; //6=postgrad
+    cumulative: Contract["cumulative"];
 }
 export interface ApiPayslip {
     amount: string;
@@ -260,6 +261,7 @@ export type Contract = {
     hca_perc: number;
     pension_perc: number;
     personal_allowance: number;
+    cumulative: 0 | 1 | boolean;
     student_loan: ApiPay["student_loan"];
     employment_id: Employment["id"];
     employment_name: Employment["name"];

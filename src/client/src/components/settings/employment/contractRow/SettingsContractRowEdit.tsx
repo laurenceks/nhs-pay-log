@@ -67,6 +67,7 @@ const SettingsContractRowEdit = ({
                         size="sm"
                         value={contract.from || ""}
                         disabled={first && !allowFirstFrom}
+                        id={`${contract.id}-from`}
                         onChange={(e) =>
                             setEmploymentContracts({
                                 action: "from",
@@ -104,6 +105,7 @@ const SettingsContractRowEdit = ({
                         size="sm"
                         value={contract.to || ""}
                         disabled={last && !allowLastTo}
+                        id={`${contract.id}-to`}
                         onChange={(e) =>
                             setEmploymentContracts({
                                 action: "to",
@@ -141,6 +143,7 @@ const SettingsContractRowEdit = ({
                     data-field={"pay_group_id"}
                     value={contract.pay_group_id}
                     onChange={changeHandler}
+                    id={`${contract.id}-pay_group_id`}
                 >
                     {filteredPayBands.map((x) => (
                         <option key={x.group_id} value={x.group_id}>
@@ -155,6 +158,7 @@ const SettingsContractRowEdit = ({
                     data-field={"hca_group_id"}
                     value={contract.hca_group_id || ""}
                     onChange={changeHandler}
+                    id={`${contract.id}-hca_group_id`}
                 >
                     <option value={""}>None</option>
                     <option value={"3"}>Fringe</option>
@@ -173,6 +177,7 @@ const SettingsContractRowEdit = ({
                     data-field={"weekly_hours"}
                     value={contract.weekly_hours}
                     onChange={changeHandler}
+                    id={`${contract.id}-weekly_hours`}
                 />
             </td>
             <td>
@@ -186,6 +191,7 @@ const SettingsContractRowEdit = ({
                     data-field={"pension_perc"}
                     value={roundTo(contract.pension_perc * 100, 2)}
                     onChange={changeHandler}
+                    id={`${contract.id}-pension_perc`}
                 />
             </td>
             <td>
@@ -199,7 +205,17 @@ const SettingsContractRowEdit = ({
                     data-field={"personal_allowance"}
                     value={contract.personal_allowance}
                     onChange={changeHandler}
+                    id={`${contract.id}-personal_allowance`}
                 />
+            </td>
+            <td style={{ verticalAlign: "middle" }}>
+                <Form.Switch
+                    data-field={"cumulative"}
+                    checked={!!contract.cumulative}
+                    onChange={changeHandler}
+                    label={"Cumulative"}
+                    id={`${contract.id}-cumulative`}
+                ></Form.Switch>
             </td>
             <td>
                 <Form.Select
@@ -207,6 +223,7 @@ const SettingsContractRowEdit = ({
                     data-field={"student_loan"}
                     value={contract.student_loan || ""}
                     onChange={changeHandler}
+                    id={`${contract.id}-student_loan`}
                 >
                     <option value={""}>None</option>
                     <option value={"1"}>1</option>
@@ -222,6 +239,7 @@ const SettingsContractRowEdit = ({
                     checked={!!contract.half_is_all_ush}
                     onChange={changeHandler}
                     label={contract.half_is_all_ush ? "Yes" : "No"}
+                    id={`${contract.id}-half_is_all_ush`}
                 ></Form.Switch>
             </td>
             <td style={{ verticalAlign: "middle" }}>
@@ -230,6 +248,7 @@ const SettingsContractRowEdit = ({
                     checked={!!contract.break_from_higher}
                     onChange={changeHandler}
                     label={contract.break_from_higher ? "Yes" : "No"}
+                    id={`${contract.id}-break_from_higher`}
                 ></Form.Switch>
             </td>
             <td>
@@ -238,6 +257,7 @@ const SettingsContractRowEdit = ({
                     data-field={"leave_relief_ush_type"}
                     value={contract.leave_relief_ush_type || ""}
                     onChange={changeHandler}
+                    id={`${contract.id}-leave_relief_ush_type`}
                 >
                     {Object.entries(ushTypeMap).map(([key, label]) => (
                         <option key={key} value={key}>

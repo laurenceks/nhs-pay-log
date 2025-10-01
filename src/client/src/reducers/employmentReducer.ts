@@ -30,6 +30,7 @@ const defaultContract = (
     personal_allowance: calculatePersonalAllowance({
         taxableAnnualIncome: 0,
     }),
+    cumulative: true,
     weekly_hours: 37.5,
     student_loan: null,
     hca_perc: 0,
@@ -530,6 +531,7 @@ const employmentReducer = (
         case "weekly_hours":
         case "pension_perc":
         case "personal_allowance":
+        case "cumulative":
         case "student_loan":
         case "half_is_all_ush":
         case "break_from_higher":

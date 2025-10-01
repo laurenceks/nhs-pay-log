@@ -11,7 +11,9 @@ const SettingsEmploymentThead = ({
             <th scope="col">HCA type</th>
             <th scope="col">Weekly hours</th>
             <th scope="col">Pension %</th>
-            <th scope="col">Personal allowance</th>
+            <th scope="col" colSpan={2}>
+                Personal allowance
+            </th>
             <th scope="col">Student loan</th>
             <th scope="col">Half is all USH</th>
             <th scope="col">Break from higher</th>

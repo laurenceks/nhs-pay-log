@@ -42,6 +42,7 @@ export const postEmployment = async (req: Request, res: Response) => {
         const [{ pay_group_id }] = await readLatestContractPayGroupIdByUserId(
             req.authenticatedUser.id
         );
+        //TODO check if personalAllowance should be 0 here? Why not default for the year?
         await createContract(
             req.authenticatedUser.id,
             insertId,
@@ -102,6 +103,7 @@ export const patchEmployment = async (req: Request, res: Response) => {
                     contract.pension_perc,
                     contract.student_loan,
                     contract.personal_allowance,
+                    contract.cumulative ? 1 : 0,
                     contract.from,
                     contract.to,
                     contract.half_is_all_ush ? 1 : 0,

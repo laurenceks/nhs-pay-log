@@ -71,7 +71,12 @@ const SettingsContractRow = ({
             </td>
             <td>{contract.weekly_hours}</td>
             <td>{contract.pension_perc * 100}%</td>
-            <td>{convertToGbp(contract.personal_allowance)}</td>
+            <td colSpan={2}>
+                {convertToGbp(contract.personal_allowance)}{" "}
+                <span className="small text-muted">
+                    {contract.cumulative ? "cumulative" : "non-cumulative"}
+                </span>
+            </td>
             <td>
                 {contract.student_loan || (
                     <span className="text-muted">

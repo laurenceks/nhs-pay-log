@@ -37,6 +37,7 @@ const commonEmploymentValidationSchema = (contracts?: Contract[]) =>
                             to: shiftDateValidationSchema("from").nullable(),
                             employment_id:
                                 rowIdValidationSchema("Employment ID"),
+                            cumulative: numberBooleanSchema("Cumulative"),
                             half_is_all_ush:
                                 numberBooleanSchema("Half is all USH"),
                             break_from_higher:

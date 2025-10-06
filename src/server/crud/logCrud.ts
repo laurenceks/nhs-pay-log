@@ -4,7 +4,7 @@ import {
     executeWriteByPlaceholders,
 } from "../utils/db";
 import { ApiShift, ClientShift } from "../../../types/commonTypes";
-import { Section2LogEntry } from "../../shared/calculations/section2";
+import { Section2Shift } from "../../shared/calculations/section2";
 
 export const readLogByUserId = async (userId: string) => {
     return await executeReadByPlaceholders<ApiShift>(
@@ -46,7 +46,7 @@ export const readUshAverageLogByUserIdAndEmploymentId = async (
     employmentId: string | number,
     weeks: 13 | 52
 ) => {
-    return await executeReadByPlaceholders<Section2LogEntry>(
+    return await executeReadByPlaceholders<Section2Shift>(
         "SELECT `log`.`date`,\n       `log`.`type`,\n       `log`.`lower_rate`,\n       `log`.`higher_rate`,\n       `log`.`actual_hours`,\n       `log`.`overrun_hours`,\n       `log`.`employment_id`,\n       `log`.`overrun_type`,\n       `log`.`actual_to`,\n       `log`.`break_override`,\n       `log`.`from`,\n       `log`.`planned_to`,\n       `log`.`absent_hours`,\n       `log`.`double`,\n       `log`.`flat`,\n       `log`.`time_and_half`,\n       `log`.`toil`\nFROM `log`\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL :weeks WEEK)\n  AND `log`.`from` < DATE(:from)\nORDER BY `log`.`from`",
         { userId, from, employmentId, weeks }
     );

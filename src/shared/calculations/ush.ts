@@ -1,7 +1,7 @@
 import { isBankHoliday } from "./shiftLengths";
 import { Overruns, ShiftTypes, USH } from "../../../types/commonTypes";
 import { addDaysToTimestamp, formatDate } from "../utils/formatDates";
-import { LeaveReliefUsh, Section2LogEntry } from "./section2";
+import { LeaveReliefUsh, Section2Shift } from "./section2";
 
 export const calculateRawLowerRate = (from: Date, to: Date) => {
     // returns in ms the total time within the lower rate windows
@@ -138,7 +138,7 @@ const calculateAverageUshForRelief = (
     from: Date,
     plannedTo: Date,
     weeks: number,
-    log: Section2LogEntry[],
+    log: Section2Shift[],
     employmentId?: number | string
 ) => {
     const averagePeriodStart = formatDate(
@@ -194,20 +194,33 @@ const calculateAverageUshForRelief = (
 
 const ushTypes: ShiftTypes[] = ["Normal", "OT", "AL", "Absent (TOIL)", "Bank"];
 
-export const calculateUsh = (
-    from: Date,
-    plannedTo: Date,
-    type: ShiftTypes = "Normal",
+export const calculateUsh = ({
+    from,
+    plannedTo,
+    type = "Normal",
     hoursOverThresholdMs = 0,
-    breakOverrideMs: number | null = null,
-    log: Section2LogEntry[] = [],
-    halfIsAllUsh: boolean = false,
-    breakInHigherRate: boolean = true,
-    overrunType: Overruns = "OT",
-    actualTo: Date | null = null,
-    leaveReliefUshType: LeaveReliefUsh = "best",
-    employment_id?: string | number
-): USH => {
+    breakOverrideMs = null,
+    shifts = [],
+    halfIsAllUsh = false,
+    breakInHigherRate = true,
+    overrunType = "OT",
+    actualTo = null,
+    leaveReliefUshType = "best",
+    employment_id,
+}: {
+    from: Date;
+    plannedTo: Date;
+    type?: ShiftTypes;
+    hoursOverThresholdMs?: number;
+    breakOverrideMs?: number | null;
+    shifts?: Section2Shift[];
+    halfIsAllUsh?: boolean;
+    breakInHigherRate?: boolean;
+    overrunType?: Overruns;
+    actualTo?: Date | null;
+    leaveReliefUshType?: LeaveReliefUsh;
+    employment_id?: string | number;
+}): USH => {
     let plannedLowerRaw = 0;
     let plannedHigherRaw = 0;
     let overrunLower = 0;
@@ -342,7 +355,7 @@ export const calculateUsh = (
                         from,
                         plannedTo,
                         13,
-                        log,
+                        shifts,
                         employment_id
                     );
                     const {
@@ -352,7 +365,7 @@ export const calculateUsh = (
                         from,
                         plannedTo,
                         13,
-                        log,
+                        shifts,
                         employment_id
                     );
                     //TODO weight for higher?
@@ -372,7 +385,7 @@ export const calculateUsh = (
                             from,
                             plannedTo,
                             13,
-                            log,
+                            shifts,
                             employment_id
                         ));
                 }
@@ -384,7 +397,7 @@ export const calculateUsh = (
                             from,
                             plannedTo,
                             52,
-                            log,
+                            shifts,
                             employment_id
                         ));
                 }

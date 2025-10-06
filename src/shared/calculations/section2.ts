@@ -14,7 +14,7 @@ interface Section2 {
     toil: number;
 }
 
-export interface Section2LogEntry extends Section2 {
+export interface Section2Shift extends Section2 {
     actual_to: string;
     actual_hours: number; //ms
     break_override?: number | null;
@@ -45,7 +45,7 @@ export const calculateSection2 = (
         id = undefined,
         employment_id = undefined,
         breakOverrideMs = null,
-        log = [],
+        shifts = [],
     }: {
         from: Date | string | number;
         planned_to: Date | string | number;
@@ -55,7 +55,7 @@ export const calculateSection2 = (
         id?: string | number;
         employment_id?: string | number;
         breakOverrideMs?: number | null;
-        log?: Section2LogEntry[];
+        shifts?: Section2Shift[];
     },
     {
         weeklyHoursMs = 135000000, //37.5
@@ -106,22 +106,23 @@ export const calculateSection2 = (
             weeklyHoursMs: weeklyHoursMs,
             breakOverrideMs,
         },
-        log
+        shifts
     );
 
-    const ush = calculateUsh(
-        fromObj,
-        plannedToObj,
-        type,
-        additionalHours.time_and_half + additionalHours.double,
-        breakOverrideMs,
-        log,
-        halfIsAllUsh,
-        breakInHigherRate,
-        overrun_type,
-        actualToObj,
-        leaveReliefUshType,
-        employment_id
-    );
+    const ush = calculateUsh({
+        from: fromObj,
+        plannedTo: plannedToObj,
+        type: type,
+        hoursOverThresholdMs:
+            additionalHours.time_and_half + additionalHours.double,
+        breakOverrideMs: breakOverrideMs,
+        shifts: shifts,
+        halfIsAllUsh: halfIsAllUsh,
+        breakInHigherRate: breakInHigherRate,
+        overrunType: overrun_type,
+        actualTo: actualToObj,
+        leaveReliefUshType: leaveReliefUshType,
+        employment_id: employment_id,
+    });
     return { ...additionalHours, ...ush };
 };

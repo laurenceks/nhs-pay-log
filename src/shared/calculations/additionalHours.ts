@@ -13,11 +13,11 @@ import {
     absentShiftTypes,
     additionalHoursShiftTypes,
 } from "../utils/shiftTypes";
-import { Section2LogEntry } from "./section2";
+import { Section2Shift } from "./section2";
 
 export const calculateCumulativeAdditionalHours = (
     from: Date,
-    log: Section2LogEntry[] = [],
+    log: Section2Shift[] = [],
     id?: string | number,
     employment_id?: string | number
 ) => {
@@ -109,7 +109,7 @@ export const calculateAdditionalHours = (
         weeklyHoursMs: number;
         breakOverrideMs?: number | null;
     },
-    log: Section2LogEntry[]
+    log: Section2Shift[]
 ) => {
     const additionalHoursBreakdown: AdditionalHours = {
         flat: 0,

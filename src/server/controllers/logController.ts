@@ -67,20 +67,21 @@ const updateAffectedShifts = async (
         await updateLogShiftByUserIdAndShiftId(userId, {
             ...shift,
             ...{
-                ...calculateUsh(
-                    new Date(shift.from),
-                    new Date(shift.planned_to),
-                    shift.type,
-                    additionalHours.time_and_half + additionalHours.double,
-                    shift.break_override,
-                    log,
-                    !!shift.half_is_all_ush,
-                    !!shift.break_from_higher,
-                    shift.overrun_type,
-                    new Date(shift.actual_to),
-                    shift.leave_relief_ush_type,
-                    shift.employment_id
-                ),
+                ...calculateUsh({
+                    from: new Date(shift.from),
+                    plannedTo: new Date(shift.planned_to),
+                    type: shift.type,
+                    hoursOverThresholdMs:
+                        additionalHours.time_and_half + additionalHours.double,
+                    breakOverrideMs: shift.break_override,
+                    shifts: log,
+                    halfIsAllUsh: !!shift.half_is_all_ush,
+                    breakInHigherRate: !!shift.break_from_higher,
+                    overrunType: shift.overrun_type,
+                    actualTo: new Date(shift.actual_to),
+                    leaveReliefUshType: shift.leave_relief_ush_type,
+                    employment_id: shift.employment_id,
+                }),
                 ...additionalHours,
             },
         });
@@ -98,7 +99,7 @@ export const recalculateLogByEmploymentId = async (
         await updateLogShiftByUserIdAndShiftId(userId, {
             ...shift,
             ...calculateSection2(
-                { ...shift, log: employmentShifts },
+                { ...shift, shifts: employmentShifts },
                 {
                     weeklyHoursMs: decimalHoursToMs(shift.weekly_hours),
                     breakInHigherRate: !!shift.break_from_higher,

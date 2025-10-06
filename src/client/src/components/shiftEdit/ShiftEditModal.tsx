@@ -160,7 +160,7 @@ const ShiftEditModal = ({
                 ...calculateSection2(
                     {
                         ...editState,
-                        log,
+                        shifts: log,
                         breakOverrideMs: editState.break_override,
                     },
                     {

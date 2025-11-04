@@ -4,7 +4,7 @@ import {
     executeWriteByPlaceholders,
 } from "../utils/db";
 import { ApiShift, ClientShift } from "../../../types/commonTypes";
-import { Section2Shift } from "../../shared/calculations/section2";
+import { Section2Shift } from "section-2";
 
 export const readLogByUserId = async (userId: string) => {
     return await executeReadByPlaceholders<ApiShift>(

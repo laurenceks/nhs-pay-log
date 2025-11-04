@@ -3,7 +3,7 @@ import { Contract } from "../../../../../../../types/commonTypes";
 import { filterOptionsByDate } from "../../../../../../shared/utils/lookup";
 import { formatDate } from "../../../../../../shared/utils/formatDates";
 import { convertToGbp } from "../../../../../../shared/utils/conversions";
-import { LeaveReliefUsh } from "../../../../../../shared/calculations/section2";
+import { LeaveReliefUsh } from "section-2";
 
 const hcaMap = {
     1: "Inner London",

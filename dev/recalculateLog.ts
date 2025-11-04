@@ -7,8 +7,7 @@ import {
     ResultSetHeader,
     RowDataPacket,
 } from "mysql2/promise";
-import { calculateAdditionalHours } from "../src/shared/calculations/additionalHours";
-import { calculateUsh } from "../src/shared/calculations/ush";
+import { calculateAdditionalHours, calculateUsh } from "section-2";
 import { decimalHoursToMs } from "../src/shared/utils/conversions";
 import {
     financialYear,
@@ -18,10 +17,9 @@ import {
 import { formatDate } from "../src/shared/utils/formatDates";
 
 configDotenv({
-    path: path.resolve(__dirname, "./../src/server/.env"),
+    path: path.resolve("src/server/.env"),
     override: false,
 });
-
 if (!process.env.NODE_ENV) {
     // if unresolved try server path
     configDotenv({
@@ -39,7 +37,7 @@ const dbOptions: ConnectionOptions = {
     namedPlaceholders: true,
     dateStrings: true,
 };
-
+console.log(dbOptions);
 const pool = createPool(dbOptions);
 
 const executeReadByPlaceholders = async <T = RowDataPacket>(
@@ -60,7 +58,7 @@ const executeWriteByPlaceholders = async (
 
 async function main() {
     const [oldLog] = (await pool.query(
-        "SELECT `log`.*,\n       `contracts`.`id` AS `contract_id`,\n       `contracts`.`weekly_hours`\nFROM `log`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nORDER BY `log`.`from`;"
+        "SELECT `log`.*,\n       `contracts`.`id` AS `contract_id`,\n       `contracts`.`weekly_hours`,\n       `contracts`.`half_is_all_ush`,\n       `contracts`.`break_from_higher`\nFROM `log`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nORDER BY `log`.`from`;"
     )) as [(ApiShift & { user_id: string })[], never];
 
     console.log(`Updating ${oldLog.length} shifts`);
@@ -69,7 +67,7 @@ async function main() {
         console.log(`Updating ${oldShift.id}`);
 
         const affectedShifts = await executeReadByPlaceholders<ApiShift>(
-            "SELECT `log`.*, `contracts`.`weekly_hours`\nFROM `log`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nWHERE `log`.`user_id` = :userId\n  AND `contracts`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL WEEKDAY(:from) DAY)\n  AND `log`.`from` < DATE_ADD(DATE(:from), INTERVAL (7 - WEEKDAY(:from)) DAY)\nORDER BY `log`.`from`",
+            "SELECT `log`.*, `contracts`.`weekly_hours`, `contracts`.`half_is_all_ush`, `contracts`.`break_from_higher`\nFROM `log`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nWHERE `log`.`user_id` = :userId\n  AND `contracts`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\n  AND `log`.`from` >= DATE_SUB(DATE(:from), INTERVAL WEEKDAY(:from) DAY)\n  AND `log`.`from` < DATE_ADD(DATE(:from), INTERVAL (7 - WEEKDAY(:from)) DAY)\nORDER BY `log`.`from`",
             {
                 userId: oldShift.user_id,
                 from: oldShift.from,
@@ -77,8 +75,13 @@ async function main() {
             }
         );
 
+        const from = new Date(oldShift.from);
+        const planned_to = new Date(oldShift.planned_to);
+        const actual_to = new Date(oldShift.actual_to);
+        const weeklyHoursMs = decimalHoursToMs(oldShift.weekly_hours);
+
         const additionalHours = calculateAdditionalHours(
-            oldShift,
+            { ...oldShift, from, planned_to, actual_to, weeklyHoursMs },
             affectedShifts
         );
 
@@ -106,16 +109,21 @@ async function main() {
         const newShift = {
             ...oldShift,
             ...{
-                ...calculateUsh(
-                    oldShift.from,
-                    oldShift.overrun_type === "OT"
-                        ? oldShift.actual_to
-                        : oldShift.planned_to,
-                    oldShift.type,
-                    additionalHours.time_and_half + additionalHours.double,
-                    decimalHoursToMs(oldShift.weekly_hours),
-                    log
-                ),
+                ...calculateUsh({
+                    from: from,
+                    plannedTo: planned_to,
+                    type: oldShift.type,
+                    hoursOverThresholdMs:
+                        additionalHours.time_and_half + additionalHours.double,
+                    breakOverrideMs: oldShift.break_override,
+                    shifts: log,
+                    halfIsAllUsh: !!oldShift.half_is_all_ush,
+                    breakInHigherRate: !!oldShift.break_from_higher,
+                    overrunType: oldShift.overrun_type,
+                    actualTo: new Date(oldShift.actual_to),
+                    leaveReliefUshType: oldShift.leave_relief_ush_type,
+                    employment_id: oldShift.employment_id,
+                }),
                 ...additionalHours,
                 ...payDates,
             },
@@ -160,8 +168,9 @@ main()
         console.log("Log recalculated");
         process.exit(0);
     })
-    .catch(async () => {
+    .catch(async (e) => {
         await pool.end();
+        console.error(e);
         console.error("Unable to recalculate log");
         process.exit(1);
     });

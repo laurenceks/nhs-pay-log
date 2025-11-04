@@ -27,6 +27,8 @@ export const Route = createFileRoute("/_private/_nav/_table/log")({
                     shift_pay: Number(x.shift_pay),
                     total_ush: Number(x.shift_pay),
                     absent_hours: Number(x.absent_hours),
+                    half_is_all_ush: !!x.half_is_all_ush,
+                    break_from_higher: !!x.break_from_higher,
                 };
             }) || [];
 
@@ -55,6 +57,8 @@ export const Route = createFileRoute("/_private/_nav/_table/log")({
                     higher_rate: roundTo(msToDecimalHours(x.higher_rate), 3),
                     double: roundTo(msToDecimalHours(x.double), 3),
                     absent_hours: roundTo(msToDecimalHours(x.absent_hours), 3),
+                    break_from_higher: !!x.break_from_higher,
+                    half_is_all_ush: !!x.half_is_all_ush,
                 };
             }) || [];
 

@@ -50,7 +50,7 @@ export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
                 actual_hours: 0,
                 actual_to: "",
                 break_from_higher: onlyContract
-                    ? onlyContract?.break_from_higher
+                    ? !!onlyContract?.break_from_higher
                     : false,
                 break_override: null,
                 break_override_string: null,
@@ -64,7 +64,7 @@ export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
                 flowers_pay_month: flowersPayMonth(today),
                 from: "",
                 half_is_all_ush: onlyContract
-                    ? onlyContract?.half_is_all_ush
+                    ? !!onlyContract?.half_is_all_ush
                     : true,
                 higher_rate: 0,
                 id: 0,

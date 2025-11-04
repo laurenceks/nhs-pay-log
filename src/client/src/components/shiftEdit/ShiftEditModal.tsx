@@ -33,7 +33,7 @@ import { logShiftValidationSchema } from "../../../../shared/validationSchemas/l
 import { overrunTypeList, typeList } from "../../../../shared/lists";
 import ShiftEditModalListOptions from "./ShiftEditModalListOptions";
 import { absentShiftTypes } from "../../../../shared/utils/shiftTypes";
-import { calculateSection2 } from "../../../../shared/calculations/section2";
+import { calculateSection2 } from "section-2";
 import { decimalHoursToMs } from "../../../../shared/utils/conversions";
 
 const ShiftEditModal = ({
@@ -161,13 +161,12 @@ const ShiftEditModal = ({
                     {
                         ...editState,
                         shifts: log,
-                        breakOverrideMs: editState.break_override,
                     },
                     {
-                        weeklyHoursMs: decimalHoursToMs(editState.weekly_hours),
-                        halfIsAllUsh: !!editState.half_is_all_ush,
-                        breakInHigherRate: !!editState.break_from_higher,
-                        leaveReliefUshType: editState.leave_relief_ush_type,
+                        weekly_hours: decimalHoursToMs(editState.weekly_hours),
+                        half_is_all_ush: !!editState.half_is_all_ush,
+                        break_from_higher: !!editState.break_from_higher,
+                        leave_relief_ush_type: editState.leave_relief_ush_type,
                     }
                 ),
             });

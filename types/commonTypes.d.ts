@@ -1,7 +1,7 @@
 import { Employment, LookupTable } from "./lookupTypes";
 import { filterFns } from "@tanstack/table-core/src/filterFns";
 import { Variant } from "react-bootstrap/types";
-import { LeaveReliefUsh } from "../src/shared/calculations/section2";
+import { LeaveReliefUsh } from "section-2";
 
 export type Overruns = "OT" | "TOIL";
 
@@ -65,19 +65,15 @@ export interface ClientShift
     extends AdditionalHours,
         USH,
         ShiftEdit,
-        Pick<
-            Contract,
-            | "weekly_hours"
-            | "half_is_all_ush"
-            | "break_from_higher"
-            | "leave_relief_ush_type"
-        > {
+        Pick<Contract, "weekly_hours" | "leave_relief_ush_type"> {
     pay_date: string;
     pay_month: string;
     pay_financial_year: string;
     flowers_pay_month: string;
     actual_hours: number; //ms
     overrun_hours: number; //ms
+    half_is_all_ush: boolean;
+    break_from_higher: boolean;
     // incentive: number;
     // incentiveHours: number;
     // incentiveType: number;
@@ -206,7 +202,10 @@ export interface ApiPayslip {
     worked: string;
 }
 
-export type ParsedApiShift = Omit<ApiShift, keyof ShiftStringToNumberKeys> & {
+export type ParsedApiShift = Omit<
+    ApiShift,
+    keyof ShiftStringToNumberKeys | "break_from_higher" | "half_is_all_ush"
+> & { half_is_all_ush: boolean; break_from_higher: boolean } & {
     [K in keyof ShiftStringToNumberKeys]: number;
 };
 

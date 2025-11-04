@@ -10,14 +10,14 @@ import {
     readUshAverageLogByUserIdAndEmploymentId,
     updateLogShiftByUserIdAndShiftId,
 } from "../crud/logCrud";
-import { calculateUsh } from "../../shared/calculations/ush";
-import { calculateAdditionalHours } from "../../shared/calculations/additionalHours";
 import { createLogExtra, deleteLogExtraByShiftId } from "../crud/logExtraCrud";
 import { decimalHoursToMs } from "../../shared/utils/conversions";
 import {
+    calculateAdditionalHours,
     calculateSection2,
+    calculateUsh,
     LeaveReliefUsh,
-} from "../../shared/calculations/section2";
+} from "section-2";
 
 const leaveOnReliefUshWeeksMap: { [key in LeaveReliefUsh]: 0 | 13 | 52 } = {
     average13: 13,
@@ -46,8 +46,7 @@ const updateAffectedShifts = async (
                 from: new Date(shift.from),
                 planned_to: new Date(shift.planned_to),
                 actual_to: new Date(shift.actual_to),
-                weeklyHoursMs: decimalHoursToMs(shift.weekly_hours),
-                breakOverrideMs: shift.break_override,
+                weekly_hours: decimalHoursToMs(shift.weekly_hours),
             },
             affectedShifts
         );
@@ -69,17 +68,17 @@ const updateAffectedShifts = async (
             ...{
                 ...calculateUsh({
                     from: new Date(shift.from),
-                    plannedTo: new Date(shift.planned_to),
+                    planned_to: new Date(shift.planned_to),
                     type: shift.type,
-                    hoursOverThresholdMs:
+                    hours_over_threshold:
                         additionalHours.time_and_half + additionalHours.double,
-                    breakOverrideMs: shift.break_override,
+                    break_override: shift.break_override,
                     shifts: log,
-                    halfIsAllUsh: !!shift.half_is_all_ush,
-                    breakInHigherRate: !!shift.break_from_higher,
-                    overrunType: shift.overrun_type,
-                    actualTo: new Date(shift.actual_to),
-                    leaveReliefUshType: shift.leave_relief_ush_type,
+                    half_is_all_ush: !!shift.half_is_all_ush,
+                    break_from_higher: !!shift.break_from_higher,
+                    overrun_type: shift.overrun_type,
+                    actual_to: new Date(shift.actual_to),
+                    leave_relief_ush_type: shift.leave_relief_ush_type,
                     employment_id: shift.employment_id,
                 }),
                 ...additionalHours,
@@ -101,10 +100,10 @@ export const recalculateLogByEmploymentId = async (
             ...calculateSection2(
                 { ...shift, shifts: employmentShifts },
                 {
-                    weeklyHoursMs: decimalHoursToMs(shift.weekly_hours),
-                    breakInHigherRate: !!shift.break_from_higher,
-                    halfIsAllUsh: !!shift.half_is_all_ush,
-                    leaveReliefUshType: shift.leave_relief_ush_type,
+                    weekly_hours: decimalHoursToMs(shift.weekly_hours),
+                    break_from_higher: !!shift.break_from_higher,
+                    half_is_all_ush: !!shift.half_is_all_ush,
+                    leave_relief_ush_type: shift.leave_relief_ush_type,
                 }
             ),
         });

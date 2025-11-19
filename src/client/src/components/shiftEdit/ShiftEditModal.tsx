@@ -35,6 +35,7 @@ import ShiftEditModalListOptions from "./ShiftEditModalListOptions";
 import { absentShiftTypes } from "../../../../shared/utils/shiftTypes";
 import { calculateSection2 } from "section-2";
 import { decimalHoursToMs } from "../../../../shared/utils/conversions";
+import InputClearButton from "../common/InputClearButton";
 
 const ShiftEditModal = ({
     setToastMessage,
@@ -240,15 +241,34 @@ const ShiftEditModal = ({
                             </Form.Group>
                             <Form.Group controlId="editBreakOverride">
                                 <Form.Label>Break overide</Form.Label>
-                                <Form.Control
-                                    type="time"
-                                    placeholder=""
-                                    value={
-                                        editState?.break_override_string || ""
-                                    }
-                                    data-field={"breakOverride"}
-                                    onChange={changeHandler}
-                                />
+                                <div
+                                    className="column-gap-2"
+                                    style={{
+                                        display: "grid",
+                                        gridTemplateColumns: "auto 1fr",
+                                    }}
+                                >
+                                    <Form.Control
+                                        type="time"
+                                        placeholder=""
+                                        value={
+                                            editState?.break_override_string ||
+                                            ""
+                                        }
+                                        data-field={"breakOverride"}
+                                        onChange={changeHandler}
+                                        className="d-inline-block"
+                                    />
+                                    <InputClearButton
+                                        onClick={() => {
+                                            setEditState({
+                                                action: "breakOverride",
+                                                payload: "",
+                                            });
+                                        }}
+                                        size="1.25rem"
+                                    />
+                                </div>
                             </Form.Group>
                         </div>
                         <div className="d-flex flex-wrap gap-3">

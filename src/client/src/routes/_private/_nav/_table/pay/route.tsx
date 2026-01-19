@@ -68,7 +68,14 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                 ] += taxable_pay;
 
                 const taxYear =
-                    `20${x.pay_financial_year.replace("-", "/")}` as TaxYear;
+                    x.pay_financial_year > "25-26"
+                        ? "2025/26"
+                        : (`20${x.pay_financial_year.replace("-", "/")}` as TaxYear);
+                if (x.pay_financial_year > "25-26") {
+                    console.warn(
+                        `Tax year ${x.pay_financial_year} not yet supported, defaulting to most recent`
+                    );
+                }
                 const monthNumber = (((Number(x.pay_date.split("-")[1]) + 8) %
                     12) +
                     1) as MonthNumber;

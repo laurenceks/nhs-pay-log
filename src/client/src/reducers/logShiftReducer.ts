@@ -232,6 +232,7 @@ const logShiftReducer = (
                 break_from_higher: payload
                     ? !!payload?.break_from_higher
                     : false,
+                leave_relief_ush_type: payload?.leave_relief_ush_type || "best",
             };
         }
         case "type": {
@@ -343,6 +344,15 @@ const logShiftReducer = (
                         newContract?.employment_name ||
                         prevState.employment_name ||
                         "",
+                    weekly_hours: newContract?.weekly_hours ?? 37.5,
+                    half_is_all_ush: newContract
+                        ? !!newContract.half_is_all_ush
+                        : true,
+                    break_from_higher: newContract
+                        ? !!newContract?.break_from_higher
+                        : false,
+                    leave_relief_ush_type:
+                        newContract?.leave_relief_ush_type || "best",
                 };
             } else {
                 return {

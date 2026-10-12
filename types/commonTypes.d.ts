@@ -335,3 +335,46 @@ declare module "@tanstack/react-table" {
         aggregationTypes?: "all" | Aggregations[];
     }
 }
+
+export interface ReportLogShift
+    extends Omit<ClientShift, "selectedExtras" | "flowers_pay_month"> {
+    total_ush: number;
+    contract_id: Contract["id"];
+    rate: number;
+    higher_rate_multiplier: number;
+    lower_rate_multiplier: number;
+}
+
+export interface ReportShift {
+    date: string;
+    lower: number | string;
+    higher: number | string;
+    eligible: number | string;
+}
+
+export interface ReportData {
+    date: string;
+    weeksLabel: string;
+    total_lower: number | string;
+    total_higher: number | string;
+    total_ush: number | string;
+    total_eligible_worked_hours: number | string;
+    average_lower: number | string;
+    average_higher: number | string;
+    leave_hours: number | string;
+    lower_rate: number | string;
+    higher_rate: number | string;
+    lower_grs: number | string;
+    higher_grs: number | string;
+    lower_diff: number | string;
+    higher_diff: number | string;
+    rate: number | string;
+    lower_due: number | string;
+    higher_due: number | string;
+    lower_received: number | string;
+    higher_received: number | string;
+    lower_claim: number | string;
+    higher_claim: number | string;
+    total_claim: number | string;
+    shifts: ReportShift[];
+}

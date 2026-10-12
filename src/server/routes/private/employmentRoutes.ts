@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     deleteEmployment,
     getEmployments,
+    getLeaveOnReliefUshReportByEmploymentId,
     patchEmployment,
     postEmployment,
 } from "../../controllers/employmentController";
@@ -14,6 +15,16 @@ import { z } from "zod";
 const router = Router();
 
 router.get("/", getEmployments);
+router.get(
+    "/:employmentId/report/",
+    validateRequest(
+        z.object({
+            employmentId: rowIdValidationSchema("Employment ID"),
+        }),
+        "params"
+    ),
+    getLeaveOnReliefUshReportByEmploymentId
+);
 router.post("/", postEmployment);
 router.patch(
     "/:employmentId",

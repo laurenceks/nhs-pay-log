@@ -3,7 +3,11 @@ import {
     executeWriteByArray,
     executeWriteByPlaceholders,
 } from "../utils/db";
-import { ApiShift, ClientShift } from "../../../types/commonTypes";
+import {
+    ApiShift,
+    ClientShift,
+    ReportLogShift,
+} from "../../../types/commonTypes";
 import { Section2Shift } from "section-2";
 
 export const readLogByUserId = async (userId: string) => {
@@ -18,6 +22,15 @@ export const readLogByUserIdAndEmploymentId = async (
 ) => {
     return await executeReadByPlaceholders<ApiShift>(
         "SELECT `log`.*,\n       `contracts`.`id` AS `contract_id`,\n       `contracts`.`weekly_hours`,\n       `contracts`.`half_is_all_ush`,\n       `contracts`.`break_from_higher`,\n       `contracts`.`leave_relief_ush_type`\nFROM `log`\n         LEFT JOIN `employments` ON `employments`.`id` = `log`.`employment_id`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\nWHERE `log`.`user_id` = :userId AND `log`.`employment_id` = :employmentId\nORDER BY `log`.`from`",
+        { userId, employmentId }
+    );
+};
+export const readLogForReportByUserIdAndEmploymentId = async (
+    userId: string,
+    employmentId: string | number
+) => {
+    return await executeReadByPlaceholders<ReportLogShift>(
+        "SELECT `log`.`id`,\n       `log`.`date`,\n       `log`.`start`,\n       `log`.`planned_end`,\n       `log`.`actual_end`,\n       `log`.`from`,\n       `log`.`planned_to`,\n       `log`.`actual_to`,\n       `log`.`toil`,\n       `log`.`flat`,\n       `log`.`lower_rate`,\n       `log`.`time_and_half`,\n       `log`.`higher_rate`,\n       `log`.`double`,\n       `log`.`total_ush`,\n       `log`.`absent_hours`,\n       `log`.`actual_hours`,\n       `log`.`overrun_hours`,\n       `contracts`.`id`     AS `contract_id`,\n       `contracts`.`weekly_hours`,\n       `contracts`.`half_is_all_ush`,\n       `contracts`.`break_from_higher`,\n       `contracts`.`leave_relief_ush_type`,\n       `log`.`employment_id`,\n       `employments`.`name` AS `employment_name`,\n       `log`.`extras_ids_string`,\n       `log`.`type`,\n       `log`.`overrun_type`,\n       `log`.`pay_date`,\n       `log`.`pay_month`,\n       `log`.`pay_financial_year`,\n       `pb`.`pay_hourly`    AS `rate`,\n       `pb`.`higher_rate_multiplier`,\n       `pb`.`lower_rate_multiplier`\nFROM `log`\n         LEFT JOIN `employments` ON `employments`.`id` = `log`.`employment_id`\n         LEFT JOIN `contracts` ON\n    `contracts`.`employment_id` = `log`.`employment_id`\n        AND (`log`.`date` >= `contracts`.`from` OR `contracts`.`from` IS NULL)\n        AND (`log`.`date` <= `contracts`.`to` OR `contracts`.`to` IS NULL)\n         LEFT JOIN `pay_bands` AS `pb` ON\n    IF(`log`.`pay_id_override` IS NULL, `contracts`.`pay_group_id`, `log`.`pay_id_override`) =\n    `pb`.`group_id` AND\n    (`log`.`date` >= `pb`.`from` OR `pb`.`from` IS NULL) AND\n    (`log`.`date` <= `pb`.`to` OR `pb`.`to` IS NULL)\nWHERE `log`.`user_id` = :userId\n  AND `log`.`employment_id` = :employmentId\nGROUP BY `log`.`id`\nORDER BY MIN(`log`.`from`)",
         { userId, employmentId }
     );
 };

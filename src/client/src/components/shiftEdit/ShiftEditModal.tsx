@@ -240,7 +240,7 @@ const ShiftEditModal = ({
                                 />
                             </Form.Group>
                             <Form.Group controlId="editBreakOverride">
-                                <Form.Label>Break overide</Form.Label>
+                                <Form.Label>Break override</Form.Label>
                                 <div
                                     className="column-gap-2"
                                     style={{

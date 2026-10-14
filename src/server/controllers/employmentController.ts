@@ -43,6 +43,13 @@ export const getEmployments = async (req: Request, res: Response) => {
     }
 };
 
+const margins = {
+    top: 20,
+    bottom: 70,
+    left: 20,
+    right: 20,
+};
+
 const weeksLabelMap = {
     average13: "13",
     average52: "52",
@@ -60,8 +67,8 @@ const summaryHeadings = [
     "Hours of leave",
     "LUSH (calculated)",
     "HUSH (calculated)",
-    "LUSH (GRS)",
-    "HUSH (GRS)",
+    "LUSH (recorded)",
+    "HUSH (recorded)",
     "LUSH diff",
     "HUSH diff",
     "Hourly rate",
@@ -98,8 +105,8 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
         leave_hours: 0,
         lower_rate: 0,
         higher_rate: 0,
-        lower_grs: 0,
-        higher_grs: 0,
+        lower_recorded: 0,
+        higher_recorded: 0,
         lower_diff: 0,
         higher_diff: 0,
         lower_due: 0,
@@ -161,8 +168,8 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
                 s2.leave_on_relief_ush_details?.leave_hours || 0;
             totals.lower_rate += s2.lower_rate;
             totals.higher_rate += s2.higher_rate;
-            totals.lower_grs += lowerDay;
-            totals.higher_grs += higherDay;
+            totals.lower_recorded += lowerDay;
+            totals.higher_recorded += higherDay;
             totals.lower_diff += s2.lower_rate - lowerDay;
             totals.higher_diff += s2.higher_rate - higherDay;
             totals.lower_due += lowerDue;
@@ -206,8 +213,8 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
                 ),
                 lower_rate: conversionFn(s2.lower_rate),
                 higher_rate: conversionFn(s2.higher_rate),
-                lower_grs: conversionFn(lowerDay),
-                higher_grs: conversionFn(higherDay),
+                lower_recorded: conversionFn(lowerDay),
+                higher_recorded: conversionFn(higherDay),
                 lower_diff: conversionFn(lowerDay - s2.lower_rate),
                 higher_diff: conversionFn(higherDay - s2.higher_rate),
                 rate: convertToGbp(Number(x.rate)),
@@ -241,38 +248,171 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
         }
     });
 
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({
+        bufferPages: true,
+        margins,
+    }).fillColor("#212529");
 
     doc.pipe(res);
     const h1 = (text: string, mb = 1) =>
-        doc.font("Helvetica-Bold", 20).text(text).moveDown(mb);
+        doc
+            .font("Helvetica-Bold", 20)
+            .fillColor("#212529")
+            .text(text)
+            .moveDown(mb);
     const h2 = (text: string, mb = 1) =>
-        doc.font("Helvetica-Bold", 18).text(text).moveDown(mb);
+        doc
+            .font("Helvetica-Bold", 18)
+            .fillColor("#212529")
+            .text(text)
+            .moveDown(mb);
     const h3 = (text: string, mb = 1) =>
-        doc.font("Helvetica-Bold", 16).text(text).moveDown(mb);
+        doc
+            .font("Helvetica-Bold", 16)
+            .fillColor("#212529")
+            .text(text)
+            .moveDown(mb);
     const h4 = (text: string, mb = 1) =>
-        doc.font("Helvetica-Bold", 14).text(text).moveDown(mb);
+        doc
+            .font("Helvetica-Bold", 14)
+            .fillColor("#212529")
+            .text(text)
+            .moveDown(mb);
     const h5 = (text: string, mb = 1) =>
-        doc.font("Helvetica-Bold", 12).text(text).moveDown(mb);
-    const p = (text: string | number, mb = 1) =>
-        doc.font("Helvetica", 10).text(text).moveDown(mb);
+        doc
+            .font("Helvetica-Bold", 12)
+            .fillColor("#212529")
+            .text(text)
+            .moveDown(mb);
+    const p = ({
+        text,
+        mb = 1,
+        continued = false,
+        link = null,
+        underline = false,
+        colour = null,
+    }: {
+        text: string | number;
+        mb?: number;
+        continued?: boolean;
+        link?: string | null;
+        underline?: boolean;
+        colour?: string | null;
+    }) =>
+        doc
+            .font("Helvetica", 10)
+            .fillColor(colour ?? "#212529")
+            .text(text, { continued, link, underline })
+            .moveDown(mb);
+
+    const a = ({
+        text,
+        mb = 1,
+        link = null,
+        continued = true,
+    }: {
+        text: string | number;
+        mb?: number;
+        link?: string | null;
+        continued?: boolean;
+    }) =>
+        p({
+            text,
+            mb,
+            link,
+            continued: continued,
+            underline: true,
+            colour: "#3459e6",
+        });
     const b = (text: string, continued = true) =>
-        doc.font("Helvetica-Bold", 10).text(text, { continued });
-    const t = (data: (string | number)[][]) =>
-        doc.font("Helvetica", 8).table({ data });
+        doc
+            .font("Helvetica-Bold", 10)
+            .fillColor("#212529")
+            .text(text, { continued });
+    const t = (
+        headings: (string | number)[],
+        rows: (string | number)[][],
+        footer?: (string | number)[]
+    ) => {
+        const t = doc
+            .font("Helvetica-Bold", 8)
+            .fillColor("#212529")
+            .table({
+                rowStyles: (i: number) => {
+                    if (i === 0) {
+                        return { border: [0, 0, 1, 0], borderColor: "black" };
+                    } else if (footer && i === rows.length + 1) {
+                        return { border: [1, 0, 0, 0], borderColor: "black" };
+                    } else if (!footer && i === rows.length + 1) {
+                        return { border: false };
+                    } else {
+                        return {
+                            border: [0, 0, 0.5, 0],
+                            borderColor: "#e9ecef",
+                        };
+                    }
+                },
+            });
+        t.row(headings);
+        doc.font("Helvetica", 6).fillColor("#212529");
+        rows.forEach((x) => t.row(x));
+        if (footer) {
+            doc.font("Helvetica-Bold", 6).fillColor("#212529");
+            t.row(footer);
+            doc.font("Helvetica", 6).fillColor("#212529");
+        }
+        t.end();
+        doc.moveDown(1);
+    };
 
-    h1("Section 2 USH for annual leave on relief report", 0);
-    h3(`For user}`);
-    p("This document is an indicative report only.");
+    const ul = (bullets: (string | number)[], mb = 1) =>
+        doc
+            .font("Helvetica", 10)
+            .fillColor("#212529")
+            .list(bullets, { bulletRadius: 1.5 })
+            .moveDown(mb);
+
+    doc.moveDown(10);
+
+    h1("Section 2 USH for annual leave on relief report", 2);
+    h3(`For \${user}`, 5);
+    p({
+        text: `Generated at ${formatDate(new Date(), "dd/mm/yy hh:mm")} using the `,
+        mb: 0,
+        continued: true,
+    });
+    a({
+        text: "NHS Pay Log app",
+        mb: 0,
+        link: "https://pay.laurencesummers.com",
+        continued: false,
+    });
+    doc.addPage({ margins });
     h2("How to use this report");
+    p({
+        text: `This document is an indicative report only. It has been generated in good faith based on the data recorded in the shift log of \${user} as an indication of potential pay discrepancies. It is the responsibility of \${user} to verify the information contained within.`,
+        mb: 2,
+    });
+    h3("Definitions");
 
-    doc.addPage({ layout: "landscape", margin: 20 });
+    ul([
+        "Weeks — the lookback period used to calculate the USH entitlements",
+        "LUSH — lower rate of unsocial hours",
+        "HUSH — higher rate of unsocial hours",
+        "LUSH/HUSH (calculated) — the calculated LUSH/HUSH earned according to the averaging calculation",
+        "LUSH/HUSH (recorded) — the recorded LUSH/HUSH earned according to the user's timesheet",
+        "LUSH/HUSH (due) — the monetary value of LUSH/HUSH (calculated)",
+        "LUSH/HUSH (received) — the monetary value of LUSH/HUSH (recorded)",
+        `LUSH/HUSH (claim) — the amount LUSH/HUSH (due) - LUSH/HUSH (received) (i.e. the pay remediation due to \${user}, if any) `,
+    ]);
+
+    doc.addPage({ layout: "landscape", margins });
 
     h4("Summary");
 
-    t([
+    t(
         summaryHeadings,
-        ...reportData.map((x) => [
+        reportData.map((x) => [
             x.date,
             x.weeksLabel,
             x.total_lower,
@@ -283,8 +423,8 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
             x.leave_hours,
             x.lower_rate,
             x.higher_rate,
-            x.lower_grs,
-            x.higher_grs,
+            x.lower_recorded,
+            x.higher_recorded,
             x.lower_diff,
             x.higher_diff,
             x.rate,
@@ -296,58 +436,162 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
             x.higher_claim,
             x.total_claim,
         ]),
-    ]).moveDown(1);
+        [
+            "",
+            "",
+            conversionFn(totals.total_lower),
+            conversionFn(totals.total_higher),
+            conversionFn(totals.total_eligible_worked_hours),
+            "",
+            "",
+            conversionFn(totals.leave_hours),
+            conversionFn(totals.lower_rate),
+            conversionFn(totals.higher_rate),
+            conversionFn(totals.lower_recorded),
+            conversionFn(totals.higher_recorded),
+            conversionFn(totals.lower_diff),
+            conversionFn(totals.higher_diff),
+            "",
+            convertToGbp(totals.lower_due),
+            convertToGbp(totals.higher_due),
+            convertToGbp(totals.lower_received),
+            convertToGbp(totals.higher_received),
+            convertToGbp(totals.lower_claim),
+            convertToGbp(totals.higher_claim),
+            convertToGbp(totals.total_claim),
+        ]
+    );
 
     reportData.forEach((x) => {
-        doc.addPage({ layout: "portrait", margin: 20 });
+        doc.addPage({ layout: "portrait", margins });
         b(`Detailed calculation for leave taken on ${x.date}`, false).moveDown(
             0.2
         );
-        t([
+        t(
             shiftHeadings,
-            ...x.shifts.map((row) => [
+            x.shifts.map((row) => [
                 row.date,
                 row.lower,
                 row.higher,
                 row.eligible,
             ]),
-            ["", x.total_lower, x.total_higher, x.total_eligible_worked_hours],
-        ]).moveDown(1);
+            ["", x.total_lower, x.total_higher, x.total_eligible_worked_hours]
+        );
         b("Total LUSH for period: ");
-        p(x.total_lower, 0);
+        p({ text: x.total_lower, mb: 0 });
         b("Total HUSH for period: ");
-        p(x.total_higher);
+        p({ text: x.total_higher });
         b("Total USH for period: ");
-        p(x.total_ush);
-        b("Average LUSH for period: ");
-        p(x.average_lower, 0);
-        b("Average HUSH for period: ");
-        p(x.average_higher);
+        p({ text: x.total_ush });
         b("Total eligible hours worked for period: ");
-        p(x.total_eligible_worked_hours);
-        b("LUSH given: ");
-        p(x.lower_grs);
-        b("HUSH given: ");
-        p(x.higher_grs);
+        p({ text: x.total_eligible_worked_hours });
+        b("Average LUSH for period: ");
+        p({ text: x.average_lower, mb: 0 });
+        b("Average HUSH for period: ");
+        p({ text: x.average_higher });
+        b("LUSH recorded: ");
+        p({ text: x.lower_recorded });
+        b("HUSH recorded: ");
+        p({ text: x.higher_recorded });
         b("Hourly rate on this day: ");
-        p(x.rate);
-        b("LUSH paid: ");
-        p(x.lower_received);
-        b("HUSH paid: ");
-        p(x.higher_received);
+        p({ text: x.rate });
+        b("LUSH received: ");
+        p({ text: x.lower_received });
+        b("HUSH received: ");
+        p({ text: x.higher_received });
         b("LUSH due: ");
-        p(x.lower_due, 0);
+        p({ text: x.lower_due, mb: 0 });
         b("HUSH due: ");
-        p(x.higher_due);
+        p({ text: x.higher_due });
         b("LUSH claim: ");
-        p(x.lower_claim, 0);
+        p({ text: x.lower_claim, mb: 0 });
         b("HUSH claim: ");
-        p(x.higher_claim);
+        p({ text: x.higher_claim });
         h5(`Total claim: ${x.total_claim}`);
     });
 
+    doc.addPage({ margins });
+
+    h2("Appendix A - complete list of shifts");
+
+    const allTotals = {
+        eligible: 0,
+        lower: 0,
+        higher: 0,
+    };
+
+    t(
+        [
+            "Date",
+            "Type",
+            "Start",
+            "Planned end",
+            "Actual end",
+            "Overrun type",
+            "Eligible worked hours",
+            "LUSH",
+            "HUSH",
+        ],
+        employmentShifts.map((x) => {
+            const eligible = Math.max(
+                0,
+                x.actual_hours -
+                    x.time_and_half -
+                    x.double -
+                    (x.overrun_type === "TOIL" ? x.overrun_hours || 0 : 0)
+            );
+            allTotals.eligible += eligible;
+            allTotals.lower += x.lower_rate;
+            allTotals.higher += x.higher_rate;
+            return [
+                formatDate(x.date, "dd/mm/yy"),
+                x.type,
+                x.start,
+                x.planned_end,
+                x.actual_end,
+                x.overrun_type,
+                conversionFn(eligible),
+                conversionFn(x.lower_rate),
+                conversionFn(x.higher_rate),
+            ];
+        }),
+        [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            conversionFn(allTotals.eligible),
+            conversionFn(allTotals.lower),
+            conversionFn(allTotals.higher),
+        ]
+    );
+
+    const range = doc.bufferedPageRange();
+
+    for (let i = range.start + 1; i < range.start + range.count; i++) {
+        doc.switchToPage(i);
+
+        const originalBottom = doc.page.margins.bottom;
+        doc.page.margins.bottom = 20;
+
+        doc.font("Helvetica", 8)
+            .fillColor("#6c757d")
+            .text(
+                `Page ${i - range.start + 1} of ${range.count}`,
+                20,
+                doc.page.height - 40,
+                {
+                    width: doc.page.width - 40,
+                    align: "center",
+                    lineBreak: false,
+                }
+            );
+        doc.page.margins.bottom = originalBottom;
+    }
+
     doc.end();
-    res.send();
 };
 export const postEmployment = async (req: Request, res: Response) => {
     try {

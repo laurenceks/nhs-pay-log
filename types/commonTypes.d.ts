@@ -364,8 +364,8 @@ export interface ReportData {
     leave_hours: number | string;
     lower_rate: number | string;
     higher_rate: number | string;
-    lower_grs: number | string;
-    higher_grs: number | string;
+    lower_recorded: number | string;
+    higher_recorded: number | string;
     lower_diff: number | string;
     higher_diff: number | string;
     rate: number | string;

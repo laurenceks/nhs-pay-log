@@ -176,7 +176,9 @@ interface PayStringToNumberKeys
 
 export interface ApiShift
     extends Omit<ClientShift, "selectedExtras">,
-        ShiftStringToNumberKeys {}
+        ShiftStringToNumberKeys {
+    leave_on_relief_ush_details: null;
+}
 export interface ApiPay
     extends Omit<
             ClientShift,

@@ -34,7 +34,10 @@ import { overrunTypeList, typeList } from "../../../../shared/lists";
 import ShiftEditModalListOptions from "./ShiftEditModalListOptions";
 import { absentShiftTypes } from "../../../../shared/utils/shiftTypes";
 import { calculateSection2 } from "section-2";
-import { decimalHoursToMs } from "../../../../shared/utils/conversions";
+import {
+    decimalHoursToMs,
+    msToFormattedHours,
+} from "../../../../shared/utils/conversions";
 import InputClearButton from "../common/InputClearButton";
 
 const ShiftEditModal = ({
@@ -381,6 +384,97 @@ const ShiftEditModal = ({
                                 ></Form.Control>
                             </Form.Group>
                         </div>
+                        {(editState.type === "AL (relief)" ||
+                            editState.type === "Absent (TOIL relief)") && (
+                            <div className="d-flex gap-3 flex-wrap">
+                                <Form.Group controlId="editManualLower">
+                                    <Form.Label>Manual lower rate</Form.Label>
+                                    <div
+                                        className="column-gap-2"
+                                        style={{
+                                            display: "grid",
+                                            gridTemplateColumns: "auto 1fr",
+                                        }}
+                                    >
+                                        <Form.Control
+                                            type="time"
+                                            placeholder=""
+                                            value={
+                                                msToFormattedHours(
+                                                    editState?.manual_lower_rate
+                                                ) || ""
+                                            }
+                                            onChange={(e) =>
+                                                setEditState({
+                                                    action: "manualLowerRate",
+                                                    payload: {
+                                                        timeString:
+                                                            e.target.value,
+                                                        lower: true,
+                                                    },
+                                                })
+                                            }
+                                            className="d-inline-block"
+                                        />
+                                        <InputClearButton
+                                            onClick={() => {
+                                                setEditState({
+                                                    action: "manualLowerRate",
+                                                    payload: {
+                                                        timeString: "",
+                                                        lower: true,
+                                                    },
+                                                });
+                                            }}
+                                            size="1.25rem"
+                                        />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group controlId="editManualHigher">
+                                    <Form.Label>Manual higher rate</Form.Label>
+                                    <div
+                                        className="column-gap-2"
+                                        style={{
+                                            display: "grid",
+                                            gridTemplateColumns: "auto 1fr",
+                                        }}
+                                    >
+                                        <Form.Control
+                                            type="time"
+                                            placeholder=""
+                                            value={
+                                                msToFormattedHours(
+                                                    editState?.manual_higher_rate
+                                                ) || ""
+                                            }
+                                            onChange={(e) =>
+                                                setEditState({
+                                                    action: "manualHigherRate",
+                                                    payload: {
+                                                        timeString:
+                                                            e.target.value,
+                                                        lower: false,
+                                                    },
+                                                })
+                                            }
+                                            className="d-inline-block"
+                                        />
+                                        <InputClearButton
+                                            onClick={() => {
+                                                setEditState({
+                                                    action: "manualHigherRate",
+                                                    payload: {
+                                                        timeString: "",
+                                                        lower: false,
+                                                    },
+                                                });
+                                            }}
+                                            size="1.25rem"
+                                        />
+                                    </div>
+                                </Form.Group>
+                            </div>
+                        )}
                         <div className="d-flex flex-wrap gap-3 w-100">
                             <Form.Group controlId="editExtras">
                                 <Form.Label>Extras</Form.Label>

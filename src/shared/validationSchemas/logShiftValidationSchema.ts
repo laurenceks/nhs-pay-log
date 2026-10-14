@@ -20,6 +20,10 @@ export const logShiftValidationSchema = z
         toil: shiftDurationIntValidationSchema("TOIL"),
         flat: shiftDurationIntValidationSchema("Flat"),
         lower_rate: shiftDurationIntValidationSchema("Lower rate"),
+        manual_lower_rate:
+            shiftDurationIntValidationSchema("Manual lower rate"),
+        manual_higher_rate:
+            shiftDurationIntValidationSchema("Manual higher rate"),
         time_and_half: shiftDurationIntValidationSchema("Time and half"),
         higher_rate: shiftDurationIntValidationSchema("Higher rate"),
         double: shiftDurationIntValidationSchema("Double"),

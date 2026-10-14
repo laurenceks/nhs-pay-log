@@ -30,6 +30,10 @@ export type LogShiftReducerOptions =
           payload: string;
       }
     | {
+          action: "manualLowerRate" | "manualHigherRate";
+          payload: { timeString: string; lower: boolean };
+      }
+    | {
           action: "contract";
           payload: Contract | undefined;
       }
@@ -267,6 +271,18 @@ const logShiftReducer = (
                 break_override_string: payload || null,
                 break_override:
                     isNaN(breakInMs) || breakInMs < 0 ? null : breakInMs,
+            };
+        }
+        case "manualLowerRate":
+        case "manualHigherRate": {
+            const [hours, minutes] = payload.timeString.split(":").map(Number);
+            const timeInMs = (hours * 60 + minutes) * 60000;
+            const key = payload.lower
+                ? "manual_lower_rate"
+                : "manual_higher_rate";
+            return {
+                ...prevState,
+                [key]: isNaN(timeInMs) || timeInMs < 0 ? null : timeInMs,
             };
         }
         case "addExtra": {

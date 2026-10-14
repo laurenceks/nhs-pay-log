@@ -44,6 +44,8 @@ export interface ShiftEdit {
     selectedExtras?: ShiftExtra[];
     start: string;
     type: ShiftTypes;
+    manual_lower_rate: number;
+    manual_higher_rate: number;
 }
 
 export type USH = {

@@ -132,12 +132,6 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
                 },
                 { ...x }
             );
-            const lowerDay = decimalHoursToMs(
-                new Date(x.date).getDay() ? (x.date >= "2026-02-25" ? 3 : 2) : 0
-            );
-            const higherDay = decimalHoursToMs(
-                new Date(x.date).getDay() ? 0 : x.date >= "2026-02-25" ? 3 : 2
-            );
             const lowerDue =
                 msToDecimalHours(s2.lower_rate) *
                 Number(x.rate) *
@@ -147,11 +141,11 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
                 Number(x.rate) *
                 x.higher_rate_multiplier;
             const lowerReceived =
-                msToDecimalHours(lowerDay) *
+                msToDecimalHours(x.manual_lower_rate) *
                 Number(x.rate) *
                 x.lower_rate_multiplier;
             const higherReceived =
-                msToDecimalHours(higherDay) *
+                msToDecimalHours(x.manual_higher_rate) *
                 Number(x.rate) *
                 x.higher_rate_multiplier;
 
@@ -168,10 +162,10 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
                 s2.leave_on_relief_ush_details?.leave_hours || 0;
             totals.lower_rate += s2.lower_rate;
             totals.higher_rate += s2.higher_rate;
-            totals.lower_recorded += lowerDay;
-            totals.higher_recorded += higherDay;
-            totals.lower_diff += s2.lower_rate - lowerDay;
-            totals.higher_diff += s2.higher_rate - higherDay;
+            totals.lower_recorded += x.manual_lower_rate;
+            totals.higher_recorded += x.manual_higher_rate;
+            totals.lower_diff += s2.lower_rate - x.manual_lower_rate;
+            totals.higher_diff += s2.higher_rate - x.manual_higher_rate;
             totals.lower_due += lowerDue;
             totals.higher_due += higherDue;
             totals.lower_received += lowerReceived;
@@ -213,10 +207,12 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
                 ),
                 lower_rate: conversionFn(s2.lower_rate),
                 higher_rate: conversionFn(s2.higher_rate),
-                lower_recorded: conversionFn(lowerDay),
-                higher_recorded: conversionFn(higherDay),
-                lower_diff: conversionFn(lowerDay - s2.lower_rate),
-                higher_diff: conversionFn(higherDay - s2.higher_rate),
+                lower_recorded: conversionFn(x.manual_lower_rate),
+                higher_recorded: conversionFn(x.manual_higher_rate),
+                lower_diff: conversionFn(x.manual_lower_rate - s2.lower_rate),
+                higher_diff: conversionFn(
+                    x.manual_higher_rate - s2.higher_rate
+                ),
                 rate: convertToGbp(Number(x.rate)),
                 lower_due: convertToGbp(lowerDue),
                 higher_due: convertToGbp(higherDue),

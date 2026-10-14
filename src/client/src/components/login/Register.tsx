@@ -21,6 +21,8 @@ const Register = () => {
         mode: "onChange",
         defaultValues: {
             email: "",
+            first_name: "",
+            last_name: "",
             password1: "",
             password2: "",
             pay_group_id: "",
@@ -67,6 +69,22 @@ const Register = () => {
                         {...register("email")}
                         type="email"
                         autoComplete={"email"}
+                    />
+                </Form.Group>
+                <Form.Group controlId="editFirstName">
+                    <Form.Label>First name</Form.Label>
+                    <Form.Control
+                        {...register("first_name")}
+                        type="text"
+                        autoComplete={"given-name"}
+                    />
+                </Form.Group>
+                <Form.Group controlId="editLastName">
+                    <Form.Label>Last name</Form.Label>
+                    <Form.Control
+                        {...register("last_name")}
+                        type="text"
+                        autoComplete={"family-name"}
                     />
                 </Form.Group>
                 <Form.Group controlId="editPassword1">

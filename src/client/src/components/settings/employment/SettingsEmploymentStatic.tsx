@@ -1,11 +1,14 @@
 import { Button, Table } from "react-bootstrap";
 import SettingsContractRow from "./contractRow/SettingsContractRow";
 import { Contract } from "../../../../../../types/commonTypes";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useTransition } from "react";
 import { Employment } from "../../../../../../types/lookupTypes";
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import SettingsEmploymentThead from "./common/SettingsEmploymentThead";
 import SettingsEmploymentDeleteButton from "./common/SettingsEmploymentDeleteButton";
+import { toast } from "react-hot-toast";
+import { useRouteContext } from "@tanstack/react-router";
+import { formatDate } from "../../../../../shared/utils/formatDates";
 
 const SettingsEmploymentStatic = ({
     employment,
@@ -26,6 +29,8 @@ const SettingsEmploymentStatic = ({
     employmentEditId: Contract["employment_id"] | null;
     setEmploymentEditId: Dispatch<SetStateAction<Employment["id"] | null>>;
 }) => {
+    const { auth } = useRouteContext({ strict: false });
+    const [reportPending, startTransition] = useTransition();
     return (
         <>
             <h3 className="px-3">{employment.name}</h3>
@@ -57,6 +62,48 @@ const SettingsEmploymentStatic = ({
                     disabled={deletePending || !!employmentEditId}
                     isOnlyEmployment={isOnlyEmployment}
                 />
+                <Button
+                    variant="outline-primary"
+                    disabled={
+                        deletePending || !!employmentEditId || reportPending
+                    }
+                    onClick={() =>
+                        startTransition(async () => {
+                            const res = await fetch(
+                                `/api/v1/private/employment/${employment.id}/report`
+                            );
+
+                            if (!res.ok) {
+                                if (res.status === 401 || res.status === 403) {
+                                    //force reload to login page
+                                    window.localStorage.setItem(
+                                        "redirect",
+                                        window.location.pathname +
+                                            window.location.hash +
+                                            window.location.search
+                                    );
+                                    window.location.href = "/login";
+                                    //stall logic to prevent error registering before the redirect
+                                    return new Promise(() => {});
+                                } else {
+                                    toast.error(`Failed generate report`);
+                                }
+                            }
+                            const blob = await res.blob();
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.download = `Section 2 USH for annual leave on relief report${auth?.user ? `for ${auth.user.first_name} ${auth.user.last_name}` : ""} (${formatDate(new Date(), "dd/mm/yy hh:mm")}).pdf`;
+                            link.click();
+
+                            URL.revokeObjectURL(url);
+                        })
+                    }
+                >
+                    {reportPending
+                        ? "Generating..."
+                        : "Generate USH for leave on relief report"}
+                </Button>
             </div>
         </>
     );

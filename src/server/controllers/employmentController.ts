@@ -375,7 +375,10 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
     doc.moveDown(10);
 
     h1("Section 2 USH for annual leave on relief report", 2);
-    h3(`For \${user}`, 5);
+    h3(
+        `For ${req.authenticatedUser.first_name} ${req.authenticatedUser.last_name}`,
+        5
+    );
     p({
         text: `Generated at ${formatDate(new Date(), "dd/mm/yy hh:mm")} using the `,
         mb: 0,
@@ -390,7 +393,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
     doc.addPage({ margins });
     h2("How to use this report");
     p({
-        text: `This document is an indicative report only. It has been generated in good faith based on the data recorded in the shift log of \${user} as an indication of potential pay discrepancies. It is the responsibility of \${user} to verify the information contained within.`,
+        text: `This document is an indicative report only. It has been generated in good faith based on the data recorded in the shift log of ${req.authenticatedUser.first_name} ${req.authenticatedUser.last_name} as an indication of potential pay discrepancies. It is the responsibility of ${req.authenticatedUser.first_name} ${req.authenticatedUser.last_name} to verify the information contained within.`,
         mb: 2,
     });
     h3("Definitions");
@@ -403,7 +406,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
         "LUSH/HUSH (recorded) — the recorded LUSH/HUSH earned according to the user's timesheet",
         "LUSH/HUSH (due) — the monetary value of LUSH/HUSH (calculated)",
         "LUSH/HUSH (received) — the monetary value of LUSH/HUSH (recorded)",
-        `LUSH/HUSH (claim) — the amount LUSH/HUSH (due) - LUSH/HUSH (received) (i.e. the pay remediation due to \${user}, if any) `,
+        `LUSH/HUSH (claim) — the amount LUSH/HUSH (due) - LUSH/HUSH (received) (i.e. the pay remediation due to ${req.authenticatedUser.first_name} ${req.authenticatedUser.last_name}, if any) `,
     ]);
 
     doc.addPage({ layout: "landscape", margins });

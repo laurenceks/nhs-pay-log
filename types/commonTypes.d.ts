@@ -239,16 +239,21 @@ export interface ApiHours extends AdditionalHours, USH {
     worked_hours: number;
 }
 
-export interface ClientUser {
+export interface ClientUserDetails {
+    first_name: string;
+    last_name: string;
+}
+
+export interface ClientUser extends ClientUserDetails {
     id: string;
     email: string;
 }
 
-export interface ApiUser extends ClientUser {
+export interface ApiUser extends ClientUser, ClientUserDetails {
     hash: string;
     salt: string;
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
     verified: boolean;
 }
 

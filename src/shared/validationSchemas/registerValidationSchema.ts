@@ -14,6 +14,8 @@ const hcaMessage = "HCA type invalid";
 export const registerValidationSchema = z
     .object({
         email: z.email("Enter a valid email address"),
+        first_name: z.string("Enter your first name"),
+        last_name: z.string("Enter your last name"),
         password1: z
             .string(passwordMessage)
             .min(8, passwordMessage)

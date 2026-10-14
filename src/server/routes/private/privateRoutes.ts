@@ -7,6 +7,7 @@ import payBandRoutes from "./payBandRoutes";
 import payRoutes from "./payRoutes";
 import timesheetRoutes from "./timesheetRoutes";
 import hoursRoutes from "./hoursRoutes";
+import userRoutes from "./userRoutes";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/employment", employmentRoutes);
 router.use("/contract", contractRoutes);
 router.use("/extra", extraRoutes);
 router.use("/payBands", payBandRoutes);
+router.use("/user", userRoutes);
 
 export default router;

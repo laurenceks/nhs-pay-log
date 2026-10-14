@@ -23,7 +23,14 @@ export const postRegister = async (req: Request, res: Response) => {
     const { hash, salt } = createHashSaltPair(req.body.password1);
     try {
         const userId = randomUUID();
-        await createUser(userId, req.body.email, hash, salt);
+        await createUser(
+            userId,
+            req.body.email.trim(),
+            req.body.first_name.trim(),
+            req.body.last_name.trim(),
+            hash,
+            salt
+        );
         await createEmployment(userId, req.body.employment_name);
         const [newEmployment] = await readEmploymentsByUserId(userId);
 

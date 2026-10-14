@@ -29,6 +29,8 @@ export const login = async (req: Request, res: Response) => {
                                         data: {
                                             id: user.id,
                                             email: user.email,
+                                            first_name: user.first_name,
+                                            last_name: user.last_name,
                                         },
                                     });
                                 }
@@ -66,6 +68,8 @@ export const checkLoginStatus = async (req: Request, res: Response) => {
         data: {
             id: req.authenticatedUser.id,
             email: req.authenticatedUser.email,
+            first_name: req.authenticatedUser.first_name,
+            last_name: req.authenticatedUser.last_name,
         },
     });
 };

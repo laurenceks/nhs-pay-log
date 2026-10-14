@@ -4,12 +4,14 @@ import { ApiUser } from "../../../types/commonTypes";
 export const createUser = async (
     userId: string,
     email: string,
+    firstName: string,
+    lastName: string,
     hash: string,
     salt: string
 ) => {
     return await executeWriteByArray(
-        "INSERT INTO users (`id`, `email`, `hash`, `salt`) VALUES (?, ?, ?, ?)",
-        [userId, email, hash, salt]
+        "INSERT INTO users (`id`, `email`, `first_name`, `last_name`, `hash`, `salt`) VALUES (?, ?, ?, ?,?,?)",
+        [userId, email, firstName, lastName, hash, salt]
     );
 };
 
@@ -40,5 +42,16 @@ export const updateUserPasswordById = async (
     return await executeWriteByArray(
         "UPDATE `users` SET `hash` = ?, `salt` = ? WHERE `id` = ?",
         [hash, salt, id]
+    );
+};
+
+export const updateUserDetails = async (
+    id: string,
+    firstName: string,
+    lastName: string
+) => {
+    return await executeWriteByArray(
+        "UPDATE `users`\nSET `first_name` = ?,\n    `last_name`  = ?\nWHERE `id` = ?",
+        [firstName, lastName, id]
     );
 };

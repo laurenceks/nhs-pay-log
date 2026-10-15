@@ -68,6 +68,7 @@ export const Route = createFileRoute("/_private/_nav/_table/log/$shiftId")({
                     : true,
                 higher_rate: 0,
                 id: 0,
+                leave_on_relief_ush_details: null,
                 leave_relief_ush_type: "best",
                 lower_rate: 0,
                 manual_higher_rate: 0,

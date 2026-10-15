@@ -15,6 +15,7 @@ export const ushTypeMap: { [key in LeaveReliefUsh]: string } = {
     best: "Best of 13/52 week average",
     average52: "52 week average",
     average13: "13 week average",
+    manual: "Manual",
     flat: "Flat",
     none: "None",
 };

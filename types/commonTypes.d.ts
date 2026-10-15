@@ -1,7 +1,7 @@
 import { Employment, LookupTable } from "./lookupTypes";
 import { filterFns } from "@tanstack/table-core/src/filterFns";
 import { Variant } from "react-bootstrap/types";
-import { LeaveReliefUsh } from "section-2";
+import { LeaveReliefUsh, Section2Shift } from "section-2";
 
 export type Overruns = "OT" | "TOIL";
 
@@ -76,6 +76,7 @@ export interface ClientShift
     overrun_hours: number; //ms
     half_is_all_ush: boolean;
     break_from_higher: boolean;
+    leave_on_relief_ush_details: Section2Shift["leave_on_relief_ush_details"];
     // incentive: number;
     // incentiveHours: number;
     // incentiveType: number;
@@ -178,9 +179,7 @@ interface PayStringToNumberKeys
 
 export interface ApiShift
     extends Omit<ClientShift, "selectedExtras">,
-        ShiftStringToNumberKeys {
-    leave_on_relief_ush_details: null;
-}
+        ShiftStringToNumberKeys {}
 export interface ApiPay
     extends Omit<
             ClientShift,

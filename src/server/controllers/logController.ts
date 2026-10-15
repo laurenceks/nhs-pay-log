@@ -25,6 +25,7 @@ const leaveOnReliefUshWeeksMap: { [key in LeaveReliefUsh]: 0 | 13 | 52 } = {
     best: 52,
     flat: 0,
     none: 0,
+    manual: 0,
 };
 
 const updateAffectedShifts = async (
@@ -95,18 +96,30 @@ export const recalculateLogByEmploymentId = async (
         employmentId
     );
     for (const shift of employmentShifts) {
-        await updateLogShiftByUserIdAndShiftId(userId, {
-            ...shift,
-            ...calculateSection2(
-                { ...shift, shifts: employmentShifts },
-                {
-                    weekly_hours: decimalHoursToMs(shift.weekly_hours),
-                    break_from_higher: !!shift.break_from_higher,
-                    half_is_all_ush: !!shift.half_is_all_ush,
-                    leave_relief_ush_type: shift.leave_relief_ush_type,
-                }
-            ),
-        });
+        await updateLogShiftByUserIdAndShiftId(
+            userId,
+            shift.leave_relief_ush_type === "manual"
+                ? {
+                      ...shift,
+                      lower_rate: shift.manual_lower_rate,
+                      higher_rate: shift.manual_higher_rate,
+                  }
+                : {
+                      ...shift,
+                      ...calculateSection2(
+                          { ...shift, shifts: employmentShifts },
+                          {
+                              weekly_hours: decimalHoursToMs(
+                                  shift.weekly_hours
+                              ),
+                              break_from_higher: !!shift.break_from_higher,
+                              half_is_all_ush: !!shift.half_is_all_ush,
+                              leave_relief_ush_type:
+                                  shift.leave_relief_ush_type,
+                          }
+                      ),
+                  }
+        );
     }
 };
 

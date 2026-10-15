@@ -48,6 +48,7 @@ const commonEmploymentValidationSchema = (contracts?: Contract[]) =>
                                     "average13",
                                     "average52",
                                     "flat",
+                                    "manual",
                                     "none",
                                 ],
                                 "Invalid leave relief USH type"

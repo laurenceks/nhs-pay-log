@@ -1,7 +1,7 @@
-import { Button, Table } from "react-bootstrap";
+import { Button, Form, Table } from "react-bootstrap";
 import SettingsContractRow from "./contractRow/SettingsContractRow";
 import { Contract } from "../../../../../../types/commonTypes";
-import { Dispatch, SetStateAction, useTransition } from "react";
+import { Dispatch, SetStateAction, useState, useTransition } from "react";
 import { Employment } from "../../../../../../types/lookupTypes";
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import SettingsEmploymentThead from "./common/SettingsEmploymentThead";
@@ -31,6 +31,7 @@ const SettingsEmploymentStatic = ({
 }) => {
     const { auth } = useRouteContext({ strict: false });
     const [reportPending, startTransition] = useTransition();
+    const [useDecimals, setUseDecimals] = useState(false);
     return (
         <>
             <h3 className="px-3">{employment.name}</h3>
@@ -70,7 +71,7 @@ const SettingsEmploymentStatic = ({
                     onClick={() =>
                         startTransition(async () => {
                             const res = await fetch(
-                                `/api/v1/private/employment/${employment.id}/report`
+                                `/api/v1/private/employment/${employment.id}/report${useDecimals ? "?useDecimals=1" : ""}`
                             );
 
                             if (!res.ok) {
@@ -86,17 +87,18 @@ const SettingsEmploymentStatic = ({
                                     //stall logic to prevent error registering before the redirect
                                     return new Promise(() => {});
                                 } else {
-                                    toast.error(`Failed generate report`);
+                                    toast.error(`Failed to generate report`);
                                 }
-                            }
-                            const blob = await res.blob();
-                            const url = URL.createObjectURL(blob);
-                            const link = document.createElement("a");
-                            link.href = url;
-                            link.download = `Section 2 USH for annual leave on relief report${auth?.user ? `for ${auth.user.first_name} ${auth.user.last_name}` : ""} (${formatDate(new Date(), "dd/mm/yy hh:mm")}).pdf`;
-                            link.click();
+                            } else {
+                                const blob = await res.blob();
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement("a");
+                                link.href = url;
+                                link.download = `Section 2 USH for annual leave on relief report${auth?.user ? `for ${auth.user.first_name} ${auth.user.last_name}` : ""} (${formatDate(new Date(), "dd/mm/yy hh:mm")}).pdf`;
+                                link.click();
 
-                            URL.revokeObjectURL(url);
+                                URL.revokeObjectURL(url);
+                            }
                         })
                     }
                 >
@@ -104,6 +106,11 @@ const SettingsEmploymentStatic = ({
                         ? "Generating..."
                         : "Generate USH for leave on relief report"}
                 </Button>
+                <Form.Check
+                    className="align-self-center"
+                    label={"Use decimal hours"}
+                    onChange={(e) => setUseDecimals(e.target.checked)}
+                ></Form.Check>
             </div>
         </>
     );

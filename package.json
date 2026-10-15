@@ -54,7 +54,7 @@
     "react-icons": "^5.5.0",
     "round-to": "^6.0.0",
     "round-tofixed": "^1.2.4",
-    "section-2": "^0.2.1",
+    "section-2": "^0.3.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {

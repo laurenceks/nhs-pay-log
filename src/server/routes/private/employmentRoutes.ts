@@ -23,6 +23,12 @@ router.get(
         }),
         "params"
     ),
+    validateRequest(
+        z.object({
+            useDecimals: z.literal("1").optional(),
+        }),
+        "query"
+    ),
     getLeaveOnReliefUshReportByEmploymentId
 );
 router.post("/", postEmployment);

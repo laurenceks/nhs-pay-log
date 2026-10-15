@@ -58,6 +58,11 @@ esbuild
             path.resolve(__dirname, "./dist/server/data"),
             { recursive: true }
         );
+        fs.cpSync(
+            path.resolve(__dirname, "./src/server/utils/fonts"),
+            path.resolve(__dirname, "./dist/server/fonts"),
+            { recursive: true }
+        );
         console.log("Server build complete");
         process.exit(0);
     })

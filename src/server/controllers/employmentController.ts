@@ -31,6 +31,8 @@ import {
 } from "../../shared/utils/conversions";
 import { calculateSection2, Section2Shift } from "section-2";
 import { PDFDocument } from "pdfkit";
+import path from "path";
+import { resolvedDirname } from "../utils/dirname";
 
 export const getEmployments = async (req: Request, res: Response) => {
     try {
@@ -253,42 +255,30 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
             }
         });
 
+        const fontsDir = path.resolve(resolvedDirname, "fonts");
+
         const doc = new PDFDocument({
             bufferPages: true,
             margins,
         }).fillColor("#212529");
 
+        doc.registerFont("Lato", path.join(fontsDir, "Lato-Regular.ttf"));
+        doc.registerFont("Lato-Bold", path.join(fontsDir, "Lato-Bold.ttf"));
+
+        const regularFont = "Lato";
+        const boldFont = "Lato-Bold";
+
         doc.pipe(res);
         const h1 = (text: string, mb = 1) =>
-            doc
-                .font("Helvetica-Bold", 20)
-                .fillColor("#212529")
-                .text(text)
-                .moveDown(mb);
+            doc.font(boldFont, 20).fillColor("#212529").text(text).moveDown(mb);
         const h2 = (text: string, mb = 1) =>
-            doc
-                .font("Helvetica-Bold", 18)
-                .fillColor("#212529")
-                .text(text)
-                .moveDown(mb);
+            doc.font(boldFont, 18).fillColor("#212529").text(text).moveDown(mb);
         const h3 = (text: string, mb = 1) =>
-            doc
-                .font("Helvetica-Bold", 16)
-                .fillColor("#212529")
-                .text(text)
-                .moveDown(mb);
+            doc.font(boldFont, 16).fillColor("#212529").text(text).moveDown(mb);
         const h4 = (text: string, mb = 1) =>
-            doc
-                .font("Helvetica-Bold", 14)
-                .fillColor("#212529")
-                .text(text)
-                .moveDown(mb);
+            doc.font(boldFont, 14).fillColor("#212529").text(text).moveDown(mb);
         const h5 = (text: string, mb = 1) =>
-            doc
-                .font("Helvetica-Bold", 12)
-                .fillColor("#212529")
-                .text(text)
-                .moveDown(mb);
+            doc.font(boldFont, 12).fillColor("#212529").text(text).moveDown(mb);
         const p = ({
             text,
             mb = 1,
@@ -305,7 +295,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
             colour?: string | null;
         }) =>
             doc
-                .font("Helvetica", 10)
+                .font(regularFont, 10)
                 .fillColor(colour ?? "#212529")
                 .text(text, { continued, link, underline })
                 .moveDown(mb);
@@ -331,7 +321,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
             });
         const b = (text: string, continued = true) =>
             doc
-                .font("Helvetica-Bold", 10)
+                .font(boldFont, 10)
                 .fillColor("#212529")
                 .text(text, { continued });
         const t = (
@@ -340,7 +330,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
             footer?: (string | number)[]
         ) => {
             const t = doc
-                .font("Helvetica-Bold", 8)
+                .font(boldFont, 8)
                 .fillColor("#212529")
                 .table({
                     rowStyles: (i: number) => {
@@ -365,12 +355,12 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
                     },
                 });
             t.row(headings);
-            doc.font("Helvetica", 6).fillColor("#212529");
+            doc.font(regularFont, 6).fillColor("#212529");
             rows.forEach((x) => t.row(x));
             if (footer) {
-                doc.font("Helvetica-Bold", 6).fillColor("#212529");
+                doc.font(boldFont, 6).fillColor("#212529");
                 t.row(footer);
-                doc.font("Helvetica", 6).fillColor("#212529");
+                doc.font(regularFont, 6).fillColor("#212529");
             }
             t.end();
             doc.moveDown(1);
@@ -378,7 +368,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
 
         const ul = (bullets: (string | number)[], mb = 1) =>
             doc
-                .font("Helvetica", 10)
+                .font(regularFont, 10)
                 .fillColor("#212529")
                 .list(bullets, { bulletRadius: 1.5 })
                 .moveDown(mb);
@@ -632,7 +622,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
             const originalBottom = doc.page.margins.bottom;
             doc.page.margins.bottom = 20;
 
-            doc.font("Helvetica", 8)
+            doc.font(regularFont, 8)
                 .fillColor("#6C757D")
                 .text(
                     `Page ${i - range.start + 1} of ${range.count}`,
@@ -650,6 +640,7 @@ export const getLeaveOnReliefUshReportByEmploymentId = async (
         doc.end();
     } catch (_e) {
         console.log(_e);
+        sendErrorRes(res);
     }
 };
 export const postEmployment = async (req: Request, res: Response) => {

@@ -70,35 +70,50 @@ const SettingsEmploymentStatic = ({
                     }
                     onClick={() =>
                         startTransition(async () => {
-                            const res = await fetch(
-                                `/api/v1/private/employment/${employment.id}/report${useDecimals ? "?useDecimals=1" : ""}`
-                            );
-
-                            if (!res.ok) {
-                                if (res.status === 401 || res.status === 403) {
-                                    //force reload to login page
-                                    window.localStorage.setItem(
-                                        "redirect",
-                                        window.location.pathname +
-                                            window.location.hash +
-                                            window.location.search
+                            await toast.promise(
+                                (async () => {
+                                    const res = await fetch(
+                                        `/api/v1/private/employment/${employment.id}/report${useDecimals ? "?useDecimals=1" : ""}`
                                     );
-                                    window.location.href = "/login";
-                                    //stall logic to prevent error registering before the redirect
-                                    return new Promise(() => {});
-                                } else {
-                                    toast.error(`Failed to generate report`);
-                                }
-                            } else {
-                                const blob = await res.blob();
-                                const url = URL.createObjectURL(blob);
-                                const link = document.createElement("a");
-                                link.href = url;
-                                link.download = `Section 2 USH for annual leave on relief report${auth?.user ? `for ${auth.user.first_name} ${auth.user.last_name}` : ""} (${formatDate(new Date(), "dd/mm/yy hh:mm")}).pdf`;
-                                link.click();
 
-                                URL.revokeObjectURL(url);
-                            }
+                                    if (!res.ok) {
+                                        if (
+                                            res.status === 401 ||
+                                            res.status === 403
+                                        ) {
+                                            //force reload to login page
+                                            window.localStorage.setItem(
+                                                "redirect",
+                                                window.location.pathname +
+                                                    window.location.hash +
+                                                    window.location.search
+                                            );
+                                            window.location.href = "/login";
+                                            //stall logic to prevent error registering before the redirect
+                                            return new Promise(() => {});
+                                        }
+                                        throw new Error(
+                                            "Failed to generate report"
+                                        );
+                                    } else {
+                                        const blob = await res.blob();
+                                        const url = URL.createObjectURL(blob);
+                                        const link =
+                                            document.createElement("a");
+                                        link.href = url;
+                                        link.download = `Section 2 USH for annual leave on relief report${auth?.user ? `for ${auth.user.first_name} ${auth.user.last_name}` : ""} (${formatDate(new Date(), "dd/mm/yy hh:mm")}).pdf`;
+                                        link.click();
+
+                                        URL.revokeObjectURL(url);
+                                    }
+                                })(),
+                                {
+                                    loading:
+                                        "Generating report, do not navigate away from this page or close this tab (this can take several minutes...)",
+                                    success: "Report generated",
+                                    error: "Failed to generate report",
+                                }
+                            );
                         })
                     }
                 >

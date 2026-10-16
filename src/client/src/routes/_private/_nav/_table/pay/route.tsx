@@ -68,10 +68,10 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                 ] += taxable_pay;
 
                 const taxYear =
-                    x.pay_financial_year > "25-26"
-                        ? "2025/26"
+                    x.pay_financial_year > "26-27"
+                        ? "2026/27"
                         : (`20${x.pay_financial_year.replace("-", "/")}` as TaxYear);
-                if (x.pay_financial_year > "25-26") {
+                if (x.pay_financial_year > "26-27") {
                     console.warn(
                         `Tax year ${x.pay_financial_year} not yet supported, defaulting to most recent`
                     );

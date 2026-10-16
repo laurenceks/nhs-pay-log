@@ -264,7 +264,6 @@ const SettingsContractRowEdit = ({
                             {label}
                         </option>
                     ))}
-                    <option value={"manual"}>Manual</option>
                 </Form.Select>
             </td>
             <td style={{ verticalAlign: "middle" }}>

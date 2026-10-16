@@ -136,7 +136,7 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                 const deduction_ni =
                     calculateEmployeeNationalInsurance({
                         taxYear,
-                        taxableAnnualIncome: ni_able_pay * 12,
+                        grossAnnualIncome: ni_able_pay * 12,
                     }) / 12;
 
                 let deduction_student_loan = 0;
@@ -145,7 +145,7 @@ export const Route = createFileRoute("/_private/_nav/_table/pay")({
                     deduction_student_loan =
                         calculateStudentLoanRepayments({
                             taxYear,
-                            taxableAnnualIncome: taxable_pay * 12,
+                            grossAnnualIncome: taxable_pay * 12,
                             studentLoanPlanNo:
                                 x.student_loan === 6
                                     ? "postgrad"
